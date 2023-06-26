@@ -500,6 +500,9 @@
             "path": "../../applications/pm_proc.c"
           },
           {
+            "path": "../../applications/stm32wbxx_it.c"
+          },
+          {
             "path": "../../applications/system_stm32wbxx.c"
           },
           {
@@ -513,6 +516,9 @@
         "files": [
           {
             "path": "../../bsp/gcc/startup_stm32wb55xx_cm4.c"
+          },
+          {
+            "path": "../../bsp/gcc/startup_stm32wb55xx_cm4.s"
           }
         ],
         "folders": [
@@ -779,7 +785,8 @@
       "excludeList": [
         "<virtual_root>/app/spi_a_hw_if.c",
         "<virtual_root>/Utilities/lpm",
-        "<virtual_root>/user_drivers/ahrs/ahrs_if.c"
+        "<virtual_root>/user_drivers/ahrs/ahrs_if.c",
+        "<virtual_root>/bsp/startup_stm32wb55xx_cm4.c"
       ],
       "toolchain": "GCC",
       "compileConfig": {
