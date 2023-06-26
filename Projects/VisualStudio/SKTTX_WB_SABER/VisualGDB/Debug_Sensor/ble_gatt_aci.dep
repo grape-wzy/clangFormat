@@ -1,0 +1,60 @@
+VisualGDB/Debug_Sensor/ble_gatt_aci.o: \
+ D:/eMed/product/hip_device_saber/Drivers/Middlewares/ST/STM32_WPAN/ble/core/auto/ble_gatt_aci.c \
+ D:/eMed/product/hip_device_saber/Drivers/Middlewares/ST/STM32_WPAN/ble/core/auto/ble_gatt_aci.h \
+ D:/eMed/product/hip_device_saber/Drivers/Middlewares/ST/STM32_WPAN/ble/core/auto/ble_types.h \
+ c:\sysgcc\arm-eabi\lib\gcc\arm-none-eabi\10.3.1\include\stdint.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\stdint.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\_default_types.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\features.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\_newlib_version.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_intsup.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_stdint.h \
+ d:\emed\product\hip_device_saber\drivers\middlewares\st\stm32_wpan\ble\core\template\ble_const.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\string.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\_ansi.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\newlib.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\config.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\ieeefp.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\reent.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\_ansi.h \
+ c:\sysgcc\arm-eabi\lib\gcc\arm-none-eabi\10.3.1\include\stddef.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_types.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\_types.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\lock.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\cdefs.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_locale.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\strings.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\string.h \
+ d:\emed\product\hip_device_saber\drivers\middlewares\st\stm32_wpan\ble\core\ble_std.h \
+ d:\emed\product\hip_device_saber\drivers\middlewares\st\stm32_wpan\ble\core\ble_defs.h \
+ d:\emed\product\hip_device_saber\drivers\middlewares\st\stm32_wpan\ble\core\template\osal.h \
+ d:\emed\product\hip_device_saber\drivers\middlewares\st\stm32_wpan\ble\core\template\compiler.h
+D:/eMed/product/hip_device_saber/Drivers/Middlewares/ST/STM32_WPAN/ble/core/auto/ble_gatt_aci.h:
+D:/eMed/product/hip_device_saber/Drivers/Middlewares/ST/STM32_WPAN/ble/core/auto/ble_types.h:
+c:\sysgcc\arm-eabi\lib\gcc\arm-none-eabi\10.3.1\include\stdint.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\stdint.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\_default_types.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\features.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\_newlib_version.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_intsup.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_stdint.h:
+d:\emed\product\hip_device_saber\drivers\middlewares\st\stm32_wpan\ble\core\template\ble_const.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\string.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\_ansi.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\newlib.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\config.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\ieeefp.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\reent.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\_ansi.h:
+c:\sysgcc\arm-eabi\lib\gcc\arm-none-eabi\10.3.1\include\stddef.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_types.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\_types.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\lock.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\cdefs.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_locale.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\strings.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\string.h:
+d:\emed\product\hip_device_saber\drivers\middlewares\st\stm32_wpan\ble\core\ble_std.h:
+d:\emed\product\hip_device_saber\drivers\middlewares\st\stm32_wpan\ble\core\ble_defs.h:
+d:\emed\product\hip_device_saber\drivers\middlewares\st\stm32_wpan\ble\core\template\osal.h:
+d:\emed\product\hip_device_saber\drivers\middlewares\st\stm32_wpan\ble\core\template\compiler.h:

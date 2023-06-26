@@ -1,0 +1,978 @@
+{
+  "name": "osteotomy_s",
+  "type": "ARM",
+  "dependenceList": [
+    {
+      "groupName": "STM32WBxx_DFP",
+      "depList": [
+        {
+          "name": "STM32CubeHAL.Common",
+          "incList": [
+            ".pack/Keil/STM32WBxx_DFP.1.3.0/Drivers/STM32WBxx_HAL_Driver/Inc",
+            ".pack/Keil/STM32WBxx_DFP.1.3.0/Drivers/STM32WBxx_HAL_Driver/Inc/Legacy",
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.Common"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.Common"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeHAL.IPCC",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.IPCC"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.IPCC"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeHAL.IWDG",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.IWDG"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.IWDG"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeHAL.LPTIM",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.LPTIM"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.LPTIM"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeHAL.PWR",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.PWR"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.PWR"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeHAL.RCC",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.RCC"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.RCC"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeHAL.RNG",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.RNG"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.RNG"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeHAL.RTC",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.RTC"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.RTC"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeHAL.GPIO",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.GPIO"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.GPIO"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeHAL.HSEM",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.HSEM"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.HSEM"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeHAL.Flash",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.Flash"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.Flash"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeHAL.EXTI",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.EXTI"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.EXTI"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeHAL.DMA",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.DMA"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.DMA"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeHAL.CRC",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.CRC"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.CRC"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeHAL.Cortex",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.Cortex"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.Cortex"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeHAL.ADC",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.ADC"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.ADC"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeHAL.SPI",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.SPI"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.SPI"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeHAL.TIM",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.TIM"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.TIM"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeHAL.UART",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.UART"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.UART"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeHAL.USART",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.USART"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.USART"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeHAL.WWDG",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.WWDG"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeHAL.WWDG"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeLL.ADC",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.ADC"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.ADC"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeLL.COMP",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.COMP"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.COMP"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeLL.Common",
+          "incList": [
+            ".pack/Keil/STM32WBxx_DFP.1.3.0/Drivers/STM32WBxx_HAL_Driver/Inc",
+            ".pack/Keil/STM32WBxx_DFP.1.3.0/Drivers/STM32WBxx_HAL_Driver/Inc/Legacy",
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.Common"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.Common"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeLL.CRC",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.CRC"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.CRC"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeLL.CRS",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.CRS"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.CRS"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeLL.DMA",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.DMA"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.DMA"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeLL.EXTI",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.EXTI"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.EXTI"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeLL.GPIO",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.GPIO"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.GPIO"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeLL.I2C",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.I2C"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.I2C"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeLL.LPTIM",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.LPTIM"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.LPTIM"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeLL.LPUART",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.LPUART"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.LPUART"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeLL.PKA",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.PKA"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.PKA"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeLL.PWR",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.PWR"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.PWR"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeLL.RCC",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.RCC"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.RCC"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeLL.RNG",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.RNG"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.RNG"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeLL.RTC",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.RTC"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.RTC"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeLL.SPI",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.SPI"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.SPI"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeLL.TIM",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.TIM"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.TIM"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeLL.USART",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.USART"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.USART"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeLL.USB",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.USB"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.USB"
+          ],
+          "libList": [],
+          "defineList": []
+        },
+        {
+          "name": "STM32CubeLL.UTILS",
+          "incList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.UTILS"
+          ],
+          "sourceDirList": [
+            ".eide/deps/STM32WBxx_DFP/STM32CubeLL.UTILS"
+          ],
+          "libList": [],
+          "defineList": []
+        }
+      ]
+    }
+  ],
+  "srcDirs": [
+    ".eide/deps"
+  ],
+  "virtualFolder": {
+    "name": "<virtual_root>",
+    "files": [],
+    "folders": [
+      {
+        "name": "applications",
+        "files": [
+          {
+            "path": "../../applications/itask.c"
+          },
+          {
+            "path": "../../applications/main.c"
+          },
+          {
+            "path": "../../applications/pd_proc.c"
+          },
+          {
+            "path": "../../applications/platform_init.c"
+          },
+          {
+            "path": "../../applications/pm_proc.c"
+          },
+          {
+            "path": "../../applications/system_stm32wbxx.c"
+          },
+          {
+            "path": "../../applications/user_global.c"
+          }
+        ],
+        "folders": []
+      },
+      {
+        "name": "bsp",
+        "files": [
+          {
+            "path": "../../bsp/gcc/startup_stm32wb55xx_cm4.c"
+          }
+        ],
+        "folders": [
+          {
+            "name": "hal_driver",
+            "files": [],
+            "folders": []
+          }
+        ]
+      },
+      {
+        "name": "STM32_WPAN",
+        "files": [],
+        "folders": [
+          {
+            "name": "ble",
+            "files": [
+              {
+                "path": "../../hal_drivers/STM32_WPAN/ble/core/auto/ble_gap_aci.c"
+              },
+              {
+                "path": "../../hal_drivers/STM32_WPAN/ble/core/auto/ble_gatt_aci.c"
+              },
+              {
+                "path": "../../hal_drivers/STM32_WPAN/ble/core/auto/ble_hal_aci.c"
+              },
+              {
+                "path": "../../hal_drivers/STM32_WPAN/ble/core/auto/ble_hci_le.c"
+              },
+              {
+                "path": "../../hal_drivers/STM32_WPAN/ble/core/auto/ble_l2cap_aci.c"
+              },
+              {
+                "path": "../../hal_drivers/STM32_WPAN/ble/core/template/osal.c"
+              }
+            ],
+            "folders": []
+          },
+          {
+            "name": "interface",
+            "files": [
+              {
+                "path": "../../hal_drivers/STM32_WPAN/interface/patterns/ble_thread/shci/shci.c"
+              },
+              {
+                "path": "../../hal_drivers/STM32_WPAN/interface/patterns/ble_thread/tl/hci_tl_if.c"
+              },
+              {
+                "path": "../../hal_drivers/STM32_WPAN/interface/patterns/ble_thread/tl/hci_tl.c"
+              },
+              {
+                "path": "../../hal_drivers/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c"
+              },
+              {
+                "path": "../../hal_drivers/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl.c"
+              },
+              {
+                "path": "../../hal_drivers/STM32_WPAN/interface/patterns/ble_thread/tl/tl_mbox.c"
+              }
+            ],
+            "folders": []
+          },
+          {
+            "name": "utilities",
+            "files": [
+              {
+                "path": "../../hal_drivers/STM32_WPAN/utilities/dbg_trace.c"
+              },
+              {
+                "path": "../../hal_drivers/STM32_WPAN/utilities/otp.c"
+              },
+              {
+                "path": "../../hal_drivers/STM32_WPAN/utilities/stm_list.c"
+              },
+              {
+                "path": "../../hal_drivers/STM32_WPAN/utilities/stm_queue.c"
+              }
+            ],
+            "folders": []
+          }
+        ]
+      },
+      {
+        "name": "user_drivers",
+        "files": [],
+        "folders": [
+          {
+            "name": "ahrs",
+            "files": [
+              {
+                "path": "../../user_drivers/ahrs/ahrs_if.c"
+              },
+              {
+                "path": "../../user_drivers/ahrs/motionFX/motion_fx_manager.c"
+              },
+              {
+                "path": "../../user_drivers/ahrs/motionFX/MotionFX_CM4F_wc32_ot_hard.a"
+              }
+            ],
+            "folders": []
+          },
+          {
+            "name": "ble",
+            "files": [
+              {
+                "path": "../../user_drivers/ble/app_ble.c"
+              },
+              {
+                "path": "../../user_drivers/ble/app_entry.c"
+              },
+              {
+                "path": "../../user_drivers/ble/ble_proc.c"
+              },
+              {
+                "path": "../../user_drivers/ble/hw_ipcc.c"
+              },
+              {
+                "path": "../../user_drivers/ble/large_event.c"
+              }
+            ],
+            "folders": []
+          },
+          {
+            "name": "crc",
+            "files": [
+              {
+                "path": "../../user_drivers/crc/crc32_hw.c"
+              }
+            ],
+            "folders": []
+          },
+          {
+            "name": "fds",
+            "files": [
+              {
+                "path": "../../user_drivers/fds/record_if.c"
+              },
+              {
+                "path": "../../user_drivers/fds/sfds.c"
+              }
+            ],
+            "folders": []
+          },
+          {
+            "name": "hash",
+            "files": [
+              {
+                "path": "../../user_drivers/hash/md5.c"
+              }
+            ],
+            "folders": []
+          },
+          {
+            "name": "iap",
+            "files": [
+              {
+                "path": "../../user_drivers/iap/firmware.c"
+              },
+              {
+                "path": "../../user_drivers/iap/flash_ble_if.c"
+              },
+              {
+                "path": "../../user_drivers/iap/flash_ramif.c"
+              },
+              {
+                "path": "../../user_drivers/iap/iap.c"
+              }
+            ],
+            "folders": []
+          },
+          {
+            "name": "log",
+            "files": [
+              {
+                "path": "../../user_drivers/log/log.c"
+              }
+            ],
+            "folders": []
+          },
+          {
+            "name": "saber",
+            "files": [
+              {
+                "path": "../../user_drivers/saber/saber_drv.c"
+              },
+              {
+                "path": "../../user_drivers/saber/skt_if.c"
+              },
+              {
+                "path": "../../user_drivers/saber/skt_sensor_if.c"
+              }
+            ],
+            "folders": []
+          },
+          {
+            "name": "timer",
+            "files": [
+              {
+                "path": "../../user_drivers/timer/gtimer.c"
+              },
+              {
+                "path": "../../user_drivers/timer/hw_timerserver.c"
+              }
+            ],
+            "folders": []
+          },
+          {
+            "name": "utilities",
+            "files": [
+              {
+                "path": "../../user_drivers/utilities/gpio_if.c"
+              },
+              {
+                "path": "../../user_drivers/utilities/rng_if.c"
+              },
+              {
+                "path": "../../user_drivers/utilities/spi_a_dma_if.c"
+              },
+              {
+                "path": "../../user_drivers/utilities/utils.c"
+              }
+            ],
+            "folders": []
+          }
+        ]
+      },
+      {
+        "name": "Utilities",
+        "files": [],
+        "folders": [
+          {
+            "name": "lpm",
+            "files": [
+              {
+                "path": "../../hal_drivers/Utilities/lpm/tiny_lpm/stm32_lpm_if_template.c"
+              },
+              {
+                "path": "../../hal_drivers/Utilities/lpm/tiny_lpm/stm32_lpm.c"
+              }
+            ],
+            "folders": []
+          },
+          {
+            "name": "sequencer",
+            "files": [
+              {
+                "path": "../../hal_drivers/Utilities/sequencer/stm32_seq.c"
+              }
+            ],
+            "folders": []
+          }
+        ]
+      }
+    ]
+  },
+  "outDir": "build",
+  "deviceName": "STM32WB55CEUx",
+  "packDir": ".pack/Keil/STM32WBxx_DFP.1.3.0",
+  "miscInfo": {
+    "uid": "7f02b5c5a2a562651a0918d53cc886b0"
+  },
+  "targets": {
+    "Debug": {
+      "excludeList": [
+        "<virtual_root>/app/spi_a_hw_if.c",
+        "<virtual_root>/Utilities/lpm",
+        "<virtual_root>/user_drivers/ahrs/ahrs_if.c"
+      ],
+      "toolchain": "GCC",
+      "compileConfig": {
+        "cpuType": "Cortex-M4",
+        "floatingPointHardware": "single",
+        "scatterFilePath": "../../bsp/gcc/link/stm32wb55xx_flash_cm4.ld",
+        "useCustomScatterFile": true,
+        "storageLayout": {
+          "RAM": [],
+          "ROM": []
+        },
+        "options": "null"
+      },
+      "uploader": "STLink",
+      "uploadConfig": {
+        "bin": "",
+        "proType": "SWD",
+        "resetMode": "HWrst",
+        "runAfterProgram": true,
+        "speed": 4000,
+        "address": "0x08000000",
+        "elFile": "None",
+        "optionBytes": ".eide/debug.st.option.bytes.ini",
+        "otherCmds": ""
+      },
+      "uploadConfigMap": {
+        "JLink": {
+          "bin": "",
+          "baseAddr": "",
+          "cpuInfo": {
+            "vendor": "null",
+            "cpuName": "null"
+          },
+          "proType": 1,
+          "speed": 8000,
+          "otherCmds": ""
+        },
+        "STLink": {
+          "bin": "",
+          "proType": "SWD",
+          "resetMode": "HWrst",
+          "runAfterProgram": true,
+          "speed": 4000,
+          "address": "0x08000000",
+          "elFile": "None",
+          "optionBytes": ".eide/debug.st.option.bytes.ini",
+          "otherCmds": ""
+        }
+      },
+      "custom_dep": {
+        "name": "default",
+        "incList": [
+          ".eide/deps",
+          "../../hal_drivers/STM32_WPAN/ble/core",
+          "../../hal_drivers/STM32_WPAN/ble/core/auto",
+          "../../hal_drivers/STM32_WPAN/ble/core/template",
+          "../../hal_drivers/STM32_WPAN/ble/svc/Inc",
+          "../../hal_drivers/STM32_WPAN/ble/svc/Src",
+          "../../hal_drivers/STM32_WPAN/ble",
+          "../../hal_drivers/STM32_WPAN/interface/patterns/ble_thread/conf",
+          "../../hal_drivers/STM32_WPAN/interface/patterns/ble_thread/lhci",
+          "../../hal_drivers/STM32_WPAN/interface/patterns/ble_thread",
+          "../../hal_drivers/STM32_WPAN/interface/patterns/ble_thread/shci",
+          "../../hal_drivers/STM32_WPAN/interface/patterns/ble_thread/tl",
+          "../../hal_drivers/STM32_WPAN/utilities",
+          "../../hal_drivers/STM32_WPAN",
+          "../../hal_drivers/Utilities/sequencer",
+          "../../hal_drivers/CMSIS/Core/Include",
+          "../../hal_drivers/CMSIS/Device/ST/STM32WBxx/Include",
+          "../../hal_drivers/CMSIS/Include",
+          "../../applications",
+          "../../user_drivers/ahrs",
+          "../../user_drivers/ahrs/motionFX",
+          "../../user_drivers/ble",
+          "../../user_drivers/crc",
+          "../../user_drivers/fds",
+          "../../user_drivers/hash",
+          "../../user_drivers/iap",
+          "../../user_drivers/inc",
+          "../../user_drivers/saber",
+          "../../user_drivers/timer",
+          "../../user_drivers/utilities",
+          "../../user_drivers/log"
+        ],
+        "libList": [],
+        "sourceDirList": [],
+        "defineList": [
+          "STM32WB55xx",
+          "ARM_MATH_CM4",
+          "STM32WB55CE",
+          "USE_HAL_DRIVER",
+          "USE_FULL_LL_DRIVER "
+        ]
+      }
+    },
+    "RELEASE": {
+      "excludeList": [
+        "<virtual_root>/app/spi_a_hw_if.c"
+      ],
+      "toolchain": "GCC",
+      "compileConfig": {
+        "cpuType": "Cortex-M4",
+        "floatingPointHardware": "single",
+        "scatterFilePath": "D:\\eMed\\product\\hip_device_saber\\Drivers\\VisualGDB\\LinkerScripts\\stm32wb55xx_flash_cm4.ld",
+        "useCustomScatterFile": true,
+        "storageLayout": {
+          "RAM": [],
+          "ROM": []
+        },
+        "options": "null"
+      },
+      "uploader": "STLink",
+      "uploadConfig": {
+        "bin": "",
+        "proType": "SWD",
+        "resetMode": "HWrst",
+        "runAfterProgram": true,
+        "speed": 4000,
+        "address": "0x08000000",
+        "elFile": "None",
+        "optionBytes": ".eide/release.st.option.bytes.ini",
+        "otherCmds": ""
+      },
+      "uploadConfigMap": {
+        "JLink": {
+          "bin": "",
+          "baseAddr": "",
+          "cpuInfo": {
+            "vendor": "null",
+            "cpuName": "null"
+          },
+          "proType": 1,
+          "speed": 8000,
+          "otherCmds": ""
+        },
+        "STLink": {
+          "bin": "",
+          "proType": "SWD",
+          "resetMode": "HWrst",
+          "runAfterProgram": true,
+          "speed": 4000,
+          "address": "0x08000000",
+          "elFile": "None",
+          "optionBytes": ".eide/debug.st.option.bytes.ini",
+          "otherCmds": ""
+        }
+      },
+      "custom_dep": {
+        "name": "default",
+        "incList": [
+          ".eide/deps",
+          "../../../Drivers/Middlewares/ST/STM32_WPAN/ble/core",
+          "../../../Drivers/Middlewares/ST/STM32_WPAN/ble/core/auto",
+          "../../../Drivers/Middlewares/ST/STM32_WPAN/ble/core/template",
+          "../../../Drivers/Middlewares/ST/STM32_WPAN/ble/svc/Inc",
+          "../../../Drivers/Middlewares/ST/STM32_WPAN/ble/svc/Src",
+          "../../../Drivers/Middlewares/ST/STM32_WPAN/ble",
+          "../../../Drivers/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/conf",
+          "../../../Drivers/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/lhci",
+          "../../../Drivers/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread",
+          "../../../Drivers/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci",
+          "../../../Drivers/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl",
+          "../../../Drivers/Middlewares/ST/STM32_WPAN/utilities",
+          "../../../Drivers/Middlewares/ST/STM32_WPAN",
+          "../../../Drivers/Utilities/sequencer",
+          "../../../Drivers/CMSIS/Core/Include",
+          "../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include",
+          "../../../Drivers/CMSIS/Include",
+          "../../SKTTX_WB_SABER/UserCode",
+          "../../../User_Drivers/ahrs/motionFX",
+          "../../../User_Drivers/crc",
+          "../../../User_Drivers/fds",
+          "../../../User_Drivers/hash",
+          "../../../User_Drivers/iap",
+          "../../../User_Drivers/imu",
+          "../../../User_Drivers/inc",
+          "../../../User_Drivers/saber",
+          "../../../User_Drivers/STM32_WPAN",
+          "../../../User_Drivers/timer",
+          "../../../User_Drivers/utilities",
+          "../../../User_Drivers/log"
+        ],
+        "libList": [],
+        "sourceDirList": [],
+        "defineList": [
+          "STM32WB55xx",
+          "ARM_MATH_CM4",
+          "STM32WB55CE",
+          "USE_HAL_DRIVER",
+          "USE_FULL_LL_DRIVER "
+        ]
+      }
+    }
+  },
+  "version": "3.3"
+}

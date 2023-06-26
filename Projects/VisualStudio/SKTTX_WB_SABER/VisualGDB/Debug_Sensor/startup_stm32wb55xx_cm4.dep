@@ -1,0 +1,4 @@
+VisualGDB/Debug_Sensor/startup_stm32wb55xx_cm4.o: \
+ d:\emed\product\hip_device_saber\drivers\visualgdb\startupfiles\startup_stm32wb55xx_cm4.c \
+ c:\sysgcc\arm-eabi\lib\gcc\arm-none-eabi\10.3.1\include\stddef.h
+c:\sysgcc\arm-eabi\lib\gcc\arm-none-eabi\10.3.1\include\stddef.h:

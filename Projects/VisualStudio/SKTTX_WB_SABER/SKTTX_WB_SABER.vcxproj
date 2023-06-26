@@ -1,0 +1,265 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug_Sensor|VisualGDB">
+      <Configuration>Debug_Sensor</Configuration>
+      <Platform>VisualGDB</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|VisualGDB">
+      <Configuration>Debug</Configuration>
+      <Platform>VisualGDB</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|VisualGDB">
+      <Configuration>Release</Configuration>
+      <Platform>VisualGDB</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{FE7F8292-912D-487F-B931-9E4F3CD0C7C2}</ProjectGuid>
+    <BSP_ID>com.visualgdb.bsp.in-place</BSP_ID>
+    <BSP_VERSION>1.0</BSP_VERSION>
+    <InPlaceBSPSubdir>../../../../Drivers</InPlaceBSPSubdir>
+    <RelativeBSPPath />
+    <ProjectName>SKTTX_WB_SABER</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Sensor|VisualGDB'" Label="Configuration" />
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
+    <GNUConfigurationType>Debug</GNUConfigurationType>
+    <ToolchainID>com.visualgdb.arm-eabi</ToolchainID>
+    <ToolchainVersion>10.3.1/10.2.90/r1</ToolchainVersion>
+    <PreserveSubdirectoriesForObjectFiles>False</PreserveSubdirectoriesForObjectFiles>
+    <MCUPropertyListFile>$(ProjectDir)stm32wb.props</MCUPropertyListFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Sensor|VisualGDB'">
+    <GNUConfigurationType>Debug</GNUConfigurationType>
+    <ToolchainID>com.visualgdb.arm-eabi</ToolchainID>
+    <ToolchainVersion>10.3.1/10.2.90/r1</ToolchainVersion>
+    <PreserveSubdirectoriesForObjectFiles>False</PreserveSubdirectoriesForObjectFiles>
+    <MCUPropertyListFile>$(ProjectDir)stm32wb.props</MCUPropertyListFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
+    <ToolchainID>com.visualgdb.arm-eabi</ToolchainID>
+    <ToolchainVersion>10.3.1/10.2.90/r1</ToolchainVersion>
+    <PreserveSubdirectoriesForObjectFiles>False</PreserveSubdirectoriesForObjectFiles>
+    <MCUPropertyListFile>$(ProjectDir)stm32wb.props</MCUPropertyListFile>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>../../../../Drivers/Utilities/sequencer;../../UserCode/;../../../../User_Drivers/inc;../../../../User_Drivers/timer;../../../../User_Drivers/crc;../../../../User_Drivers/hash;../../../../User_Drivers/iap;../../../../User_Drivers/STM32_WPAN;../../../../User_Drivers/utilities;../../../../User_Drivers/log;../../../../User_Drivers/iap;../../../../User_Drivers/fds;../../../../User_Drivers/kneelib;../../../../User_Drivers/imu;../../../../User_Drivers/ahrs;../../../../User_Drivers/ahrs/motionFX;../../../../User_Drivers/saber;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DEBUG=1;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Optimization>O3</Optimization>
+      <WarningLevel>Extra</WarningLevel>
+      <AdditionalOptions>-Wno-unknown-pragmas -Wno-unused-parameter -Wno-strict-aliasing -Wno-implicit-fallthrough %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <AdditionalLinkerInputs>;%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
+      <LibrarySearchDirectories>;%(Link.LibrarySearchDirectories)</LibrarySearchDirectories>
+      <AdditionalLibraryNames>;%(Link.AdditionalLibraryNames)</AdditionalLibraryNames>
+      <LinkerScript>../../../../Drivers/VisualGDB/LinkerScripts/stm32wb55xx_flash_cm4.ld</LinkerScript>
+      <GenerateMapFile>true</GenerateMapFile>
+      <PrintMemoryUsage>true</PrintMemoryUsage>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Sensor|VisualGDB'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>../../../../Drivers/Utilities/sequencer;../../UserCode/;../../../../User_Drivers/inc;../../../../User_Drivers/timer;../../../../User_Drivers/crc;../../../../User_Drivers/hash;../../../../User_Drivers/iap;../../../../User_Drivers/STM32_WPAN;../../../../User_Drivers/utilities;../../../../User_Drivers/log;../../../../User_Drivers/iap;../../../../User_Drivers/fds;../../../../User_Drivers/kneelib;../../../../User_Drivers/imu;../../../../User_Drivers/ahrs;../../../../User_Drivers/ahrs/motionFX;../../../../User_Drivers/saber;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DEBUG=1;ENABLE_SKT_SENSOR;;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Optimization>O3</Optimization>
+      <WarningLevel>Extra</WarningLevel>
+      <AdditionalOptions>-Wno-unknown-pragmas -Wno-unused-parameter -Wno-strict-aliasing -Wno-implicit-fallthrough %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <AdditionalLinkerInputs>;%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
+      <LibrarySearchDirectories>;%(Link.LibrarySearchDirectories)</LibrarySearchDirectories>
+      <AdditionalLibraryNames>;%(Link.AdditionalLibraryNames)</AdditionalLibraryNames>
+      <LinkerScript>../../../../Drivers/VisualGDB/LinkerScripts/stm32wb55xx_flash_cm4.ld</LinkerScript>
+      <GenerateMapFile>true</GenerateMapFile>
+      <PrintMemoryUsage>true</PrintMemoryUsage>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>../../../../Drivers/Utilities/sequencer;../../UserCode/;../../../../User_Drivers/inc;../../../../User_Drivers/timer;../../../../User_Drivers/crc;../../../../User_Drivers/hash;../../../../User_Drivers/iap;../../../../User_Drivers/STM32_WPAN;../../../../User_Drivers/utilities;../../../../User_Drivers/log;../../../../User_Drivers/iap;../../../../User_Drivers/fds;../../../../User_Drivers/kneelib;../../../../User_Drivers/imu;../../../../User_Drivers/ahrs;../../../../User_Drivers/ahrs/motionFX;../../../../User_Drivers/saber;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>O3</Optimization>
+      <AdditionalOptions>-Wno-unknown-pragmas -Wno-unused-parameter -Wno-strict-aliasing %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessorDefinitions>NDEBUG=1;RELEASE=1;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateMapFile>true</GenerateMapFile>
+    </Link>
+    <Link>
+      <PrintMemoryUsage>true</PrintMemoryUsage>
+      <MapFileName>
+      </MapFileName>
+      <LinkerScript>..\..\..\..\Drivers\VisualGDB\LinkerScripts\stm32wb55xx_flash_cm4.ld</LinkerScript>
+      <AdditionalLinkerInputs>;%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
+      <LibrarySearchDirectories>;%(Link.LibrarySearchDirectories)</LibrarySearchDirectories>
+      <AdditionalLibraryNames>;%(Link.AdditionalLibraryNames)</AdditionalLibraryNames>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Xml Include="stm32wb.xml" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\Drivers\Middlewares\ST\STM32_WPAN\ble\core\auto\ble_gap_aci.c" />
+    <ClCompile Include="..\..\..\..\Drivers\Middlewares\ST\STM32_WPAN\ble\core\auto\ble_gatt_aci.c" />
+    <ClCompile Include="..\..\..\..\Drivers\Middlewares\ST\STM32_WPAN\ble\core\auto\ble_hal_aci.c" />
+    <ClCompile Include="..\..\..\..\Drivers\Middlewares\ST\STM32_WPAN\ble\core\auto\ble_hci_le.c" />
+    <ClCompile Include="..\..\..\..\Drivers\Middlewares\ST\STM32_WPAN\ble\core\auto\ble_l2cap_aci.c" />
+    <ClCompile Include="..\..\..\..\Drivers\Middlewares\ST\STM32_WPAN\ble\core\template\osal.c" />
+    <ClCompile Include="..\..\..\..\Drivers\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\shci\shci.c" />
+    <ClCompile Include="..\..\..\..\Drivers\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\hci_tl.c" />
+    <ClCompile Include="..\..\..\..\Drivers\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\hci_tl_if.c" />
+    <ClCompile Include="..\..\..\..\Drivers\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\shci_tl.c" />
+    <ClCompile Include="..\..\..\..\Drivers\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\shci_tl_if.c" />
+    <ClCompile Include="..\..\..\..\Drivers\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\tl_mbox.c" />
+    <ClCompile Include="..\..\..\..\Drivers\Middlewares\ST\STM32_WPAN\utilities\dbg_trace.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_Sensor|VisualGDB'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Drivers\Middlewares\ST\STM32_WPAN\utilities\otp.c" />
+    <ClCompile Include="..\..\..\..\Drivers\Middlewares\ST\STM32_WPAN\utilities\stm_list.c" />
+    <ClCompile Include="..\..\..\..\Drivers\Middlewares\ST\STM32_WPAN\utilities\stm_queue.c" />
+    <ClCompile Include="..\..\..\..\Drivers\Utilities\sequencer\stm32_seq.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\ahrs\ahrs_if.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_Sensor|VisualGDB'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\User_Drivers\ahrs\motionFX\motion_fx_manager.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\crc\crc32_hw.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\fds\record_if.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\fds\sfds.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\hash\md5.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\iap\firmware.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\iap\flash_ble_if.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\iap\flash_ramif.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\iap\iap.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\log\log.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\saber\saber_drv.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\saber\skt_if.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\saber\skt_sensor_if.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\STM32_WPAN\app_ble.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\STM32_WPAN\app_entry.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\STM32_WPAN\ble_proc.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\STM32_WPAN\hw_ipcc.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\STM32_WPAN\large_event.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\timer\gtimer.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\timer\hw_timerserver.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\utilities\gpio_if.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\utilities\rng_if.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\utilities\spi_a_dma_if.c" />
+    <ClCompile Include="..\..\..\..\User_Drivers\utilities\utils.c" />
+    <ClCompile Include="..\..\UserCode\itask.c" />
+    <ClCompile Include="..\..\UserCode\main.c" />
+    <ClCompile Include="..\..\UserCode\pd_proc.c" />
+    <ClCompile Include="..\..\UserCode\platform_init.c" />
+    <ClCompile Include="..\..\UserCode\pm_proc.c" />
+    <ClCompile Include="..\..\UserCode\stm32wbxx_it.c" />
+    <ClCompile Include="..\..\UserCode\system_stm32wbxx.c" />
+    <ClCompile Include="..\..\UserCode\user_global.c" />
+    <ClInclude Include="..\..\UserCode\app_conf.h" />
+    <ClInclude Include="..\..\UserCode\itask.h" />
+    <ClInclude Include="..\..\UserCode\platform.h" />
+    <ClInclude Include="..\..\UserCode\platform_init.h" />
+    <ClInclude Include="..\..\UserCode\stm32wbxx_hal_conf.h" />
+    <ClInclude Include="..\..\UserCode\stm32wbxx_it.h" />
+    <ClInclude Include="..\..\UserCode\user_drivers.h" />
+    <ClInclude Include="..\..\UserCode\user_global.h" />
+    <ClInclude Include="..\..\UserCode\user_hw.h" />
+    <None Include="SKTTX_WB_SABER-Debug.vgdbsettings" />
+    <None Include="SKTTX_WB_SABER-Release.vgdbsettings" />
+    <None Include="stm32wb.props" />
+    <ClCompile Include="$(BSP_ROOT)\VisualGDB\StartupFiles\startup_stm32wb55xx_cm4.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_adc.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_adc_ex.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_comp.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_cortex.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_crc.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_crc_ex.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_cryp.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_cryp_ex.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_dma.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_dma_ex.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_exti.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_flash.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_flash_ex.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_gpio.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_hsem.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_i2c.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_i2c_ex.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_ipcc.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_irda.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_iwdg.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_lcd.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_lptim.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pcd.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pcd_ex.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pka.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pwr.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pwr_ex.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_qspi.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rcc.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rcc_ex.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rng.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rtc.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rtc_ex.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_sai.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_sai_ex.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_smartcard.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_smartcard_ex.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_smbus.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_spi.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_spi_ex.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_tim.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_tim_ex.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_tsc.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_uart.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_uart_ex.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_usart.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_usart_ex.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_wwdg.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_adc.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_comp.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_crc.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_crs.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_dma.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_exti.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_gpio.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_i2c.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_lptim.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_lpuart.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_pka.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_pwr.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_rcc.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_rng.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_rtc.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_spi.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_tim.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_usart.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_usb.c" />
+    <ClCompile Include="..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_utils.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\..\..\..\User_Drivers\ahrs\motionFX\MotionFX_CM4F_wc32_ot_hard.a" />
+  </ItemGroup>
+</Project>

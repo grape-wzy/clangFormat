@@ -1,0 +1,22 @@
+The 'RTX_Blinky' project is a simple CMSIS RTOS2 based example for
+ST 'STM32WB55' microcontroller using ST 'NUCLEO-WB55' Board.
+Compliant to Cortex Microcontroller Software Interface Standard (CMSIS).
+
+Example functionality:
+ - Clock Settings:
+   - MSI     =            4 MHz
+   - SYSCLK  =           32 MHz
+
+ - 3 LED blinks with a fixed speed.
+ - blinking is paused while holding down SW1 .. SW3 buttons.
+
+
+The Blinky program is available in different targets:
+ - Debug:
+   - Compiler optimization Level 1
+   - Enabled Event Recorder
+   - Keil RTX5 variant 'Source'
+ - Release:
+   - Compiler optimization Level 3
+   - Keil RTX5 variant 'Library'
+

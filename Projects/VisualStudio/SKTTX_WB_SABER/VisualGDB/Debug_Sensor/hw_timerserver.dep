@@ -1,0 +1,248 @@
+VisualGDB/Debug_Sensor/hw_timerserver.o: \
+ D:/eMed/product/hip_device_saber/User_Drivers/timer/hw_timerserver.c \
+ ../../UserCode/platform.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal.h \
+ ../../UserCode/stm32wbxx_hal_conf.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_dma.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_def.h \
+ d:\emed\product\hip_device_saber\drivers\cmsis\device\st\stm32wbxx\include\stm32wbxx.h \
+ d:\emed\product\hip_device_saber\drivers\cmsis\device\st\stm32wbxx\include\stm32wb55xx.h \
+ d:\emed\product\hip_device_saber\drivers\cmsis\core\include\core_cm4.h \
+ c:\sysgcc\arm-eabi\lib\gcc\arm-none-eabi\10.3.1\include\stdint.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\stdint.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\_default_types.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\features.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\_newlib_version.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_intsup.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_stdint.h \
+ d:\emed\product\hip_device_saber\drivers\cmsis\core\include\cmsis_version.h \
+ d:\emed\product\hip_device_saber\drivers\cmsis\core\include\cmsis_compiler.h \
+ d:\emed\product\hip_device_saber\drivers\cmsis\core\include\cmsis_gcc.h \
+ d:\emed\product\hip_device_saber\drivers\cmsis\core\include\mpu_armv7.h \
+ d:\emed\product\hip_device_saber\drivers\cmsis\device\st\stm32wbxx\include\system_stm32wbxx.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\Legacy/stm32_hal_legacy.h \
+ c:\sysgcc\arm-eabi\lib\gcc\arm-none-eabi\10.3.1\include\stddef.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_dma.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_dmamux.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_dma_ex.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_cortex.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_crc.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_crc_ex.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_exti.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_flash.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_flash_ex.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_gpio.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_gpio_ex.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_hsem.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_ipcc.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_lptim.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_pcd.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_usb.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_pcd_ex.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_pwr.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_pwr.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_exti.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_pwr_ex.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_rcc.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_rcc.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_bus.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_rcc_ex.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_crs.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_rng.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_rtc.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_rtc_ex.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_spi.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_spi_ex.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_tim.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_tim_ex.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_uart.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_uart_ex.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_system.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_exti.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_system.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_rcc.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_ipcc.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_bus.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_pwr.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_cortex.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_utils.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_hsem.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_gpio.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_rtc.h \
+ d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_rng.h \
+ ../../UserCode/user_hw.h \
+ D:/eMed/product/hip_device_saber/User_Drivers/timer/hw_timerserver.h \
+ ../../../../User_Drivers/inc/standard_lib.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\string.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\_ansi.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\newlib.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\config.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\ieeefp.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\reent.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\_ansi.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_types.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\_types.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\lock.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\cdefs.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_locale.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\strings.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\string.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\stdio.h \
+ c:\sysgcc\arm-eabi\lib\gcc\arm-none-eabi\10.3.1\include\stdarg.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\types.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\endian.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\_endian.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\select.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_sigset.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_timeval.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\timespec.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_timespec.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_pthreadtypes.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\sched.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\types.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\stdio.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\math.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\stdlib.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\stdlib.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\alloca.h \
+ c:\sysgcc\arm-eabi\lib\gcc\arm-none-eabi\10.3.1\include\stdbool.h \
+ c:\sysgcc\arm-eabi\arm-none-eabi\include\inttypes.h \
+ ../../UserCode/user_global.h \
+ d:\emed\product\hip_device_saber\drivers\cmsis\core\include\cmsis_compiler.h \
+ ../../../../User_Drivers/inc/gcompiler.h \
+ ../../../../User_Drivers/inc/event_struct.h \
+ ../../../../User_Drivers/inc/com_struct.h \
+ ../../../../User_Drivers/utilities/utils.h \
+ ../../../../User_Drivers/timer/gtimer.h \
+ ../../../../User_Drivers/utilities/gpio_if.h \
+ ../../../../Drivers/Utilities/sequencer/stm32_seq.h \
+ ../../UserCode/app_conf.h \
+ d:\emed\product\hip_device_saber\drivers\middlewares\st\stm32_wpan\interface\patterns\ble_thread\hw.h \
+ ../../../../User_Drivers/STM32_WPAN/hw_conf.h \
+ d:\emed\product\hip_device_saber\drivers\middlewares\st\stm32_wpan\ble\core\ble_bufsize.h \
+ ../../../../User_Drivers/log/log.h \
+ ../../../../User_Drivers/STM32_WPAN/app_common.h \
+ ../../UserCode/app_conf.h
+../../UserCode/platform.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal.h:
+../../UserCode/stm32wbxx_hal_conf.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_dma.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_def.h:
+d:\emed\product\hip_device_saber\drivers\cmsis\device\st\stm32wbxx\include\stm32wbxx.h:
+d:\emed\product\hip_device_saber\drivers\cmsis\device\st\stm32wbxx\include\stm32wb55xx.h:
+d:\emed\product\hip_device_saber\drivers\cmsis\core\include\core_cm4.h:
+c:\sysgcc\arm-eabi\lib\gcc\arm-none-eabi\10.3.1\include\stdint.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\stdint.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\_default_types.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\features.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\_newlib_version.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_intsup.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_stdint.h:
+d:\emed\product\hip_device_saber\drivers\cmsis\core\include\cmsis_version.h:
+d:\emed\product\hip_device_saber\drivers\cmsis\core\include\cmsis_compiler.h:
+d:\emed\product\hip_device_saber\drivers\cmsis\core\include\cmsis_gcc.h:
+d:\emed\product\hip_device_saber\drivers\cmsis\core\include\mpu_armv7.h:
+d:\emed\product\hip_device_saber\drivers\cmsis\device\st\stm32wbxx\include\system_stm32wbxx.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\Legacy/stm32_hal_legacy.h:
+c:\sysgcc\arm-eabi\lib\gcc\arm-none-eabi\10.3.1\include\stddef.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_dma.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_dmamux.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_dma_ex.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_cortex.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_crc.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_crc_ex.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_exti.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_flash.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_flash_ex.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_gpio.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_gpio_ex.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_hsem.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_ipcc.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_lptim.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_pcd.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_usb.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_pcd_ex.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_pwr.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_pwr.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_exti.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_pwr_ex.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_rcc.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_rcc.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_bus.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_rcc_ex.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_crs.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_rng.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_rtc.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_rtc_ex.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_spi.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_spi_ex.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_tim.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_tim_ex.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_uart.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_hal_uart_ex.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_system.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_exti.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_system.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_rcc.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_ipcc.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_bus.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_pwr.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_cortex.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_utils.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_hsem.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_gpio.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_rtc.h:
+d:\emed\product\hip_device_saber\drivers\stm32wbxx_hal_driver\inc\stm32wbxx_ll_rng.h:
+../../UserCode/user_hw.h:
+D:/eMed/product/hip_device_saber/User_Drivers/timer/hw_timerserver.h:
+../../../../User_Drivers/inc/standard_lib.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\string.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\_ansi.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\newlib.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\config.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\ieeefp.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\reent.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\_ansi.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_types.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\_types.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\lock.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\cdefs.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_locale.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\strings.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\string.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\stdio.h:
+c:\sysgcc\arm-eabi\lib\gcc\arm-none-eabi\10.3.1\include\stdarg.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\types.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\endian.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\_endian.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\select.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_sigset.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_timeval.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\timespec.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_timespec.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_pthreadtypes.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\sched.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\types.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\stdio.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\math.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\stdlib.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\stdlib.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\alloca.h:
+c:\sysgcc\arm-eabi\lib\gcc\arm-none-eabi\10.3.1\include\stdbool.h:
+c:\sysgcc\arm-eabi\arm-none-eabi\include\inttypes.h:
+../../UserCode/user_global.h:
+d:\emed\product\hip_device_saber\drivers\cmsis\core\include\cmsis_compiler.h:
+../../../../User_Drivers/inc/gcompiler.h:
+../../../../User_Drivers/inc/event_struct.h:
+../../../../User_Drivers/inc/com_struct.h:
+../../../../User_Drivers/utilities/utils.h:
+../../../../User_Drivers/timer/gtimer.h:
+../../../../User_Drivers/utilities/gpio_if.h:
+../../../../Drivers/Utilities/sequencer/stm32_seq.h:
+../../UserCode/app_conf.h:
+d:\emed\product\hip_device_saber\drivers\middlewares\st\stm32_wpan\interface\patterns\ble_thread\hw.h:
+../../../../User_Drivers/STM32_WPAN/hw_conf.h:
+d:\emed\product\hip_device_saber\drivers\middlewares\st\stm32_wpan\ble\core\ble_bufsize.h:
+../../../../User_Drivers/log/log.h:
+../../../../User_Drivers/STM32_WPAN/app_common.h:
+../../UserCode/app_conf.h:

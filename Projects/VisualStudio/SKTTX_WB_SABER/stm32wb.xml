@@ -1,0 +1,205 @@
+<?xml version="1.0"?>
+<EmbeddedProfile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ToolchainID>com.visualgdb.arm-eabi</ToolchainID>
+  <ToolchainVersion>
+    <GCC>10.3.1</GCC>
+    <GDB>10.2.90</GDB>
+    <Revision>1</Revision>
+  </ToolchainVersion>
+  <BspID>com.visualgdb.bsp.in-place</BspID>
+  <BspVersion>1.0</BspVersion>
+  <McuID>STM32WB55CE</McuID>
+  <BSPSubdirectory>../../../../Drivers</BSPSubdirectory>
+  <MCUDefinitionFile>stm32wb55xx.xml</MCUDefinitionFile>
+  <MCUProperties>
+    <Entries />
+  </MCUProperties>
+  <BSPSourceFolderName>Drivers</BSPSourceFolderName>
+  <InPlaceMCU>
+    <ID>STM32WB55CE</ID>
+    <UserFriendlyName>STM32WB55CE</UserFriendlyName>
+    <CompilationFlags>
+      <PreprocessorMacros>
+        <string>ARM_MATH_CM4</string>
+        <string>STM32WB55CE</string>
+        <string>STM32WB55xx</string>
+        <string>USE_HAL_DRIVER</string>
+        <string>USE_FULL_LL_DRIVER</string>
+        <string />
+      </PreprocessorMacros>
+      <IncludeDirectories>
+        <string>.</string>
+        <string>$$SYS:BSP_ROOT$$/Middlewares/ST/STM32_WPAN/ble/core</string>
+        <string>$$SYS:BSP_ROOT$$/Middlewares/ST/STM32_WPAN/ble/core/auto</string>
+        <string>$$SYS:BSP_ROOT$$/Middlewares/ST/STM32_WPAN/ble/core/template</string>
+        <string>$$SYS:BSP_ROOT$$/Middlewares/ST/STM32_WPAN/ble/svc/Inc</string>
+        <string>$$SYS:BSP_ROOT$$/Middlewares/ST/STM32_WPAN/ble/svc/Src</string>
+        <string>$$SYS:BSP_ROOT$$/Middlewares/ST/STM32_WPAN/ble</string>
+        <string>$$SYS:BSP_ROOT$$/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread</string>
+        <string>$$SYS:BSP_ROOT$$/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/conf</string>
+        <string>$$SYS:BSP_ROOT$$/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/lhci</string>
+        <string>$$SYS:BSP_ROOT$$/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci</string>
+        <string>$$SYS:BSP_ROOT$$/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl</string>
+        <string>$$SYS:BSP_ROOT$$/Middlewares/ST/STM32_WPAN</string>
+        <string>$$SYS:BSP_ROOT$$/Middlewares/ST/STM32_WPAN/utilities</string>
+        <string>$$SYS:BSP_ROOT$$/Utilities/sequencer</string>
+        <string>$$SYS:BSP_ROOT$$/STM32WBxx_HAL_Driver/Inc</string>
+        <string>$$SYS:BSP_ROOT$$/STM32WBxx_HAL_Driver/Inc/Legacy</string>
+        <string>$$SYS:BSP_ROOT$$/CMSIS/Core/Include</string>
+        <string>$$SYS:BSP_ROOT$$/CMSIS/Device/ST/STM32WBxx/Include</string>
+        <string>$$SYS:BSP_ROOT$$/CMSIS/Include</string>
+      </IncludeDirectories>
+      <LDFLAGS>--specs=nano.specs  -u _printf_float --specs=nosys.specs </LDFLAGS>
+      <LinkerScript>$$SYS:BSP_ROOT$$/VisualGDB/LinkerScripts/stm32wb55xx_flash_cm4.ld</LinkerScript>
+      <COMMONFLAGS>-mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard</COMMONFLAGS>
+      <EnableLinkerGroups>true</EnableLinkerGroups>
+    </CompilationFlags>
+    <AdditionalSourceFiles>
+      <string>$$SYS:BSP_ROOT$$/VisualGDB/StartupFiles/startup_stm32wb55xx_cm4.c</string>
+    </AdditionalSourceFiles>
+    <AdditionalHeaderFiles />
+    <MemoryMap>
+      <Memories>
+        <MCUMemory>
+          <Name>FLASH</Name>
+          <Address>134217728</Address>
+          <Size>524288</Size>
+          <AddressSpaceSize>0</AddressSpaceSize>
+          <Flags>IsDefaultFLASH</Flags>
+        </MCUMemory>
+        <MCUMemory>
+          <Name>SRAM</Name>
+          <Address>536870912</Address>
+          <Size>262144</Size>
+          <AddressSpaceSize>0</AddressSpaceSize>
+          <Flags>None</Flags>
+        </MCUMemory>
+      </Memories>
+    </MemoryMap>
+    <AdditionalSystemVars>
+      <SysVarEntry>
+        <Key>com.sysprogs.bspoptions.arm.core</Key>
+        <Value>M4</Value>
+      </SysVarEntry>
+      <SysVarEntry>
+        <Key>com.sysprogs.freertos.default_port</Key>
+        <Value>ARM_CM4F</Value>
+      </SysVarEntry>
+      <SysVarEntry>
+        <Key>com.sysprogs.stm32.hal_header_prefix</Key>
+        <Value>stm32wbxx</Value>
+      </SysVarEntry>
+      <SysVarEntry>
+        <Key>com.sysprogs.bspoptions.stm32.hal_system_file</Key>
+        <Value>CMSIS/Device/ST/STM32WBxx/Source/Templates/system_stm32wbxx.c</Value>
+      </SysVarEntry>
+      <SysVarEntry>
+        <Key>com.sysprogs.bspoptions.stm32.hal_config_template_file</Key>
+        <Value>STM32WBxx_HAL_Driver/Inc/stm32wbxx_hal_conf_template.h</Value>
+      </SysVarEntry>
+      <SysVarEntry>
+        <Key>com.sysprogs.stm32.hal_device_family</Key>
+        <Value>STM32WB55xx</Value>
+      </SysVarEntry>
+    </AdditionalSystemVars>
+    <ConfigurableProperties>
+      <PropertyGroups>
+        <PropertyGroup>
+          <Properties>
+            <PropertyEntry xsi:type="Enumerated">
+              <Name>Floating point support</Name>
+              <UniqueID>com.sysprogs.bspoptions.arm.floatmode</UniqueID>
+              <OmitPrefixIfEmpty>false</OmitPrefixIfEmpty>
+              <SuggestionList>
+                <Suggestion>
+                  <UserFriendlyName>Software</UserFriendlyName>
+                  <InternalValue>-mfloat-abi=soft</InternalValue>
+                </Suggestion>
+                <Suggestion>
+                  <UserFriendlyName>Hardware</UserFriendlyName>
+                  <InternalValue>-mfloat-abi=hard</InternalValue>
+                </Suggestion>
+                <Suggestion>
+                  <UserFriendlyName>Unspecified</UserFriendlyName>
+                  <InternalValue />
+                </Suggestion>
+              </SuggestionList>
+              <DefaultEntryIndex>1</DefaultEntryIndex>
+              <AllowFreeEntry>false</AllowFreeEntry>
+            </PropertyEntry>
+            <PropertyEntry xsi:type="Boolean">
+              <Name>Exclude the startup file from project</Name>
+              <UniqueID>com.sysprogs.mcuoptions.ignore_startup_file</UniqueID>
+              <OmitPrefixIfEmpty>false</OmitPrefixIfEmpty>
+              <DefaultValue>false</DefaultValue>
+              <ValueForTrue>1</ValueForTrue>
+            </PropertyEntry>
+            <PropertyEntry xsi:type="Enumerated">
+              <Name>C Library Type</Name>
+              <UniqueID>com.sysprogs.toolchainoptions.arm.libctype</UniqueID>
+              <OmitPrefixIfEmpty>false</OmitPrefixIfEmpty>
+              <SuggestionList>
+                <Suggestion>
+                  <UserFriendlyName>Default</UserFriendlyName>
+                  <InternalValue />
+                </Suggestion>
+                <Suggestion>
+                  <UserFriendlyName>Newlib-nano</UserFriendlyName>
+                  <InternalValue>--specs=nano.specs</InternalValue>
+                </Suggestion>
+                <Suggestion>
+                  <UserFriendlyName>Newlib-nano with floating point support in printf()</UserFriendlyName>
+                  <InternalValue>--specs=nano.specs -u _printf_float</InternalValue>
+                </Suggestion>
+                <Suggestion>
+                  <UserFriendlyName>Newlib-nano with floating point support in printf() and scanf()</UserFriendlyName>
+                  <InternalValue>--specs=nano.specs -u _printf_float -u _scanf_float</InternalValue>
+                </Suggestion>
+              </SuggestionList>
+              <DefaultEntryIndex>1</DefaultEntryIndex>
+              <AllowFreeEntry>false</AllowFreeEntry>
+            </PropertyEntry>
+            <PropertyEntry xsi:type="Enumerated">
+              <Name>Implementations for _sbrk(), etc.</Name>
+              <UniqueID>com.sysprogs.toolchainoptions.arm.syscallspecs</UniqueID>
+              <OmitPrefixIfEmpty>false</OmitPrefixIfEmpty>
+              <SuggestionList>
+                <Suggestion>
+                  <UserFriendlyName>None</UserFriendlyName>
+                  <InternalValue />
+                </Suggestion>
+                <Suggestion>
+                  <UserFriendlyName>Minimal (no semihosting)</UserFriendlyName>
+                  <InternalValue>--specs=nosys.specs</InternalValue>
+                </Suggestion>
+                <Suggestion>
+                  <UserFriendlyName>Support semihosting</UserFriendlyName>
+                  <InternalValue>--specs=rdimon.specs</InternalValue>
+                </Suggestion>
+              </SuggestionList>
+              <DefaultEntryIndex>1</DefaultEntryIndex>
+              <AllowFreeEntry>false</AllowFreeEntry>
+            </PropertyEntry>
+          </Properties>
+          <CollapsedByDefault>false</CollapsedByDefault>
+        </PropertyGroup>
+      </PropertyGroups>
+    </ConfigurableProperties>
+    <HierarchicalPath>STM32\STM32WB</HierarchicalPath>
+    <FamilyID>STM32WB</FamilyID>
+    <FLASHSize>524288</FLASHSize>
+    <RAMSize>262144</RAMSize>
+    <FLASHBase>134217728</FLASHBase>
+    <RAMBase>536870912</RAMBase>
+    <MCUDefinitionFile>stm32wb55xx.xml</MCUDefinitionFile>
+    <AdditionalSourcesRequiredForTesting>false</AdditionalSourcesRequiredForTesting>
+  </InPlaceMCU>
+  <MCUMakFile>stm32wb.mak</MCUMakFile>
+  <ReferencedFrameworks />
+  <FrameworkProperties>
+    <Entries />
+  </FrameworkProperties>
+  <TestFrameworkProperties>
+    <Entries />
+  </TestFrameworkProperties>
+</EmbeddedProfile>
