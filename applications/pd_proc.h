@@ -47,4 +47,3 @@ uint8_t pd_device_is_checked(void);
 void pd_clear_device_check(void);
 
 #endif /*__PD_PROC_H */
-

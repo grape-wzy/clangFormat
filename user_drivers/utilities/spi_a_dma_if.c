@@ -300,50 +300,38 @@ uint8_t spi_a_hw_transmit_receive(uint8_t* pTxData, uint8_t* pRxData, uint16_t S
 	uint8_t ret = STD_SUCCESS;
 	SPI_A_HW_CS(0);
 
-
 #if ENABLE_SPI_A_DMA == 1
 
-	//uint64_t To = Clock_Time() + Timeout;
-	uint32_t To = Timeout * 0xffff;
-	wTransferState = TRANSFER_WAIT;
-	ATOMIC_SECTION_BEGIN();
-	uint8_t hal_status = HAL_SPI_TransmitReceive_DMA(&aSpiHandle, pTxData, pRxData, Size);
-	ATOMIC_SECTION_END();
-	if (hal_status != HAL_OK)
-	{
-		kprint("dma error\r\n");
-		ret = STD_FAILED;
-	}
-	else
-	{
-		uint32_t timeCount = 0;
-		while (wTransferState == TRANSFER_WAIT)
-		{
-			timeCount++;
-			if (timeCount > To)
-			{
-				static uint8_t status = 0;
-				if (status == 0)
-				{
-					status = 1;
-					led_ctrl(LED_MODE_Y_CTRL, 1);
-				}
-				else
-				{
-					status = 0;
-					led_ctrl(LED_MODE_Y_CTRL, 0);
-				}
-				ret = STD_FAILED;
-				kprint("timeout\r\n");
-				break;
-			}
-		}
-		if (wTransferState == TRANSFER_ERROR)
-		{
-			kprint("error\r\n");
-			ret = STD_FAILED;
-		}
-	}
+    uint64_t To = Clock_Time() + Timeout;
+    // uint32_t To = Timeout * 0xffff;
+    wTransferState = TRANSFER_WAIT;
+    // ATOMIC_SECTION_BEGIN();
+    uint8_t hal_status = HAL_SPI_TransmitReceive_DMA(&aSpiHandle, pTxData, pRxData, Size);
+    // ATOMIC_SECTION_END();
+    if (hal_status != HAL_OK) {
+        kprint("dma error\r\n");
+        ret = STD_FAILED;
+    } else {
+        while (wTransferState == TRANSFER_WAIT) {
+            if (Clock_Time() > To) {
+                static uint8_t status = 0;
+                if (status == 0) {
+                    status = 1;
+                    led_ctrl(LED_MODE_Y_CTRL, 1);
+                } else {
+                    status = 0;
+                    led_ctrl(LED_MODE_Y_CTRL, 0);
+                }
+                ret = STD_FAILED;
+                kprint("timeout\r\n");
+                break;
+            }
+        }
+        if (wTransferState == TRANSFER_ERROR) {
+            kprint("error\r\n");
+            ret = STD_FAILED;
+        }
+    }
 
 #else
 	if ((HAL_SPI_TransmitReceive(&aSpiHandle, pTxData, pRxData, Size, Timeout)) != HAL_OK)
@@ -355,7 +343,6 @@ uint8_t spi_a_hw_transmit_receive(uint8_t* pTxData, uint8_t* pRxData, uint16_t S
 	SPI_A_HW_CS(1);
 	return ret;
 }
-
 
 uint8_t spi_a_hw_reset(uint8_t enable)
 {
@@ -432,7 +419,7 @@ void SPI_A_RX_DMA_IRQHandler(void)
 
 #pragma endregion
 
-#pragma region Low Level 
+#pragma region Low Level
 
 uint8_t spi_ll_transmit_receive(SPI_HandleTypeDef* hspi, uint8_t* pTxData, uint8_t* pRxData, uint16_t Size, uint32_t Timeout)
 {
@@ -534,6 +521,3 @@ void spi_a_hw_error_cb(SPI_HandleTypeDef* hspi)
 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-
-
-

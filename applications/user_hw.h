@@ -156,7 +156,7 @@ extern "C"
 
 
 	// SCLK: PA.1
-#define SPI_A_HW_SCLK_PIN					GPIO_PIN_1
+#define SPI_A_HW_SCLK_PIN                   GPIO_PIN_5
 #define SPI_A_HW_SCLK_MODE					GPIO_MODE_AF_PP
 #define SPI_A_HW_SCLK_PULL					GPIO_PULLDOWN
 #define SPI_A_HW_SCLK_SPEED		        	GPIO_SPEED_FREQ_LOW
@@ -196,8 +196,7 @@ extern "C"
 #define SPI_A_HW_CS_CLK_ENABLE()			__HAL_RCC_GPIOA_CLK_ENABLE()
 #define SPI_A_HW_CS(n)						HAL_GPIO_WritePin(SPI_A_HW_CS_PORT, SPI_A_HW_CS_PIN, n?GPIO_PIN_SET:GPIO_PIN_RESET)
 
-
-#define SPI_A_HW_SYNC_PIN					GPIO_PIN_3
+#define SPI_A_HW_SYNC_PIN                   GPIO_PIN_0
 #define SPI_A_HW_SYNC_MODE			        GPIO_MODE_OUTPUT_PP
 #define SPI_A_HW_SYNC_PULL			        GPIO_PULLUP
 #define SPI_A_HW_SYNC_SPEED					GPIO_SPEED_FREQ_LOW
@@ -208,7 +207,7 @@ extern "C"
 
 // ready : PB.4
 
-#define SPI_A_HW_READY_PIN					GPIO_PIN_4
+#define SPI_A_HW_READY_PIN                  GPIO_PIN_1
 #define SPI_A_HW_READY_MODE					GPIO_MODE_IT_RISING
 #define SPI_A_HW_READY_PULL					GPIO_PULLUP
 #define SPI_A_HW_READY_SPEED				GPIO_SPEED_FREQ_VERY_HIGH
@@ -226,7 +225,7 @@ extern "C"
 #define SPI_A_HW_READY_EXTI_PORT			SPI_A_HW_READY_PORT
 
 	// RESET: PA.5
-#define SPI_A_HW_RESET_PIN					GPIO_PIN_5
+#define SPI_A_HW_RESET_PIN                  GPIO_PIN_8
 #define SPI_A_HW_RESET_MODE			        GPIO_MODE_OUTPUT_PP
 #define SPI_A_HW_RESET_PULL			        GPIO_NOPULL
 #define SPI_A_HW_RESET_SPEED				GPIO_SPEED_FREQ_VERY_HIGH
@@ -252,7 +251,6 @@ extern "C"
 #define SPI_A_RX_DMA_IRQHandler				DMA1_Channel2_IRQHandler
 #pragma endregion
 
-#pragma region LED
 #pragma region Power Switch
 
 //设备IO
@@ -269,21 +267,28 @@ extern "C"
 #define PWR_GPIO_CTRL(n)				HAL_GPIO_WritePin(PWR_GPIO_PORT, PWR_GPIO_PIN, n?GPIO_PIN_SET:GPIO_PIN_RESET)
 #define PWR_GPIO_CLK_ENABLE()			__HAL_RCC_GPIOA_CLK_ENABLE()
 
+#define MCU_PWR_PIN                     GPIO_PIN_11
+#define MCU_PWR_PORT                    GPIOA
+#define MCU_PWR_CTRL(n)                 HAL_GPIO_WritePin(MCU_PWR_PORT, MCU_PWR_PIN, n ? GPIO_PIN_SET : GPIO_PIN_RESET)
+#define MCU_PWR_READ()                  HAL_GPIO_ReadPin(MCU_PWR_PORT, MCU_PWR_PIN)
+#define MCU_PWR_CLK_ENABLE()            __HAL_RCC_GPIOA_CLK_ENABLE()
+
+#pragma endregion
+
+#pragma region LED
 //绿灯
-#define LEDG_PIN						GPIO_PIN_15
-#define LEDG_PORT						GPIOA
+#define LEDG_PIN                        GPIO_PIN_4
+#define LEDG_PORT                       GPIOB
 #define LEDG_CTRL(n)					HAL_GPIO_WritePin(LEDG_PORT, LEDG_PIN, n?GPIO_PIN_SET:GPIO_PIN_RESET)
 #define LEDG_TOGGLE()					HAL_GPIO_TogglePin(LEDG_PORT, LEDG_PIN);
-#define LEDG_CLK_ENABLE()				__HAL_RCC_GPIOA_CLK_ENABLE()
+#define LEDG_CLK_ENABLE()               __HAL_RCC_GPIOB_CLK_ENABLE()
 
 //黄灯灯
 #define LEDY_PIN						GPIO_PIN_3
-#define LEDY_PORT						GPIOA
+#define LEDY_PORT                       GPIOB
 #define LEDY_CTRL(n)					HAL_GPIO_WritePin(LEDY_PORT, LEDY_PIN, n?GPIO_PIN_SET:GPIO_PIN_RESET)
 #define LEDY_TOGGLE()					HAL_GPIO_TogglePin(LEDY_PORT, LEDY_PIN);
-#define LEDY_CLK_ENABLE()				__HAL_RCC_GPIOA_CLK_ENABLE()
-
-#pragma endregion
+#define LEDY_CLK_ENABLE()               __HAL_RCC_GPIOB_CLK_ENABLE()
 
 #pragma endregion
 
@@ -314,6 +319,11 @@ extern "C"
 #define 	SPI_A_HW_DMA_NVIC_PreemptionPriority      			1
 #define 	SPI_A_HW_DMA_NVIC_SubPriority						0
 
+#define AHRS_GYRO_SCALE                                         (2)             // GYPO_SCALE_500dps
+#define AHRS_ACC_SCALE                                          (0)             // ACC_SCALE_2g
+#define AHRS_ACC_GYRO_DATA_RATE                                 (104)           //104Hz
+#define AHRS_ACC_GYRO_POWER_MODE                                ((uint16_t)(0)) // high_performance, 0 disable, 1 enable
+
 #pragma endregion
 
 #ifdef __cplusplus
@@ -323,4 +333,3 @@ extern "C"
 #endif /* __USRE_HW_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-

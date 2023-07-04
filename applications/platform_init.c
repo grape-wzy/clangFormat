@@ -8,11 +8,12 @@
 /* Includes ------------------------------------------------------------------*/
 #include "platform_init.h"
 #include "user_drivers.h"
-#include "platform.h" 
+#include "platform.h"
 #include "itask.h"
 #include "pm_proc.h"
 #include "pd_proc.h"
-
+#include "acc_gyro_if.h"
+#include "spi_a_hw_if.h"
 
 void Error_Handler(void);
 
@@ -73,6 +74,50 @@ void platform_init(void)
 
 }
 
+#define TIMEOUT_DURATION 100
+
+uint8_t spi_ReadReg(void *handle, uint8_t reg, uint8_t *data, uint16_t size)
+{
+    uint8_t  aTxBuffer[8] = { 0 };
+    uint16_t buffersize   = size + 1;
+
+    aTxBuffer[0] = reg;
+
+    return spi_a_hw_transmit_receive((uint8_t *)aTxBuffer, data, 1, TIMEOUT_DURATION);
+}
+
+uint8_t spi_WriteReg(void *handle, uint8_t reg, uint8_t *data, uint16_t size)
+{
+    uint8_t aTxBuffer[32] = { 0 };
+    uint8_t aRxBuffer[32] = { 0 };
+
+    uint16_t buffersize = size + 1;
+    aTxBuffer[0]        = reg;
+    memcpy(&aTxBuffer[1], data, size);
+
+    return spi_a_hw_transmit_receive((uint8_t *)aTxBuffer, (uint8_t *)aRxBuffer, buffersize, TIMEOUT_DURATION);
+}
+
+uint8_t spi_read_buffer(void *handle, uint8_t, uint8_t *, uint16_t)
+{
+}
+
+void acc_gpro_init(void)
+{
+    ACC_GYRO_CONFIG_TypeDef acc_gyro_config = {
+        AHRS_ACC_GYRO_DATA_RATE,
+        AHRS_GYRO_SCALE,
+        AHRS_ACC_SCALE,
+        AHRS_ACC_GYRO_POWER_MODE,
+        spi_WriteReg,
+        spi_ReadReg,
+        NULL,
+        NULL,
+    };
+
+    acc_gyro_init(&acc_gyro_config);
+}
+
 /*******************************************************************************
 * Function Name  : void DefaultConfigureSTMPeripheral(void)
 * Description    : 复位配置
@@ -82,87 +127,75 @@ void platform_init(void)
 *******************************************************************************/
 void platform_deinit(void)
 {
-	//LEDG_DEINIT();
-	//LEDY_DEINIT();
+    //LEDG_DEINIT();
+    //LEDY_DEINIT();
 
-	//crc32_deinit();
-	//ble_os_deinit();
+    //crc32_deinit();
+    //ble_os_deinit();
 
-	//log_deinit();
+    //log_deinit();
 }
-
 
 void SystemClock_32M_Config(void)
 {
-	RCC_OscInitTypeDef RCC_OscInitStruct = { 0 };
-	RCC_ClkInitTypeDef RCC_ClkInitStruct = { 0 };
-	RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = { 0 };
+    RCC_OscInitTypeDef       RCC_OscInitStruct   = { 0 };
+    RCC_ClkInitTypeDef       RCC_ClkInitStruct   = { 0 };
+    RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = { 0 };
 
-	/** Configure LSE Drive Capability
+    /** Configure LSE Drive Capability
 	*/
-	HAL_PWR_EnableBkUpAccess();
-	__HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_LOW);
-	/** Configure the main internal regulator output voltage
+    HAL_PWR_EnableBkUpAccess();
+    __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_LOW);
+    /** Configure the main internal regulator output voltage
 	*/
-	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
-	/** Initializes the RCC Oscillators according to the specified parameters
+    __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+    /** Initializes the RCC Oscillators according to the specified parameters
 	* in the RCC_OscInitTypeDef structure.
 	*/
-	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48
-		| RCC_OSCILLATORTYPE_HSI
-		| RCC_OSCILLATORTYPE_HSE
-		| RCC_OSCILLATORTYPE_LSE;
-	RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-	RCC_OscInitStruct.LSEState = RCC_LSE_ON;
-	RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-	RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
-	RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
-	//RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-	//RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-	//RCC_OscInitStruct.PLL.PLLM = RCC_PLLM_DIV2;
-	//RCC_OscInitStruct.PLL.PLLN = 8;
-	//RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-	//RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
-	//RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
-	if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-	{
-		Error_Handler();
-	}
-	/** Configure the SYSCLKSource, HCLK, PCLK1 and PCLK2 clocks dividers
+    RCC_OscInitStruct.OscillatorType      = RCC_OSCILLATORTYPE_HSI48 | RCC_OSCILLATORTYPE_HSI | RCC_OSCILLATORTYPE_HSE | RCC_OSCILLATORTYPE_LSE;
+    RCC_OscInitStruct.HSEState            = RCC_HSE_ON;
+    RCC_OscInitStruct.LSEState            = RCC_LSE_ON;
+    RCC_OscInitStruct.HSIState            = RCC_HSI_ON;
+    RCC_OscInitStruct.HSI48State          = RCC_HSI48_ON;
+    RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+    RCC_OscInitStruct.PLL.PLLState        = RCC_PLL_NONE;
+    //RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+    //RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+    //RCC_OscInitStruct.PLL.PLLM = RCC_PLLM_DIV2;
+    //RCC_OscInitStruct.PLL.PLLN = 8;
+    //RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+    //RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
+    //RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
+    if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
+        Error_Handler();
+    }
+    /** Configure the SYSCLKSource, HCLK, PCLK1 and PCLK2 clocks dividers
 	*/
-	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK4 | RCC_CLOCKTYPE_HCLK2
-		| RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
-		| RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
-	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSE;
-	//RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-	RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
-	RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-	RCC_ClkInitStruct.AHBCLK2Divider = RCC_SYSCLK_DIV1;
-	RCC_ClkInitStruct.AHBCLK4Divider = RCC_SYSCLK_DIV1;
+    RCC_ClkInitStruct.ClockType    = RCC_CLOCKTYPE_HCLK4 | RCC_CLOCKTYPE_HCLK2 | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSE;
+    //RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+    RCC_ClkInitStruct.AHBCLKDivider  = RCC_SYSCLK_DIV1;
+    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+    RCC_ClkInitStruct.AHBCLK2Divider = RCC_SYSCLK_DIV1;
+    RCC_ClkInitStruct.AHBCLK4Divider = RCC_SYSCLK_DIV1;
 
-	if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
-	{
-		Error_Handler();
-	}
-	/** Initializes the peripherals clocks
+    if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK) {
+        Error_Handler();
+    }
+    /** Initializes the peripherals clocks
 	*/
-	PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_SMPS
-		| RCC_PERIPHCLK_RFWAKEUP
-		| RCC_PERIPHCLK_RTC
-		| RCC_PERIPHCLK_RNG
+    PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_SMPS | RCC_PERIPHCLK_RFWAKEUP | RCC_PERIPHCLK_RTC | RCC_PERIPHCLK_RNG
 #ifdef DEBUG
-		| RCC_PERIPHCLK_USART1
+                                               | RCC_PERIPHCLK_USART1
 #endif
-		| RCC_PERIPHCLK_LPTIM1
-		;
-	//PeriphClkInitStruct.PLLSAI1.PLLN = 6; 
-	//PeriphClkInitStruct.PLLSAI1.PLLP = RCC_PLLP_DIV2;
-	//PeriphClkInitStruct.PLLSAI1.PLLQ = RCC_PLLQ_DIV2;
-	//PeriphClkInitStruct.PLLSAI1.PLLR = RCC_PLLR_DIV2;
-	//PeriphClkInitStruct.PLLSAI1.PLLSAI1ClockOut = RCC_PLLSAI1_USBCLK;
-	//PeriphClkInitStruct.UsbClockSelection = RCC_USBCLKSOURCE_PLLSAI1;
+                                               | RCC_PERIPHCLK_LPTIM1;
+    //PeriphClkInitStruct.PLLSAI1.PLLN = 6;
+    //PeriphClkInitStruct.PLLSAI1.PLLP = RCC_PLLP_DIV2;
+    //PeriphClkInitStruct.PLLSAI1.PLLQ = RCC_PLLQ_DIV2;
+    //PeriphClkInitStruct.PLLSAI1.PLLR = RCC_PLLR_DIV2;
+    //PeriphClkInitStruct.PLLSAI1.PLLSAI1ClockOut = RCC_PLLSAI1_USBCLK;
+    //PeriphClkInitStruct.UsbClockSelection = RCC_USBCLKSOURCE_PLLSAI1;
 #ifdef DEBUG
 	PeriphClkInitStruct.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
 #endif
@@ -176,9 +209,7 @@ void SystemClock_32M_Config(void)
 	if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
 	{
 		Error_Handler();
-	}
-
-
+    }
 }
 
 void SystemClock_64M_Config(void)

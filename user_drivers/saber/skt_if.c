@@ -1,10 +1,10 @@
 /*******************************************************************************
-* file     saber_if.c
-* author   mackgim
-* version  V1.0.0
-* date
-* brief ：
-*******************************************************************************/
+ * file     saber_if.c
+ * author   mackgim
+ * version  V1.0.0
+ * date
+ * brief ：
+ *******************************************************************************/
 
 /* Includes ------------------------------------------------------------------*/
 
@@ -14,40 +14,38 @@
 #include "saber_config.h"
 #include "spi_a_hw_if.h"
 
-
 #ifndef ENABLE_SKT_SENSOR
 
 #define ROLE_MASTER 0
 #define ROLE_REF 1
 #define ROLE_SENSOR 5
 
-#define SABER_ACC_GYRO_DATA_RATE			(100)
-#define SABER_OUTPUT_RATE					(20)
+#define SABER_ACC_GYRO_DATA_RATE (100)
+#define SABER_OUTPUT_RATE (20)
 
-#define SABER_INPUT_BUFF_LENGHT				SABER_ACC_GYRO_DATA_RATE
-
+#define SABER_INPUT_BUFF_LENGHT SABER_ACC_GYRO_DATA_RATE
 
 static __GYRO_ACC_CONFIG_TypeDef sGyroAccConfig = {
 	.BitDepth = 0,
 	.DataRate = SABER_ACC_GYRO_DATA_RATE,
 	.Mode = 0,
 	.AccSensitivity = 1,
-	.GyroSensitivity = 1
+	.GyroSensitivity = 1,
 };
-static __GYRO_ACC_HW_DRIVER_TypeDef sGyroAccHwDrv =
-{
-		.init = spi_a_hw_init,
-		.deinit = spi_a_hw_deinit,
-		.reset = spi_a_hw_reset,
-		.pwr_ctrl = pwr_ctrl,
-		.transmit_receive = spi_a_hw_transmit_receive,
-		.get_ready = spi_a_hw_get_ready,
-		.enable_irq = spi_a_hw_enable_irq,
-		.generate_swi = spi_a_hw_generate_swi,
-		.set_cs = spi_a_hw_set_cs
+
+static __GYRO_ACC_HW_DRIVER_TypeDef sGyroAccHwDrv = {
+	.init = spi_a_hw_init,
+	.deinit = spi_a_hw_deinit,
+	.reset = spi_a_hw_reset,
+	.pwr_ctrl = pwr_ctrl,
+	.transmit_receive = spi_a_hw_transmit_receive,
+	.get_ready = spi_a_hw_get_ready,
+	.enable_irq = spi_a_hw_enable_irq,
+	.generate_swi = spi_a_hw_generate_swi,
+	.set_cs = spi_a_hw_set_cs,
 };
-static __GYRO_ACC_DEV_DRIVER_TypeDef sGyroAccDevDrv
-= {
+
+static __GYRO_ACC_DEV_DRIVER_TypeDef sGyroAccDevDrv = {
 	.init = saber_drv_init,
 	.deinit = saber_drv_deinit,
 	.restore = NULL,
@@ -57,8 +55,7 @@ static __GYRO_ACC_DEV_DRIVER_TypeDef sGyroAccDevDrv
 	.read_raw = saber_drv_read_raw,
 };
 
-static __GYRO_ACC_HANDLE_TypeDef sIMUHandle =
-{
+static __GYRO_ACC_HANDLE_TypeDef sIMUHandle = {
 	.hw_drv = &sGyroAccHwDrv,
 	.dev_drv = &sGyroAccDevDrv,
 	.config = &sGyroAccConfig,
@@ -67,15 +64,15 @@ static __GYRO_ACC_HANDLE_TypeDef sIMUHandle =
 void skt_proc(void);
 
 static uint8_t sSaberIsStarted = 0;
-static uint8_t sDeviceRole = ROLE_MASTER;//设备角色
-static uint32_t sSaberIsrDataCount = 0;//中断总数
+static uint8_t sDeviceRole = ROLE_MASTER; // 设备角色
+static uint32_t sSaberIsrDataCount = 0;	  // 中断总数
 static __SKT_CALLBACK_TypeDef sSktCB;
 
-//缓存变量
+// 缓存变量
 static uint32_t sInPtr = 0, sOutPtr = 0;
-static  __SABER_RESULT_TypeDef sSaberRaw[SABER_INPUT_BUFF_LENGHT] __ALIGNED(4);
-static __SKT_REF_DEVICE_BLE_DATA_TypeDef sSktRefFrame;//BLE上传的referece帧
-static __SKT_MASTER_DEVICE_BLE_DATA_TypeDef sSktMasterFrame;//BLE上传的master帧
+static __SABER_RESULT_TypeDef sSaberRaw[SABER_INPUT_BUFF_LENGHT] __ALIGNED(4);
+static __SKT_REF_DEVICE_BLE_DATA_TypeDef sSktRefFrame;		 // BLE上传的referece帧
+static __SKT_MASTER_DEVICE_BLE_DATA_TypeDef sSktMasterFrame; // BLE上传的master帧
 
 uint8_t skt_init(uint8_t device, uint32_t key_addr)
 {
@@ -85,10 +82,9 @@ uint8_t skt_init(uint8_t device, uint32_t key_addr)
 	return STD_SUCCESS;
 }
 
-
-void skt_register_cb(void* cb)
+void skt_register_cb(void *cb)
 {
-	sSktCB = *(__SKT_CALLBACK_TypeDef*)cb;
+	sSktCB = *(__SKT_CALLBACK_TypeDef *)cb;
 }
 
 uint8_t skt_get_role(void)
@@ -96,10 +92,10 @@ uint8_t skt_get_role(void)
 	return sDeviceRole;
 }
 
-void stk_get_version(uint8_t* version)
+void stk_get_version(uint8_t *version)
 {
 
-	sprintf((char*)version, "YM ALG V1.0.0");
+	sprintf((char *)version, "YM ALG V1.0.0");
 }
 
 uint8_t skt_set_config(__FLASH_SKT_CONFIG_TypeDef config)
@@ -139,7 +135,6 @@ uint8_t skt_start(void)
 		return STD_SUCCESS;
 	}
 
-
 	uint8_t ret = sIMUHandle.dev_drv->init(&sIMUHandle);
 	if (ret != STD_SUCCESS)
 	{
@@ -156,7 +151,6 @@ uint8_t skt_start(void)
 	return STD_SUCCESS;
 }
 
-
 uint8_t skt_stop(void)
 {
 	if (!sSaberIsStarted)
@@ -169,7 +163,7 @@ uint8_t skt_stop(void)
 	return STD_SUCCESS;
 }
 
-uint8_t skt_update_ref_data(uint8_t* buff, uint8_t buffsize)
+uint8_t skt_update_ref_data(uint8_t *buff, uint8_t buffsize)
 {
 	return STD_SUCCESS;
 }
@@ -186,7 +180,7 @@ uint32_t skt_get_buffersize(void)
 
 void skt_proc(void)
 {
-	//获取采样缓存
+	// 获取采样缓存
 	uint32_t FifoSize = skt_get_buffersize();
 	if (FifoSize == 0)
 	{
@@ -216,28 +210,27 @@ void skt_proc(void)
 				sSktRefFrame.MotionStatus = 0;
 				sSktRefFrame.MotionFreezPercent = 0;
 				sSktRefFrame.MotionError = FifoSize;
-				//sSktRefFrame.DebugStatus = 0;
+				// sSktRefFrame.DebugStatus = 0;
 				sSktRefFrame.DebugStatus = 0;
 				sSktRefFrame.DataSize = 40;
 				sSktRefFrame.Q[0] = sSaberRaw[sOutPtr].q[0];
 				sSktRefFrame.Q[1] = sSaberRaw[sOutPtr].q[1];
 				sSktRefFrame.Q[2] = sSaberRaw[sOutPtr].q[2];
 				sSktRefFrame.Q[3] = sSaberRaw[sOutPtr].q[3];
-				//sSktRefFrame.Q[0] = quat[3];
-				//sSktRefFrame.Q[1] = quat[1];
-				//sSktRefFrame.Q[2] = quat[2];
-				//sSktRefFrame.Q[3] = quat[0];
+				// sSktRefFrame.Q[0] = quat[3];
+				// sSktRefFrame.Q[1] = quat[1];
+				// sSktRefFrame.Q[2] = quat[2];
+				// sSktRefFrame.Q[3] = quat[0];
 				sSktRefFrame.G[0] = sSaberRaw[sOutPtr].Gyro[0];
 				sSktRefFrame.G[1] = sSaberRaw[sOutPtr].Gyro[1];
 				sSktRefFrame.G[2] = sSaberRaw[sOutPtr].Gyro[2];
 				sSktRefFrame.A[0] = sSaberRaw[sOutPtr].Acc[0];
 				sSktRefFrame.A[1] = sSaberRaw[sOutPtr].Acc[1];
 				sSktRefFrame.A[2] = sSaberRaw[sOutPtr].Acc[2];
-				sSktCB.send((uint8_t*)&sSktRefFrame, sizeof(sSktRefFrame));
-				//nprint("Q0=%f,Q1=%f,Q2=%f,Q3=%f\r\n", sSktRefFrame.Q[0], sSktRefFrame.Q[1], sSktRefFrame.Q[2], sSktRefFrame.Q[3]);
-
+				sSktCB.send((uint8_t *)&sSktRefFrame, sizeof(sSktRefFrame));
+				// nprint("Q0=%f,Q1=%f,Q2=%f,Q3=%f\r\n", sSktRefFrame.Q[0], sSktRefFrame.Q[1], sSktRefFrame.Q[2], sSktRefFrame.Q[3]);
 			}
-			else //master
+			else // master
 			{
 
 				sSktMasterFrame.HeadSize = 18;
@@ -258,10 +251,10 @@ void skt_proc(void)
 				sSktMasterFrame.AdjustFE = sSaberRaw[sOutPtr].e[1];
 				sSktMasterFrame.NavigateVV = sSaberRaw[sOutPtr].e[2];
 				sSktMasterFrame.NavigateFE = (float)sSaberRaw[sOutPtr].Temperature;
-				//sSktMasterFrame.Q[0] = quat[3];
-				//sSktMasterFrame.Q[1] = quat[1];
-				//sSktMasterFrame.Q[2] = quat[2];
-				//sSktMasterFrame.Q[3] = quat[0];
+				// sSktMasterFrame.Q[0] = quat[3];
+				// sSktMasterFrame.Q[1] = quat[1];
+				// sSktMasterFrame.Q[2] = quat[2];
+				// sSktMasterFrame.Q[3] = quat[0];
 				sSktMasterFrame.G[0] = sSaberRaw[sOutPtr].Gyro[0];
 				sSktMasterFrame.G[1] = sSaberRaw[sOutPtr].Gyro[1];
 				sSktMasterFrame.G[2] = sSaberRaw[sOutPtr].Gyro[2];
@@ -269,10 +262,9 @@ void skt_proc(void)
 				sSktMasterFrame.A[1] = sSaberRaw[sOutPtr].Acc[1];
 				sSktMasterFrame.A[2] = sSaberRaw[sOutPtr].Acc[2];
 
-				sSktCB.send((uint8_t*)&sSktMasterFrame, sizeof(sSktMasterFrame));
+				sSktCB.send((uint8_t *)&sSktMasterFrame, sizeof(sSktMasterFrame));
 			}
 		}
-
 
 #ifdef DEBUG
 		static uint8_t count1 = 0;
@@ -284,21 +276,19 @@ void skt_proc(void)
 			if (sDeviceRole == ROLE_MASTER)
 			{
 				kprint("1-A0=%f,A1=%f,A2=%f\r\n", sSaberRaw[sOutPtr].Acc[0], sSaberRaw[sOutPtr].Acc[1], sSaberRaw[sOutPtr].Acc[2]);
-				//nprint("other=%u, Prcessret=0x%x\r\n", (unsigned int)sSktRefFrame.Other, sSktRefFrame.MotionProcess);
-				//nprint("Q0=%f,Q1=%f,Q2=%f,Q3=%f\r\n", sSktRefFrame.Q[0], sSktRefFrame.Q[1], sSktRefFrame.Q[2], sSktRefFrame.Q[3]);
-				//kprint("G0=%f,G1=%f,G2=%f\r\n", sAhrsOutput.gravity[0], sAhrsOutput.gravity[1], sAhrsOutput.gravity[2]);
-				//kprint("A0=%f,A1=%f,A2=%f\r\n", sAhrsOutput.linear_acceleration[0], sAhrsOutput.linear_acceleration[1], sAhrsOutput.linear_acceleration[2]);
-				//kprint("id=%u,G0=%f,G1=%f,G2=%f\r\n", (unsigned int)sOutPtr, (float)(sSktInput[sOutPtr].G[0] / 25), (float)(sSktInput[sOutPtr].G[1] / 25), (float)(sSktInput[sOutPtr].G[2] / 25));
-				//kprint("id=%u,A0=%f,A1=%f,A2=%f\r\n", (unsigned int)sOutPtr, (float)(sSktInput[sOutPtr].A[0] / 9806.65), (float)(sSktInput[sOutPtr].A[1] / 9806.65), (float)(sSktInput[sOutPtr].A[2] / 9806.65));
+				// nprint("other=%u, Prcessret=0x%x\r\n", (unsigned int)sSktRefFrame.Other, sSktRefFrame.MotionProcess);
+				// nprint("Q0=%f,Q1=%f,Q2=%f,Q3=%f\r\n", sSktRefFrame.Q[0], sSktRefFrame.Q[1], sSktRefFrame.Q[2], sSktRefFrame.Q[3]);
+				// kprint("G0=%f,G1=%f,G2=%f\r\n", sAhrsOutput.gravity[0], sAhrsOutput.gravity[1], sAhrsOutput.gravity[2]);
+				// kprint("A0=%f,A1=%f,A2=%f\r\n", sAhrsOutput.linear_acceleration[0], sAhrsOutput.linear_acceleration[1], sAhrsOutput.linear_acceleration[2]);
+				// kprint("id=%u,G0=%f,G1=%f,G2=%f\r\n", (unsigned int)sOutPtr, (float)(sSktInput[sOutPtr].G[0] / 25), (float)(sSktInput[sOutPtr].G[1] / 25), (float)(sSktInput[sOutPtr].G[2] / 25));
+				// kprint("id=%u,A0=%f,A1=%f,A2=%f\r\n", (unsigned int)sOutPtr, (float)(sSktInput[sOutPtr].A[0] / 9806.65), (float)(sSktInput[sOutPtr].A[1] / 9806.65), (float)(sSktInput[sOutPtr].A[2] / 9806.65));
 
-				//kprint("count=%u, Prcessret=0x%x\r\n", (unsigned int)sSktInput[sOutPtr].DataTick, Prcessret);
-
+				// kprint("count=%u, Prcessret=0x%x\r\n", (unsigned int)sSktInput[sOutPtr].DataTick, Prcessret);
 			}
 			else
 			{
 
-				//tprint("Mode=0x%x, proc=0x%x, error=%d\r\n", sSktMasterFrame.MotionMode, sSktMasterFrame.MotionProcess, (int)sSktMasterFrame.MotionError);
-
+				// tprint("Mode=0x%x, proc=0x%x, error=%d\r\n", sSktMasterFrame.MotionMode, sSktMasterFrame.MotionProcess, (int)sSktMasterFrame.MotionError);
 			}
 		}
 #endif
@@ -309,8 +299,6 @@ void skt_proc(void)
 	{
 		sOutPtr = 0;
 	}
-
-
 
 	if (sInPtr != sOutPtr)
 	{
@@ -330,7 +318,7 @@ void skt_irq_handle(void)
 	sSaberIsrDataCount++;
 
 	uint32_t inp = sInPtr;
-	sIMUHandle.dev_drv->read_raw(&sIMUHandle, (uint8_t*)&sSaberRaw[inp], sizeof(sSaberRaw[inp]));
+	sIMUHandle.dev_drv->read_raw(&sIMUHandle, (uint8_t *)&sSaberRaw[inp], sizeof(sSaberRaw[inp]));
 	inp++;
 	if (inp == SABER_INPUT_BUFF_LENGHT)
 	{
@@ -348,9 +336,6 @@ void skt_irq_handle(void)
 	UTIL_SEQ_SetTask(1 << CFG_TASK_AHRS_REQ_ID, CFG_PRIO_NBR_3);
 }
 
-
-
-
 uint8_t skt_test(void)
 {
 	return saber_drv_test(&sIMUHandle);
@@ -360,4 +345,3 @@ uint8_t skt_test(void)
 /*******************************************************************************
 END
 *******************************************************************************/
-

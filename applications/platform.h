@@ -2,7 +2,7 @@
  * file    Platform.h
  * author  mackgim
  * version 1.0.0
- * date    
+ * date
  * brief   config platform
  *******************************************************************************/
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -10,7 +10,6 @@
 #define __PLATFORM_H
 
 /* Includes ------------------------------------------------------------------*/
-
 
 #include "stm32wbxx_hal.h"
 #include "stm32wbxx_ll_exti.h"
@@ -26,7 +25,5 @@
 #include "stm32wbxx_ll_rtc.h"
 #include "stm32wbxx_ll_rng.h"
 
-#include "user_hw.h" 
+#include "user_hw.h"
 #endif /* __PLATFORM_H */
-
-

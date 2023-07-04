@@ -1,10 +1,10 @@
 /*******************************************************************************
-* file    itask.c
-* author  mackgim
-* version 1.0.0
-* date
-* brief   逻辑任务
-*******************************************************************************/
+ * file    itask.c
+ * author  mackgim
+ * version 1.0.0
+ * date
+ * brief   逻辑任务
+ *******************************************************************************/
 
 /* Includes ------------------------------------------------------------------*/
 #include "itask.h"
@@ -23,27 +23,24 @@
 
 static uint8_t itask_ble_connected();
 static uint8_t itask_ble_disconnected();
-static uint8_t itask_rx_proc(uint8_t* data, uint8_t size);
-static uint8_t itask_data_proc(uint8_t* data, uint8_t size);
-static uint8_t itask_image_proc(uint8_t* data, uint8_t size);
+static uint8_t itask_rx_proc(uint8_t *data, uint8_t size);
+static uint8_t itask_data_proc(uint8_t *data, uint8_t size);
+static uint8_t itask_image_proc(uint8_t *data, uint8_t size);
 
-
-static uint8_t itask_set_alg_para(uint8_t* buffer, uint8_t buffersize);
-static uint8_t itask_get_alg_para(uint8_t* input, uint8_t inputsize, uint8_t* out, uint8_t* outsize);
+static uint8_t itask_set_alg_para(uint8_t *buffer, uint8_t buffersize);
+static uint8_t itask_get_alg_para(uint8_t *input, uint8_t inputsize, uint8_t *out, uint8_t *outsize);
 
 void itask_update_general_status(void);
 
 static void itask_test_ble_speed_proc(void);
 
-//状态任务，当蓝牙连接之后，以2秒的频率运行
+// 状态任务，当蓝牙连接之后，以2秒的频率运行
 void itask_status_proc(void);
 void itask_status_ts_callback(void);
 
-//系统时间管理，10分钟保持一次
+// 系统时间管理，10分钟保持一次
 void itask_time_keeper_proc(void);
 void itask_time_keeper_ts_callback(void);
-
-
 
 #ifdef DEBUG
 void itaks_test_rx_evt(void);
@@ -58,16 +55,15 @@ void itaks_test_rx_evt(void);
 static uint8_t sSystemStatus = SYSTEM_STATUS_NULL;
 static uint8_t sLastSystemStatus = SYSTEM_STATUS_NULL;
 // 有效设备校验码
-static __MCU_MARK_TypeDef sMcuMark = { { 0, 0 }, 0 };
-//状态任务
+static __MCU_MARK_TypeDef sMcuMark = {{0, 0}, 0};
+// 状态任务
 static uint8_t sTSItaskStatusID;
-//时间保存任务
+// 时间保存任务
 static uint8_t sTSItaskTimeKeeperID;
-//设备是否正在老化
+// 设备是否正在老化
 static uint8_t sDeviceAgeing = false;
 // 速度测试
-static __TESTSPEED_SETTING_TypeDef SpeedTestBuff;        // = { 0, { 0x12345678, 0x9abcdef0, 0x02468ace, 0x13579bdf } };
-
+static __TESTSPEED_SETTING_TypeDef SpeedTestBuff; // = { 0, { 0x12345678, 0x9abcdef0, 0x02468ace, 0x13579bdf } };
 
 #pragma endregion
 
@@ -75,22 +71,21 @@ static __TESTSPEED_SETTING_TypeDef SpeedTestBuff;        // = { 0, { 0x12345678,
 
 void itask_led_ctrl(void)
 {
-	//static uint8_t count = 0;
-	//count++;
-	//if (count == 20)
+	// static uint8_t count = 0;
+	// count++;
+	// if (count == 20)
 	{
-		//count = 0;
+		// count = 0;
 		if (ble_is_connected())
 		{
-			led_ctrl(LED_MODE_G_BLINK, 200);//绿灯闪烁
+			led_ctrl(LED_MODE_G_BLINK, 200); // 绿灯闪烁
 		}
 		else if (sDeviceAgeing)
 		{
-			led_ctrl(LED_MODE_Y_G_BLINK, 200);//蓝绿灯闪烁
+			led_ctrl(LED_MODE_Y_G_BLINK, 200); // 蓝绿灯闪烁
 		}
 	}
 }
-
 
 void itask_init(void)
 {
@@ -107,14 +102,12 @@ void itask_init(void)
 	log_register_rx_cb(itaks_test_rx_evt);
 #endif
 
-
-	//注册4秒中断回调,中断为gtimer的周期中断
+	// 注册4秒中断回调,中断为gtimer的周期中断
 	__GTIMER_CALLBACK_TypeDef gtimer_cb = {
-	.irq_cb = pwr_check_mcu_alive,
-	.sleep_cb = pwr_stop_mcu_for_delay,
+		.irq_cb = pwr_check_mcu_alive,
+		.sleep_cb = pwr_stop_mcu_for_delay,
 	};
 	gtimer_register_callback(&gtimer_cb);
-
 
 	__SKT_CALLBACK_TypeDef skt_cb = {
 		.send = ble_update_data,
@@ -122,7 +115,7 @@ void itask_init(void)
 	};
 	skt_register_cb(&skt_cb);
 
-	//读取skt的配置
+	// 读取skt的配置
 	if (pd_read_skt_config() == STD_SUCCESS)
 	{
 		skt_set_config(gSKTConfig);
@@ -132,14 +125,13 @@ void itask_init(void)
 	{
 		kprint("no skt config\r\n\r\n");
 	}
-	//初始化skt
+	// 初始化skt
 	uint8_t device = read_device_type();
-	//0-master, 1-reference
+	// 0-master, 1-reference
 	skt_init(device, (uint32_t)&gAlgoPara.Value[0]);
 	log_flush();
 
-
-	//注册BLE回调函数
+	// 注册BLE回调函数
 	__BLE_CALLBACK_TypeDef sBleCallBack = {
 		.connected = itask_ble_connected,
 		.disconnected = itask_ble_disconnected,
@@ -149,12 +141,11 @@ void itask_init(void)
 		.disable_sleep = pwr_disable_sleep,
 	};
 	ble_register_callback(&sBleCallBack);
-	//在pd_init中已更新gFlashBleMac
-	ble_set_local_id(device, (uint8_t*)&gFlashBleInfo.Mac[0]);
+	// 在pd_init中已更新gFlashBleMac
+	ble_set_local_id(device, (uint8_t *)&gFlashBleInfo.Mac[0]);
 	ble_init();
 
-
-	ts_start_ms(sTSItaskTimeKeeperID, 20 * 60 * 1000);//20分钟
+	ts_start_ms(sTSItaskTimeKeeperID, 20 * 60 * 1000); // 20分钟
 }
 
 void itask_proc(void)
@@ -166,7 +157,6 @@ void itask_proc(void)
 
 #pragma region 任务序列
 
-
 void UTIL_SEQ_PreIdle(void)
 {
 	pm_proc_pre_idle(sSystemStatus);
@@ -177,19 +167,18 @@ void UTIL_SEQ_Idle(void)
 	pm_proc_idle(sSystemStatus);
 }
 
-
 void UTIL_SEQ_PostIdle(void)
 {
 	pm_proc_post_idle(sSystemStatus);
 }
 
 /**
-  * @brief  This function is called by the scheduler each time an event
-  *         is pending.
-  *
-  * @param  evt_waited_bm : Event pending.
-  * @retval None
-  */
+ * @brief  This function is called by the scheduler each time an event
+ *         is pending.
+ *
+ * @param  evt_waited_bm : Event pending.
+ * @retval None
+ */
 void UTIL_SEQ_EvtIdle(UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm)
 {
 	UTIL_SEQ_Run(UTIL_SEQ_DEFAULT);
@@ -206,7 +195,7 @@ void itask_time_keeper_proc(void)
 
 void itask_time_keeper_ts_callback(void)
 {
-	//kprint("hello\r\n");
+	// kprint("hello\r\n");
 	UTIL_SEQ_SetTask(1 << CFG_TASK_TIME_KEEPER_ID, CFG_PRIO_NBR_4);
 }
 #pragma endregion
@@ -229,7 +218,7 @@ void itask_status_proc(void)
 	}
 	case SYSTEM_STATUS_UPDATING_IMAGE:
 	{
-		//超时故障,如果蓝牙没有断开，迅速断开
+		// 超时故障,如果蓝牙没有断开，迅速断开
 		if (fw_timeout() == STD_TIMEOUT)
 		{
 			sSystemStatus = SYSTEM_STATUS_NULL;
@@ -246,36 +235,34 @@ void itask_status_proc(void)
 		break;
 	}
 
-
-	//case SYSTEM_STATUS_TESTING:
+	// case SYSTEM_STATUS_TESTING:
 	//{
 	//	itask_test_ble_speed_proc();
-	//}
+	// }
 }
-#pragma endregion 
+#pragma endregion
 
 #pragma region 状态流程
 
-//更新日常状态
+// 更新日常状态
 void itask_update_general_status(void)
 {
-	//日常状态
+	// 日常状态
 	//__GENERAL_STATUS_TypeDef sGeneralStatus = { 0 };
 	//__SYSTEM_TIME32_TypeDef t;
-	//sys_get_time(&t);
-	//sGeneralStatus.RunTime = t.RunTime;
-	//sGeneralStatus.WorkTime = t.WorkTime;
-	//sGeneralStatus.UpTime = t.UpTime;
+	// sys_get_time(&t);
+	// sGeneralStatus.RunTime = t.RunTime;
+	// sGeneralStatus.WorkTime = t.WorkTime;
+	// sGeneralStatus.UpTime = t.UpTime;
 
-	//sGeneralStatus.BleTransmitBytes = ble_get_send_bytes() + sizeof(sGeneralStatus) + 1;        //1为命令字的byte数
-	//sGeneralStatus.Power = pwr_get_power_relative();       													 //pm_get_power_relative();
+	// sGeneralStatus.BleTransmitBytes = ble_get_send_bytes() + sizeof(sGeneralStatus) + 1;        //1为命令字的byte数
+	// sGeneralStatus.Power = pwr_get_power_relative();       													 //pm_get_power_relative();
 
-	//if (ble_update_status(STATUS_GENERAL_INDEX, (uint8_t*)&sGeneralStatus, sizeof(sGeneralStatus)) == STD_SUCCESS)
+	// if (ble_update_status(STATUS_GENERAL_INDEX, (uint8_t*)&sGeneralStatus, sizeof(sGeneralStatus)) == STD_SUCCESS)
 	//{
-	//}
+	// }
 
-
-	__GENERAL_LONG_STATUS_TypeDef lstatus = { 0 };
+	__GENERAL_LONG_STATUS_TypeDef lstatus = {0};
 	lstatus.Length = sizeof(lstatus) - 1;
 	lstatus.DataType = STATUS_LONG_TYPE_0X02_INDEX;
 	lstatus.BleTransmitBytes = ble_get_send_bytes() + sizeof(lstatus) + 1;
@@ -290,24 +277,23 @@ void itask_update_general_status(void)
 	lstatus.Power = pwr_get_power_relative();
 	lstatus.Role = skt_get_role();
 
-	if (ble_update_status(STATUS_LONG_GENERAL_INDEX, (uint8_t*)&lstatus, sizeof(lstatus)) == STD_SUCCESS)
+	if (ble_update_status(STATUS_LONG_GENERAL_INDEX, (uint8_t *)&lstatus, sizeof(lstatus)) == STD_SUCCESS)
 	{
 	}
 }
 
-//更新系统状态
+// 更新系统状态
 void itask_update_system_status(void)
 {
 
 	if (sLastSystemStatus != sSystemStatus)
 	{
-		if (ble_update_status(STATUS_SYSTEM_INDEX, (uint8_t*)&sSystemStatus, sizeof(sSystemStatus)) == STD_SUCCESS)
+		if (ble_update_status(STATUS_SYSTEM_INDEX, (uint8_t *)&sSystemStatus, sizeof(sSystemStatus)) == STD_SUCCESS)
 		{
 			sLastSystemStatus = sSystemStatus;
 		}
 	}
 }
-
 
 #pragma endregion
 
@@ -316,8 +302,8 @@ void itask_update_system_status(void)
 // 蓝牙连接
 uint8_t itask_ble_connected()
 {
-	led_ctrl(LED_MODE_Y_CTRL, 0);        //黄灯灭
-	led_ctrl(LED_MODE_G_CTRL, 1);        //绿灯亮
+	led_ctrl(LED_MODE_Y_CTRL, 0); // 黄灯灭
+	led_ctrl(LED_MODE_G_CTRL, 1); // 绿灯亮
 	ts_start_ms(sTSItaskStatusID, 2000);
 	return STD_SUCCESS;
 }
@@ -325,18 +311,18 @@ uint8_t itask_ble_connected()
 // 蓝牙断开
 uint8_t itask_ble_disconnected()
 {
-	led_ctrl(LED_MODE_G_CTRL, 0);         //绿灯灭
-	led_ctrl(LED_MODE_Y_BLINK, 0);        //黄灯闪烁
-	//sSystemStatus = SYSTEM_STATUS_NULL;
+	led_ctrl(LED_MODE_G_CTRL, 0);  // 绿灯灭
+	led_ctrl(LED_MODE_Y_BLINK, 0); // 黄灯闪烁
+	// sSystemStatus = SYSTEM_STATUS_NULL;
 	ts_stop(sTSItaskStatusID);
 	return STD_SUCCESS;
 }
 
 // cmd数据交互,非中断，在正常的大循环中执行
-uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
+uint8_t itask_rx_proc(uint8_t *data, uint8_t size)
 {
 
-	__BLE_COMMAND_EVENT_TypeDef* rx = (__BLE_COMMAND_EVENT_TypeDef*)data;
+	__BLE_COMMAND_EVENT_TypeDef *rx = (__BLE_COMMAND_EVENT_TypeDef *)data;
 	{
 		uint8_t rx_length = size - 2;
 		tkkpf("rx=0x%x,seq=0x%x\r\n", rx->Cmd, rx->Sequence);
@@ -350,7 +336,7 @@ uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
 			tDeviceInitStatus.EverBootTimes = gFlashTime.EverBootTimes;
 			tDeviceInitStatus.BorTimes = gFlashTime.BorTimes;
 			tDeviceInitStatus.Power = pwr_get_power_relative();
-			ble_reply_data((uint8_t*)&tDeviceInitStatus, sizeof(tDeviceInitStatus));
+			ble_reply_data((uint8_t *)&tDeviceInitStatus, sizeof(tDeviceInitStatus));
 		}
 		break;
 		case ET_SET_Device_Mark:
@@ -359,11 +345,11 @@ uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
 			{
 				memcpy(&sMcuMark, rx->Buffer, rx_length);
 				uint64_t t = 0;
-				memcpy((void*)&t, (const void*)&sMcuMark.TimeStamp[0], sizeof(sMcuMark.TimeStamp));
+				memcpy((void *)&t, (const void *)&sMcuMark.TimeStamp[0], sizeof(sMcuMark.TimeStamp));
 				rtc_set_unix_time_ms(t);
 				kprint("stamp=%lu\r\n", (long unsigned int)t);
 
-				uint8_t ret = pd_check_mcu_mark((void*)&sMcuMark);
+				uint8_t ret = pd_check_mcu_mark((void *)&sMcuMark);
 				ble_done_complete_connt();
 				ble_reply_command(STD_SUCCESS);
 				if (ret == STD_SUCCESS)
@@ -384,7 +370,7 @@ uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
 		break;
 		case ET_GET_Device_Mark:
 		{
-			ble_reply_data((uint8_t*)&sMcuMark, sizeof(sMcuMark));
+			ble_reply_data((uint8_t *)&sMcuMark, sizeof(sMcuMark));
 		}
 		break;
 #pragma endregion
@@ -407,13 +393,13 @@ uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
 		break;
 		case ET_GET_Device_Time:
 		{
-			__DEVICE_TIME_TypeDef dt = { 0 };
+			__DEVICE_TIME_TypeDef dt = {0};
 			__SYSTEM_TIME32_TypeDef t;
 			sys_get_time(&t);
 			dt.UpTime = t.UpTime;
 			dt.RunTime = t.RunTime;
 			dt.WorkTime = t.WorkTime;
-			ble_reply_data((uint8_t*)&dt, sizeof(dt));
+			ble_reply_data((uint8_t *)&dt, sizeof(dt));
 		}
 		break;
 		case ET_CMD_RunTime_Clear:
@@ -433,13 +419,13 @@ uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
 #pragma region 版本查询
 		case ET_GET_Version:
 		{
-			uint8_t buff[247] = { 0 };
-			uint8_t alg_version[64] = { 0 };
+			uint8_t buff[247] = {0};
+			uint8_t alg_version[64] = {0};
 			stk_get_version(alg_version);
 			get_version(buff, alg_version);
 			tkkpf("%s\r\n", buff);
-			uint8_t len = strlen((const char*)buff);
-			ble_reply_data((uint8_t*)&buff[0], len);
+			uint8_t len = strlen((const char *)buff);
+			ble_reply_data((uint8_t *)&buff[0], len);
 		}
 		break;
 #pragma endregion
@@ -467,7 +453,7 @@ uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
 		break;
 		case ET_GET_Nameplate:
 		{
-			ble_reply_data((uint8_t*)&gProductData.Nameplate, sizeof(gProductData.Nameplate));
+			ble_reply_data((uint8_t *)&gProductData.Nameplate, sizeof(gProductData.Nameplate));
 		}
 		break;
 #pragma endregion
@@ -475,7 +461,7 @@ uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
 #pragma region 注册信息
 		case ET_GET_Reg_Info:
 		{
-			ble_reply_data((uint8_t*)&gAccountInfo, sizeof(gAccountInfo));
+			ble_reply_data((uint8_t *)&gAccountInfo, sizeof(gAccountInfo));
 		}
 		break;
 		case ET_CMD_Register:
@@ -524,7 +510,7 @@ uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
 		break;
 #pragma endregion
 
-#pragma region MCU控制指令	
+#pragma region MCU控制指令
 
 		case ET_CMD_Device_Reset:
 		{
@@ -551,9 +537,9 @@ uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
 		}
 		break;
 
-#pragma endregion	
+#pragma endregion
 
-#pragma region  蓝牙配置相关指令 
+#pragma region 蓝牙配置相关指令
 		case ET_SET_Device_Mac:
 		{
 			if (!pd_device_is_checked())
@@ -567,7 +553,7 @@ uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
 				ble_reply_command(STD_FAILED);
 				break;
 			}
-			uint8_t* pbuff = rx->Buffer;
+			uint8_t *pbuff = rx->Buffer;
 			uint16_t DeviceType = (uint16_t)(((uint16_t)pbuff[7] << 8) & 0xff00) + (pbuff[6] & 0xff);
 			if (DeviceType != DEVICE_TPYE_DEFAULT_CODE)
 			{
@@ -575,7 +561,7 @@ uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
 				ble_reply_command(STD_FAILED);
 				break;
 			}
-			memcpy((void*)&gFlashBleInfo.Mac[0], rx->Buffer, rx_length);
+			memcpy((void *)&gFlashBleInfo.Mac[0], rx->Buffer, rx_length);
 
 			uint8_t ret = pd_save_ble_mac();
 
@@ -594,27 +580,27 @@ uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
 			ble_reply_command(ret);
 		}
 		break;
-#pragma endregion  
+#pragma endregion
 
 #pragma region 查询基本信息
 		case ET_GET_Error:
 		{
 			sMcuCheck.Check = (uint32_t)skt_is_check();
-			ble_reply_data((uint8_t*)&sMcuCheck, sizeof(sMcuCheck));
+			ble_reply_data((uint8_t *)&sMcuCheck, sizeof(sMcuCheck));
 		}
 		break;
 		case ET_GET_Device_RSSI: // 信号强度
 		{
 			int16_t DeviceRssi = 0;
 			//				ble_get_rssi(&DeviceRssi);
-			ble_reply_data((uint8_t*)&DeviceRssi, sizeof(DeviceRssi));
+			ble_reply_data((uint8_t *)&DeviceRssi, sizeof(DeviceRssi));
 		}
 		break;
 		case ET_GET_Ble_Power_Level:
 		{
 			//			int8_t pl = ble_get_power_level();
 			int8_t pl = 2;
-			ble_reply_data((uint8_t*)&pl, sizeof(pl));
+			ble_reply_data((uint8_t *)&pl, sizeof(pl));
 		}
 		break;
 #pragma endregion
@@ -627,7 +613,7 @@ uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
 				ble_reply_command(STD_DO_NOTHING);
 				break;
 			}
-			__FLASH_DATA_READ_TypeDef fdr = { 0 };
+			__FLASH_DATA_READ_TypeDef fdr = {0};
 
 			if (sizeof(fdr) != rx_length)
 			{
@@ -642,19 +628,19 @@ uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
 				ble_reply_command(STD_FAILED);
 				break;
 			}
-			//if ((fdr.Addr & 0x3))
+			// if ((fdr.Addr & 0x3))
 			//{
 			//	kprint("flash data, data Addr(%u) error\r\n", (unsigned int)fdr.Addr);
 			//	ble_reply_command(STD_FAILED);
 			//	break;
-			//}
+			// }
 			if ((fdr.Addr + fdr.Size) >= pd_get_user_end_space())
 			{
 				kprint("error, flash addr(0x%x) overflow\r\n", (unsigned int)fdr.Addr);
 				ble_reply_command(STD_FAILED);
 				break;
 			}
-			ble_reply_data((uint8_t*)fdr.Addr, fdr.Size);
+			ble_reply_data((uint8_t *)fdr.Addr, fdr.Size);
 		}
 		break;
 #pragma endregion
@@ -684,7 +670,7 @@ uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
 
 			if (itask_get_alg_para(rx->Buffer, rx_length, buffer, &buffersize) == STD_SUCCESS)
 			{
-				ble_reply_data((uint8_t*)&buffer[0], buffersize);
+				ble_reply_data((uint8_t *)&buffer[0], buffersize);
 			}
 			else
 			{
@@ -706,7 +692,6 @@ uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
 			}
 			memcpy(&config, rx->Buffer, rx_length);
 			uint8_t ret = skt_set_config(config);
-
 
 			if (ret == STD_SUCCESS)
 			{
@@ -786,7 +771,7 @@ uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
 					tkkpf("failed to start\r\n");
 				}
 			}
-			else if (sSystemStatus == SYSTEM_STATUS_WORKING) 
+			else if (sSystemStatus == SYSTEM_STATUS_WORKING)
 			{
 				tkkpf("started\r\n");
 				ble_reply_command(STD_SUCCESS);
@@ -808,7 +793,6 @@ uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
 				sSystemStatus = SYSTEM_STATUS_NULL;
 				ble_reply_command(STD_SUCCESS);
 
-
 				if (ble_is_connected())
 				{
 					led_ctrl(LED_MODE_G_CTRL, 1);
@@ -817,7 +801,6 @@ uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
 				{
 					led_ctrl(LED_MODE_G_CTRL, 0);
 				}
-
 			}
 			else if (sSystemStatus == SYSTEM_STATUS_NULL)
 			{
@@ -924,7 +907,7 @@ uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
 				ble_reply_command(STD_DO_NOTHING);
 				break;
 			}
-			//if (DownLoad_Stop(sEvtRxFrame.buff) ==true)
+			// if (DownLoad_Stop(sEvtRxFrame.buff) ==true)
 			if (sSystemStatus == SYSTEM_STATUS_UPDATING_IMAGE)
 			{
 				if (fw_stop(rx->Buffer, (uint32_t)rx_length) == STD_SUCCESS)
@@ -953,7 +936,6 @@ uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
 
 			uint8_t ret = fw_is_ready(rx->Buffer, (uint32_t)rx_length);
 			ble_reply_command(ret);
-
 		}
 		break;
 		case ET_SET_Firmware_Config:
@@ -975,17 +957,17 @@ uint8_t itask_rx_proc(uint8_t* data, uint8_t size)
 			tkkpf("donot tell cmd - 0x%x\r\n", rx->Cmd);
 			ble_reply_command(STD_DENIED);
 		}
-		return STD_DENIED;
+			return STD_DENIED;
 #pragma endregion
 		}
 	}
 	return STD_SUCCESS;
 }
 
-//数据通道，数据流，没有回复
-uint8_t itask_data_proc(uint8_t* data, uint8_t size)
+// 数据通道，数据流，没有回复
+uint8_t itask_data_proc(uint8_t *data, uint8_t size)
 {
-	__BLE_DATA_EVENT_TypeDef* rx = (__BLE_DATA_EVENT_TypeDef*)data;
+	__BLE_DATA_EVENT_TypeDef *rx = (__BLE_DATA_EVENT_TypeDef *)data;
 	{
 		uint8_t rx_length = size - 1;
 		switch (rx->Cmd)
@@ -1004,15 +986,15 @@ uint8_t itask_data_proc(uint8_t* data, uint8_t size)
 		{
 			tkkpf("donot tell cmd - 0x%x\r\n", rx->Cmd);
 		}
-		return STD_DENIED;
+			return STD_DENIED;
 #pragma endregion
 		}
 	}
 	return STD_SUCCESS;
 }
 
-//固件数据交互
-uint8_t itask_image_proc(uint8_t* data, uint8_t size)
+// 固件数据交互
+uint8_t itask_image_proc(uint8_t *data, uint8_t size)
 {
 	//	tkkpf("size=%u\r\n", size);
 	uint8_t ret = fw_proc(data, size);
@@ -1027,7 +1009,6 @@ uint8_t itask_image_proc(uint8_t* data, uint8_t size)
 		{
 			ble_disconnect();
 		}
-
 	}
 	return ret;
 }
@@ -1037,11 +1018,11 @@ uint8_t itask_image_proc(uint8_t* data, uint8_t size)
 
 static __LARGE_EVENT_Typedef sLargeEvent = LARGE_EVNT_DEFAULT();
 
-uint8_t itask_set_alg_para(uint8_t* buffer, uint8_t buffersize)
+uint8_t itask_set_alg_para(uint8_t *buffer, uint8_t buffersize)
 {
-	//查询帧头
+	// 查询帧头
 	uint8_t ret = sLargeEvent.is_head(&sLargeEvent, buffer, buffersize);
-	//如果是帧头的话，先导入数据
+	// 如果是帧头的话，先导入数据
 	if (ret == STD_SUCCESS)
 	{
 		sLargeEvent.DataP = &gAlgoPara.Value[0];
@@ -1071,10 +1052,10 @@ uint8_t itask_set_alg_para(uint8_t* buffer, uint8_t buffersize)
 	return STD_SUCCESS;
 }
 
-uint8_t itask_get_alg_para(uint8_t* input, uint8_t inputsize, uint8_t* out, uint8_t* outsize)
+uint8_t itask_get_alg_para(uint8_t *input, uint8_t inputsize, uint8_t *out, uint8_t *outsize)
 {
 	uint8_t ret = sLargeEvent.is_head(&sLargeEvent, input, inputsize);
-	//如果是帧头的话，先导入数据
+	// 如果是帧头的话，先导入数据
 	if (ret == STD_SUCCESS)
 	{
 		pd_read_algo_para();
@@ -1084,7 +1065,7 @@ uint8_t itask_get_alg_para(uint8_t* input, uint8_t inputsize, uint8_t* out, uint
 	}
 
 	ret = sLargeEvent.get(&sLargeEvent, input, inputsize, out, outsize);
-	//获取帧头
+	// 获取帧头
 	if (ret == STD_FAILED)
 	{
 		return STD_FAILED;
@@ -1097,7 +1078,7 @@ uint8_t itask_get_alg_para(uint8_t* input, uint8_t inputsize, uint8_t* out, uint
 #pragma region 速度测试
 void itask_test_ble_speed_proc(void)
 {
-	led_ctrl(LED_MODE_G_CTRL, 0); //绿灯亮
+	led_ctrl(LED_MODE_G_CTRL, 0); // 绿灯亮
 	//	if (!ble_tx_is_idle())
 	//	{
 	//		return;
@@ -1111,9 +1092,7 @@ void itask_test_ble_speed_proc(void)
 		id++;
 	}
 
-
-
-	uint8_t ret = ble_update_image((uint8_t*)&tx, SpeedTestBuff.DataSize);
+	uint8_t ret = ble_update_image((uint8_t *)&tx, SpeedTestBuff.DataSize);
 	if (ret == STD_SUCCESS)
 	{
 		SpeedTestBuff.ID = id;
@@ -1135,28 +1114,30 @@ void itask_test_ble_speed_proc(void)
 void fault_test_by_div0(void);
 void fault_test_by_unalign(void);
 
-void fault_test_by_unalign(void) {
-	volatile int* SCB_CCR = (volatile int*)0xE000ED14;  // SCB->CCR
-	volatile int* p;
+void fault_test_by_unalign(void)
+{
+	volatile int *SCB_CCR = (volatile int *)0xE000ED14; // SCB->CCR
+	volatile int *p;
 	volatile int value;
 
 	*SCB_CCR |= (1 << 3); /* bit3: UNALIGN_TRP. */
 
-	p = (int*)0x00;
+	p = (int *)0x00;
 	value = *p;
 	printf("addr:0x%02X value:0x%08X\r\n", (int)p, value);
 
-	p = (int*)0x04;
+	p = (int *)0x04;
 	value = *p;
 	printf("addr:0x%02X value:0x%08X\r\n", (int)p, value);
 
-	p = (int*)0x03;
+	p = (int *)0x03;
 	value = *p;
 	printf("addr:0x%02X value:0x%08X\r\n", (int)p, value);
 }
 
-void fault_test_by_div0(void) {
-	volatile int* SCB_CCR = (volatile int*)0xE000ED14;  // SCB->CCR
+void fault_test_by_div0(void)
+{
+	volatile int *SCB_CCR = (volatile int *)0xE000ED14; // SCB->CCR
 	int x, y, z;
 
 	*SCB_CCR |= (1 << 4); /* bit4: DIV_0_TRP. */
@@ -1173,10 +1154,10 @@ void itask_test_proc(void)
 	switch (code)
 	{
 	case '1':
-	{	
-		kprint("XXX\r\n");	
+	{
+		kprint("XXX\r\n");
 		uint32_t x[115];
-		uint8_t ret = rng_get_numbers((uint32_t*)&x[0], 115);
+		uint8_t ret = rng_get_numbers((uint32_t *)&x[0], 115);
 		if (ret != STD_SUCCESS)
 		{
 			kprint("failed to get rand\r\n");
@@ -1192,11 +1173,11 @@ void itask_test_proc(void)
 		nprint("\r\n");
 	}
 	break;
-	case  '2':
+	case '2':
 	{
 		kprint("25666\r\n");
 		fault_test_by_unalign();
-		//skt_test();
+		// skt_test();
 	}
 	break;
 	case '3':
@@ -1208,13 +1189,13 @@ void itask_test_proc(void)
 	{
 
 		kprint("4\r\n");
-		//ahrs_calib(0);
-		//uint64_t* ap = (uint64_t*)FLASH_SPACE_SHADOW_END_ADDR;
-		//uint64_t* bp = (uint64_t*)(FLASH_SPACE_SHADOW_END_ADDR + 8);
-		//uint8_t ret = STD_SUCCESS;
+		// ahrs_calib(0);
+		// uint64_t* ap = (uint64_t*)FLASH_SPACE_SHADOW_END_ADDR;
+		// uint64_t* bp = (uint64_t*)(FLASH_SPACE_SHADOW_END_ADDR + 8);
+		// uint8_t ret = STD_SUCCESS;
 
-		//uint64_t a = 0x1111222233334445;
-		//for (uint32_t i = 0; i < (FLASH_PAGE_SIZE / 8); i++)
+		// uint64_t a = 0x1111222233334445;
+		// for (uint32_t i = 0; i < (FLASH_PAGE_SIZE / 8); i++)
 		//{
 		//	a++;
 		//	ret = flash_ll_write(FLASH_SPACE_SHADOW_END_ADDR + FLASH_PAGE_SIZE - 8 * (i + 1), (uint8_t*)&a, sizeof(a));
@@ -1223,31 +1204,30 @@ void itask_test_proc(void)
 		//		kprint("write, ret=0x%x\r\n", ret);
 		//		break;
 		//	}
-		//}
+		// }
 
-		//kprint("1,a=0x%lx, b=0x%lx\r\n", (long unsigned int) * ap, (long unsigned int) * bp);
-		//uint64_t a = 0x1111222233334445;
-		//ret = flash_ll_write(FLASH_SPACE_SHADOW_END_ADDR + 8, (uint8_t*)&a, sizeof(a));
-		//kprint("write, ret=0x%x\r\n", ret);
-		//uint64_t b = 0x5555666677778889;
-		//ret = flash_ll_write(FLASH_SPACE_SHADOW_END_ADDR, (uint8_t*)&b, sizeof(b));
-		//kprint("write, ret=0x%x\r\n", ret);
-		//kprint("2, a=0x%lx, b=0x%lx\r\n", (long unsigned int) * ap, (long unsigned int) * bp);
-
+		// kprint("1,a=0x%lx, b=0x%lx\r\n", (long unsigned int) * ap, (long unsigned int) * bp);
+		// uint64_t a = 0x1111222233334445;
+		// ret = flash_ll_write(FLASH_SPACE_SHADOW_END_ADDR + 8, (uint8_t*)&a, sizeof(a));
+		// kprint("write, ret=0x%x\r\n", ret);
+		// uint64_t b = 0x5555666677778889;
+		// ret = flash_ll_write(FLASH_SPACE_SHADOW_END_ADDR, (uint8_t*)&b, sizeof(b));
+		// kprint("write, ret=0x%x\r\n", ret);
+		// kprint("2, a=0x%lx, b=0x%lx\r\n", (long unsigned int) * ap, (long unsigned int) * bp);
 	}
 	break;
 	case '5':
 	{
 		kprint("5\r\n");
 
-		//uint64_t a = 0xffffffffffff4445;
-		//flash_ll_write(FLASH_SPACE_SHADOW_END_ADDR, (uint8_t*)&a, sizeof(a));
+		// uint64_t a = 0xffffffffffff4445;
+		// flash_ll_write(FLASH_SPACE_SHADOW_END_ADDR, (uint8_t*)&a, sizeof(a));
 
-		//uint64_t b = 0xffffffff12344445;
-		//flash_ll_write(FLASH_SPACE_SHADOW_END_ADDR, (uint8_t*)&b, sizeof(b));
+		// uint64_t b = 0xffffffff12344445;
+		// flash_ll_write(FLASH_SPACE_SHADOW_END_ADDR, (uint8_t*)&b, sizeof(b));
 
-		//kprint("end\r\n");
-		//imu_get_all_reg();
+		// kprint("end\r\n");
+		// imu_get_all_reg();
 	}
 	break;
 	case '6':
@@ -1296,4 +1276,3 @@ void itaks_test_rx_evt(void)
 /*******************************************************************************
 END
 *******************************************************************************/
-

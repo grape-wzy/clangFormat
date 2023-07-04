@@ -146,8 +146,7 @@ void spi_a_hw_mspinit(SPI_HandleTypeDef* hspi)
 		/* Enable and set line 4 Interrupt to the lowest priority */
 		HAL_NVIC_SetPriority(SPI_A_HW_READY_EXTI_IRQn, SPI_A_HW_DRDY_NVIC_PreemptionPriority, SPI_A_HW_DRDY_NVIC_SubPriority);
 		//HAL_NVIC_EnableIRQ(SPI_A_HW_READY_EXTI_IRQn);
-	
-	}
+    }
 }
 
 
@@ -169,8 +168,7 @@ void spi_a_hw_mspdeinit(SPI_HandleTypeDef* hspi)
 
 uint8_t spi_a_hw_transmit_receive(uint8_t* pTxData, uint8_t* pRxData, uint16_t Size, uint32_t Timeout)
 {
-
-	uint8_t ret = STD_SUCCESS;
+    uint8_t ret = STD_SUCCESS;
 	SPI_A_HW_CS(0);
 	//if ((HAL_SPI_TransmitReceive(&aSpiHandle, pTxData, pRxData, Size, Timeout)) != HAL_OK)
 	//{
@@ -180,7 +178,6 @@ uint8_t spi_a_hw_transmit_receive(uint8_t* pTxData, uint8_t* pRxData, uint16_t S
 	SPI_A_HW_CS(1);
 	return ret;
 }
-
 
 uint8_t spi_a_hw_reset(uint8_t enable)
 {
@@ -248,8 +245,7 @@ uint8_t spi_ll_transmit_receive(SPI_HandleTypeDef* hspi, uint8_t* pTxData, uint8
 		}
 		hspi->Instance->DR = pTx[i];
 
-		
-		while (!__HAL_SPI_GET_FLAG(hspi, SPI_FLAG_RXNE))
+        while (!__HAL_SPI_GET_FLAG(hspi, SPI_FLAG_RXNE))
 		{
 			if ((Clock_Time() - TimeStart) > Timeout)
 			{
@@ -483,7 +479,7 @@ uint8_t spi_ll_transmit_receive(SPI_HandleTypeDef* hspi,  uint8_t *  pTxData, ui
 	while(1)
 	{
 		count = 0;
-		do 
+		do
 		{
 			if (__HAL_SPI_GET_FLAG(hspi, SPI_FLAG_TXE))
 			{
@@ -498,9 +494,9 @@ uint8_t spi_ll_transmit_receive(SPI_HandleTypeDef* hspi,  uint8_t *  pTxData, ui
 				return STD_FAILED;
 			}
 		}while (1);
-		
+
 		count = 0;
-		do 
+		do
 		{
 
 			if (__HAL_SPI_GET_FLAG(hspi, SPI_FLAG_RXNE))
@@ -608,7 +604,7 @@ uint8_t spi_a_hw_transmit_receive2(uint8_t* pTxData, uint8_t* pRxData, uint16_t 
 				//hspi->Instance->DR = *(uint16_t*)hspi->pTxBuffPtr;
 				//hspi->pTxBuffPtr += sizeof(uint16_t);
 				hspi->Instance->DR = sSpiTxBuff[sSPICount];
-				
+
 				break;
 			}
 			sSPICount++;
@@ -723,6 +719,3 @@ end:
 #endif
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-
-
-

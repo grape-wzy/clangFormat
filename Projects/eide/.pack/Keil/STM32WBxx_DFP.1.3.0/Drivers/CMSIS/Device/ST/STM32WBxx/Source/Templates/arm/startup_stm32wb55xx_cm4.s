@@ -10,7 +10,7 @@
 ;*                        calls main()).
 ;*                      After Reset the CortexM4 processor is in Thread mode,
 ;*                      priority is Privileged, and the Stack is set to Main.
-;* <<< Use Configuration Wizard in Context Menu >>>   
+;* <<< Use Configuration Wizard in Context Menu >>>
 ;******************************************************************************
 ;* @attention
 ;*
@@ -364,4 +364,3 @@ __user_initial_stackheap
                  ENDIF
 
                  END
-
