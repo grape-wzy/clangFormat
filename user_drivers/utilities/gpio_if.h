@@ -2,15 +2,18 @@
 * file    gpio_hw.h
 * author  mackgim
 * version 1.0.0
-* date    
+* date
 * brief   gpio
 *******************************************************************************/
 
-#ifndef __GPIO_IF_H
-#define __GPIO_IF_H
+#ifndef __GPIO_IF_H__
+#define __GPIO_IF_H__
 
 #include "stdint.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Mode定义
  * 0 - 控制ledy状态
@@ -35,6 +38,11 @@ void ledg_ctrl(uint8_t value);
 void ledy_ctrl(uint8_t value);
 
 void led_ctrl(uint8_t mode, uint8_t status);
-#endif /* __GPIO_HW_H*/
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* __GPIO_IF_H__*/
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

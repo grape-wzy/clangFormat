@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "app_conf.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -31,6 +31,16 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define WKUP_PIN_Pin       GPIO_PIN_0
+#define WKUP_PIN_GPIO_Port GPIOA
+#define ADC_CTRL_Pin       GPIO_PIN_2
+#define ADC_CTRL_GPIO_Port GPIOA
+#define IMU_CS_Pin         GPIO_PIN_4
+#define IMU_CS_GPIO_Port   GPIOA
+#define PWR_CTRL_Pin       GPIO_PIN_11
+#define PWR_CTRL_GPIO_Port GPIOA
+#define LED_G_Pin          GPIO_PIN_4
+#define LED_G_GPIO_Port    GPIOB
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -557,7 +567,7 @@ void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+#if 0
 /* USER CODE END 4 */
 
 /**
@@ -567,12 +577,14 @@ void MX_GPIO_Init(void)
 void Error_Handler(void)
 {
     /* USER CODE BEGIN Error_Handler_Debug */
+    kprint("Error\r\n");
     /* User can add his own implementation to report the HAL error return state */
     __disable_irq();
     while (1) {
     }
     /* USER CODE END Error_Handler_Debug */
 }
+#endif
 
 #ifdef USE_FULL_ASSERT
 /**

@@ -406,6 +406,7 @@ void spi_a_hw_register_cb(void* cb)
 }
 
 #if ENABLE_SPI_A_DMA == 1
+#if 0
 void SPI_A_TX_DMA_IRQHandler(void)
 {
 	HAL_DMA_IRQHandler(&sHdmaSpi1Tx);
@@ -415,6 +416,7 @@ void SPI_A_RX_DMA_IRQHandler(void)
 {
 	HAL_DMA_IRQHandler(&sHdmaSpi1Rx);
 }
+#endif
 #endif
 
 #pragma endregion

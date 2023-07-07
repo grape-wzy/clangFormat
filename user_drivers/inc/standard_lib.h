@@ -11,7 +11,7 @@
 #define __STANDARD_LIB_H
 
 #ifdef __cplusplus
-extern "C"
+extern "C" {
 #endif
 
 #include <string.h>
@@ -208,6 +208,9 @@ __STATIC_INLINE uint8_t is_word_aligned(void const* p)
 #define uprint(...)
 #endif
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __STANDARDLIB_H*/
 

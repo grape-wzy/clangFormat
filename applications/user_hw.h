@@ -137,7 +137,7 @@ extern "C"
 #define SPI_A_HW_CLK_FORCE_RESET()			__HAL_RCC_SPI1_FORCE_RESET()
 #define SPI_A_HW_CLK_RELEASE_RESET()		__HAL_RCC_SPI1_RELEASE_RESET()
 
-	// SPI Configuration
+// SPI Configuration
 #define SPI_A_HW_MODE						SPI_MODE_MASTER
 #define SPI_A_HW_DIRECTION					SPI_DIRECTION_2LINES
 #define SPI_A_HW_DATASIZE					SPI_DATASIZE_8BIT
@@ -154,8 +154,7 @@ extern "C"
 #endif
 #define SPI_A_HW_CRCCALCULATION				SPI_CRCCALCULATION_DISABLED
 
-
-	// SCLK: PA.1
+// SCLK: PA.1
 #define SPI_A_HW_SCLK_PIN                   GPIO_PIN_5
 #define SPI_A_HW_SCLK_MODE					GPIO_MODE_AF_PP
 #define SPI_A_HW_SCLK_PULL					GPIO_PULLDOWN
@@ -164,7 +163,7 @@ extern "C"
 #define SPI_A_HW_SCLK_PORT					GPIOA
 #define SPI_A_HW_SCLK_CLK_ENABLE()	        __HAL_RCC_GPIOA_CLK_ENABLE()
 
-	// MISO (Master Input Slave Output): PA.6
+// MISO (Master Input Slave Output): PA.6
 #define SPI_A_HW_MISO_PIN					GPIO_PIN_6
 #define SPI_A_HW_MISO_MODE					GPIO_MODE_AF_PP
 #define SPI_A_HW_MISO_PULL					GPIO_NOPULL
@@ -174,9 +173,7 @@ extern "C"
 #define SPI_A_HW_MISO_CLK_ENABLE()	        __HAL_RCC_GPIOA_CLK_ENABLE()
 #define SPI_A_HW_READ_MISO()				(HAL_GPIO_ReadPin(SPI_A_HW_MISO_PORT, SPI_A_HW_MISO_PIN))
 
-
-
-	// MOSI (Master Output Slave Input): PA.7
+// MOSI (Master Output Slave Input): PA.7
 #define SPI_A_HW_MOSI_PIN					GPIO_PIN_7
 #define SPI_A_HW_MOSI_MODE					GPIO_MODE_AF_PP
 #define SPI_A_HW_MOSI_PULL					GPIO_NOPULL
@@ -185,8 +182,7 @@ extern "C"
 #define SPI_A_HW_MOSI_PORT					GPIOA
 #define SPI_A_HW_MOSI_CLK_ENABLE()	        __HAL_RCC_GPIOA_CLK_ENABLE()
 
-
-	// NSS/CSN/CS: PA.3
+// NSS/CSN/CS: PA.3
 #define SPI_A_HW_CS_PIN						GPIO_PIN_4
 #define SPI_A_HW_CS_MODE			        GPIO_MODE_OUTPUT_PP
 #define SPI_A_HW_CS_PULL			        GPIO_PULLUP
@@ -224,7 +220,7 @@ extern "C"
 #define SPI_A_HW_READY_EXTI_PIN				SPI_A_HW_READY_PIN
 #define SPI_A_HW_READY_EXTI_PORT			SPI_A_HW_READY_PORT
 
-	// RESET: PA.5
+// RESET: PA.5
 #define SPI_A_HW_RESET_PIN                  GPIO_PIN_8
 #define SPI_A_HW_RESET_MODE			        GPIO_MODE_OUTPUT_PP
 #define SPI_A_HW_RESET_PULL			        GPIO_NOPULL

@@ -244,7 +244,7 @@ void Init_IPCC(void)
 	{
 	}
 }
-
+#if 0
 void HAL_IPCC_MspInit(IPCC_HandleTypeDef* hipcc)
 {
 	if (hipcc->Instance == IPCC)
@@ -260,6 +260,7 @@ void HAL_IPCC_MspInit(IPCC_HandleTypeDef* hipcc)
 	}
 
 }
+#endif
 
 void Init_Smps(void)
 {
@@ -620,8 +621,7 @@ void APPE_SysEvtReadyProcessing(void* pPayload)
 				{
 					kprint("version = 0, use st link to download stack\r\n");
 				}
-				
-			}
+            }
 		}
 	}
 }

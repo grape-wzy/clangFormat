@@ -2,7 +2,7 @@
 * file    gpio_if.c
 * author  mackgim
 * version 1.0.0
-* date    
+* date
 * brief   io 操作
 *******************************************************************************/
 
@@ -44,7 +44,7 @@ void gpio_init(void)
     GPIO_InitStruct.Pin = LEDY_PIN;
     HAL_GPIO_Init(LEDY_PORT, &GPIO_InitStruct);
     ledy_ctrl(0);
- 
+
     GPIO_InitStruct.Pin = PWR_GPIO_PIN;
     HAL_GPIO_Init(PWR_GPIO_PORT, &GPIO_InitStruct);
     pwr_ctrl(0);
@@ -75,21 +75,16 @@ void pwr_ctrl(uint8_t value)
 
 uint8_t read_device_type(void)
 {
-	
-	//return DEVICE_GPIO_READ();
+    //return DEVICE_GPIO_READ();
 
-
-	//20220623， 模块的主从定义切换
-	//原来gpio为0是master， 为1是ref
-	//现在gpio为1是master，为0是ref
-	if (DEVICE_GPIO_READ())
-	{
-		return 0; 
-	}
-	else
-	{
-		return 1;
-	}
+    //20220623， 模块的主从定义切换
+    //原来gpio为0是master， 为1是ref
+    //现在gpio为1是master，为0是ref
+    if (DEVICE_GPIO_READ()) {
+        return 0;
+    } else {
+        return 1;
+    }
 }
 
 void ledg_ctrl(uint8_t value)

@@ -387,7 +387,7 @@ uint8_t klog_get(void)
 #pragma endregion
 
 #pragma region 中断
-
+#if 0
 void KLOG_USARTx_IRQHandler(void)
 {
     HAL_UART_IRQHandler(&sKlogHandle);
@@ -396,6 +396,7 @@ void KLOG_USARTx_TX_DMAx_IRQHandler(void)
 {
     HAL_DMA_IRQHandler(sKlogHandle.hdmatx);
 }
+#endif
 
 #pragma endregion
 
@@ -614,7 +615,7 @@ caddr_t _sbrk(int incr)
 }
 
 #else
-
+#if 0
 static uint8_t *__sbrk_heap_end = NULL;
 
 void *_sbrk(ptrdiff_t incr)
@@ -643,6 +644,8 @@ void *_sbrk(ptrdiff_t incr)
     return (void *)prev_heap_end;
 }
 #endif
+#endif
+#if 0
 /* Functions */
 void initialise_monitor_handles()
 {
@@ -780,7 +783,7 @@ int remove(const char *filename)
 {
     return 0;
 }
-
+#endif
 #endif
 #pragma endregion
 

@@ -551,6 +551,24 @@
         ]
       },
       {
+        "name": "drivers",
+        "files": [
+          {
+            "path": "../../components/drivers/interface/interface.c"
+          },
+          {
+            "path": "../../components/drivers/interface/spi/spi_interface.c"
+          },
+          {
+            "path": "../../components/drivers/misc/pin.c"
+          },
+          {
+            "path": "../../hal_drivers/drivers/spi_if.c"
+          }
+        ],
+        "folders": []
+      },
+      {
         "name": "hal",
         "files": [],
         "folders": [
@@ -565,7 +583,11 @@
           },
           {
             "name": "drivers",
-            "files": [],
+            "files": [
+              {
+                "path": "../../hal_drivers/drivers/drv_pin.c"
+              }
+            ],
             "folders": []
           },
           {
@@ -654,6 +676,9 @@
           {
             "name": "acc_gyro",
             "files": [
+              {
+                "path": "../../components/imu/lsm6ds3_STdC/driver/lsm6ds3_reg.c"
+              },
               {
                 "path": "../../components/imu/lsm6ds3tr-c_STdC/driver/lsm6ds3tr-c_reg.c"
               },
@@ -846,12 +871,15 @@
         "<virtual_root>/bsp/startup_stm32wb55xx_cm4.c",
         "<virtual_root>/user_drivers/ahrs/motion_fx_manager.c",
         "<virtual_root>/user_drivers/ahrs/MotionFX_CM4F_wc32_ot_hard.a",
-        "<virtual_root>/Utilities/lpm"
+        "<virtual_root>/Utilities/lpm",
+        "<virtual_root>/applications/stm32wbxx_it.c",
+        "<virtual_root>/applications/system_stm32wbxx.c",
+        "<virtual_root>/user_drivers/acc_gyro/lsm6ds3tr-c_reg.c"
       ],
       "toolchain": "GCC",
       "compileConfig": {
         "cpuType": "Cortex-M4",
-        "floatingPointHardware": "single",
+        "floatingPointHardware": "none",
         "scatterFilePath": "../../hal_drivers/compiler/gcc/stm32wb55xx_flash_cm4.ld",
         "useCustomScatterFile": true,
         "storageLayout": {
@@ -933,7 +961,12 @@
           "../../components/imu/lsm6ds3tr-c_STdC/driver",
           "../../bsp",
           "../../user_drivers/imu",
-          "../../bsp/CubeMX_config/Core/Src"
+          "../../bsp/CubeMX_config/Core/Src",
+          "../../components",
+          "../../hal_drivers/drivers/include",
+          "../../components/drivers",
+          "../../include",
+          "../../components/imu/lsm6ds3_STdC/driver"
         ],
         "libList": [],
         "sourceDirList": [],
@@ -942,8 +975,7 @@
           "ARM_MATH_CM4",
           "STM32WB55CE",
           "USE_HAL_DRIVER",
-          "USE_FULL_LL_DRIVER ",
-          "DEBUG"
+          "USE_FULL_LL_DRIVER "
         ]
       }
     },

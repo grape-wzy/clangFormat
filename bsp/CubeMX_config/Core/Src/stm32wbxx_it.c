@@ -330,6 +330,7 @@ void HSEM_IRQHandler(void)
   /* USER CODE END HSEM_IRQn 1 */
 }
 
+#if 0
 /**
   * @brief This function handles LPTIM1 global interrupt.
   */
@@ -343,6 +344,7 @@ void LPTIM1_IRQHandler(void)
 
   /* USER CODE END LPTIM1_IRQn 1 */
 }
+#endif
 
 /* USER CODE BEGIN 1 */
 

@@ -8,7 +8,7 @@
 
 #include "main.h"
 #include "platform.h"
-#include "spi_a_hw_if.h"
+#include "spi_if.h"
 
 #include "acc_gyro_if.h"
 
@@ -29,7 +29,7 @@ int main()
 }
 
 #else
-
+extern void MX_DMA_Init(void);
 int main(void)
 {
     ACC_GYRO_FDATA_T imu_data[2];
@@ -44,11 +44,15 @@ int main(void)
     SystemClock_64M_Config();
 #endif
 
+    ym_hw_pin_init();
+
+    MX_DMA_Init();
+
     log_init();
 
     gtimer_init();
 
-    spi_a_hw_init();
+    spi1_hw_init();
 
     acc_gpro_init();
 

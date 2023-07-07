@@ -8,7 +8,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "acc_gyro_if.h"
-#include "lsm6ds3tr-c_reg.h"
+#include "lsm6ds3_reg.h"
 #include "standard_lib.h"
 
 #define MEMS_SUCCESS   (0)
@@ -21,61 +21,59 @@
 static ACC_SCALE_E  acc_sensitivity  = ACC_SCALE_2g;
 static GYRO_SCALE_E gyro_sensitivity = GYPO_SCALE_500dps;
 
-static lsm6ds3tr_c_odr_xl_t acc_output_data_rate  = 0;
-static lsm6ds3tr_c_odr_g_t  gyro_output_data_rate = 0;
+static lsm6ds3_odr_xl_t acc_output_data_rate  = 0;
+static lsm6ds3_odr_g_t  gyro_output_data_rate = 0;
 
 static ACC_GYRO_IRQ_TypeDef acc_gyro_irq = NULL;
 
-static stmdev_ctx_t        lsm6ds3tr_c_dev_ctx;
-static lsm6ds3tr_c_fs_xl_t lsm6ds3tr_c_acc_scale;
-static lsm6ds3tr_c_fs_g_t  lsm6ds3tr_c_gypo_scale;
+static stmdev_ctx_t    lsm6ds3_dev_ctx;
+static lsm6ds3_xl_fs_t lsm6ds3_acc_scale;
+static lsm6ds3_fs_g_t  lsm6ds3_gypo_scale;
 
-static lsm6ds3tr_c_odr_xl_t acc_gyro_hal_get_acc_output_data_rate(uint16_t odr)
+static lsm6ds3_odr_xl_t acc_gyro_hal_get_acc_output_data_rate(uint16_t odr)
 {
-    lsm6ds3tr_c_odr_xl_t new_odr;
+    lsm6ds3_odr_xl_t new_odr;
 
-    new_odr = (odr <= 13)     ? LSM6DS3TR_C_XL_ODR_12Hz5
-              : (odr <= 26)   ? LSM6DS3TR_C_XL_ODR_26Hz
-              : (odr <= 52)   ? LSM6DS3TR_C_XL_ODR_52Hz
-              : (odr <= 104)  ? LSM6DS3TR_C_XL_ODR_104Hz
-              : (odr <= 208)  ? LSM6DS3TR_C_XL_ODR_208Hz
-              : (odr <= 416)  ? LSM6DS3TR_C_XL_ODR_416Hz
-              : (odr <= 833)  ? LSM6DS3TR_C_XL_ODR_833Hz
-              : (odr <= 1660) ? LSM6DS3TR_C_XL_ODR_1k66Hz
-              : (odr <= 3330) ? LSM6DS3TR_C_XL_ODR_3k33Hz
-                              : LSM6DS3TR_C_XL_ODR_6k66Hz;
+    new_odr = (odr <= 13)     ? LSM6DS3_XL_ODR_12Hz5
+              : (odr <= 26)   ? LSM6DS3_XL_ODR_26Hz
+              : (odr <= 52)   ? LSM6DS3_XL_ODR_52Hz
+              : (odr <= 104)  ? LSM6DS3_XL_ODR_104Hz
+              : (odr <= 208)  ? LSM6DS3_XL_ODR_208Hz
+              : (odr <= 416)  ? LSM6DS3_XL_ODR_416Hz
+              : (odr <= 833)  ? LSM6DS3_XL_ODR_833Hz
+              : (odr <= 1660) ? LSM6DS3_XL_ODR_1k66Hz
+              : (odr <= 3330) ? LSM6DS3_XL_ODR_3k33Hz
+                              : LSM6DS3_XL_ODR_6k66Hz;
 
     return new_odr;
 }
 
-static lsm6ds3tr_c_odr_g_t acc_gyro_hal_get_gyro_output_data_rate(uint16_t odr)
+static lsm6ds3_odr_g_t acc_gyro_hal_get_gyro_output_data_rate(uint16_t odr)
 {
-    lsm6ds3tr_c_odr_g_t new_odr;
+    lsm6ds3_odr_g_t new_odr;
 
-    new_odr = (odr <= 13)     ? LSM6DS3TR_C_GY_ODR_12Hz5
-              : (odr <= 26)   ? LSM6DS3TR_C_GY_ODR_26Hz
-              : (odr <= 52)   ? LSM6DS3TR_C_GY_ODR_52Hz
-              : (odr <= 104)  ? LSM6DS3TR_C_GY_ODR_104Hz
-              : (odr <= 208)  ? LSM6DS3TR_C_GY_ODR_208Hz
-              : (odr <= 416)  ? LSM6DS3TR_C_GY_ODR_416Hz
-              : (odr <= 833)  ? LSM6DS3TR_C_GY_ODR_833Hz
-              : (odr <= 1660) ? LSM6DS3TR_C_GY_ODR_1k66Hz
-              : (odr <= 3330) ? LSM6DS3TR_C_GY_ODR_3k33Hz
-                              : LSM6DS3TR_C_GY_ODR_6k66Hz;
+    new_odr = (odr <= 13)    ? LSM6DS3_GY_ODR_12Hz5
+              : (odr <= 26)  ? LSM6DS3_GY_ODR_26Hz
+              : (odr <= 52)  ? LSM6DS3_GY_ODR_52Hz
+              : (odr <= 104) ? LSM6DS3_GY_ODR_104Hz
+              : (odr <= 208) ? LSM6DS3_GY_ODR_208Hz
+              : (odr <= 416) ? LSM6DS3_GY_ODR_416Hz
+              : (odr <= 833) ? LSM6DS3_GY_ODR_833Hz
+                             : LSM6DS3_GY_ODR_1k66Hz;
 
     return new_odr;
 }
 
 static uint8_t acc_gyro_hal_set_acc_full_scale(ACC_SCALE_E scale)
 {
-    lsm6ds3tr_c_acc_scale = (scale == ACC_SCALE_2g)   ? LSM6DS3TR_C_2g
-                            : (scale == ACC_SCALE_4g) ? LSM6DS3TR_C_4g
-                            : (scale == ACC_SCALE_8g) ? LSM6DS3TR_C_8g
-                                                      : LSM6DS3TR_C_16g;
+    lsm6ds3_acc_scale = (scale == ACC_SCALE_2g)   ? LSM6DS3_2g
+                        : (scale == ACC_SCALE_4g) ? LSM6DS3_4g
+                        : (scale == ACC_SCALE_8g) ? LSM6DS3_8g
+                                                  : LSM6DS3_16g;
 
-    kprint("[LSM6DS3]: acc full scale 0x%x\r\n", lsm6ds3tr_c_acc_scale);
+    kprint("[LSM6DS3]: acc full scale 0x%x\r\n", lsm6ds3_acc_scale);
 
-    if (lsm6ds3tr_c_xl_full_scale_set(&lsm6ds3tr_c_dev_ctx, lsm6ds3tr_c_acc_scale) != MEMS_SUCCESS) {
+    if (lsm6ds3_xl_full_scale_set(&lsm6ds3_dev_ctx, lsm6ds3_acc_scale) != MEMS_SUCCESS) {
         return STD_FAILED;
     }
 
@@ -84,15 +82,15 @@ static uint8_t acc_gyro_hal_set_acc_full_scale(ACC_SCALE_E scale)
 
 static uint8_t acc_gyro_hal_set_gyro_full_scale(GYRO_SCALE_E scale)
 {
-    lsm6ds3tr_c_gypo_scale = (scale == GYPO_SCALE_125dps)    ? LSM6DS3TR_C_125dps
-                             : (scale == GYPO_SCALE_250dps)  ? LSM6DS3TR_C_250dps
-                             : (scale == GYPO_SCALE_500dps)  ? LSM6DS3TR_C_500dps
-                             : (scale == GYPO_SCALE_1000dps) ? LSM6DS3TR_C_1000dps
-                                                             : LSM6DS3TR_C_2000dps;
+    lsm6ds3_gypo_scale = (scale == GYPO_SCALE_125dps)    ? LSM6DS3_125dps
+                         : (scale == GYPO_SCALE_250dps)  ? LSM6DS3_250dps
+                         : (scale == GYPO_SCALE_500dps)  ? LSM6DS3_500dps
+                         : (scale == GYPO_SCALE_1000dps) ? LSM6DS3_1000dps
+                                                         : LSM6DS3_2000dps;
 
-    kprint("[LSM6DS3]: gyro full scale 0x%x\r\n", lsm6ds3tr_c_gypo_scale);
+    kprint("[LSM6DS3]: gyro full scale 0x%x\r\n", lsm6ds3_gypo_scale);
 
-    if (lsm6ds3tr_c_gy_full_scale_set(&lsm6ds3tr_c_dev_ctx, lsm6ds3tr_c_gypo_scale) != MEMS_SUCCESS) {
+    if (lsm6ds3_gy_full_scale_set(&lsm6ds3_dev_ctx, lsm6ds3_gypo_scale) != MEMS_SUCCESS) {
         return STD_FAILED;
     }
 
@@ -101,11 +99,11 @@ static uint8_t acc_gyro_hal_set_gyro_full_scale(GYRO_SCALE_E scale)
 
 static uint8_t acc_gyro_hal_set_acc_power_mode(uint8_t high_performance_en)
 {
-    lsm6ds3tr_c_xl_hm_mode_t val = !(high_performance_en) ? LSM6DS3TR_C_XL_NORMAL
-                                                          : LSM6DS3TR_C_XL_HIGH_PERFORMANCE;
+    lsm6ds3_xl_hm_mode_t val = !(high_performance_en) ? LSM6DS3_XL_NORMAL
+                                                      : LSM6DS3_XL_HIGH_PERFORMANCE;
     kprint("[LSM6DS3]: acc hm_mode = 0x%x\r\n", val);
 
-    if (lsm6ds3tr_c_xl_power_mode_set(&lsm6ds3tr_c_dev_ctx, val) != MEMS_SUCCESS) {
+    if (lsm6ds3_xl_power_mode_set(&lsm6ds3_dev_ctx, val) != MEMS_SUCCESS) {
         return STD_FAILED;
     }
 
@@ -114,11 +112,11 @@ static uint8_t acc_gyro_hal_set_acc_power_mode(uint8_t high_performance_en)
 
 static uint8_t acc_gyro_hal_set_gyro_power_mode(uint8_t high_performance_en)
 {
-    lsm6ds3tr_c_g_hm_mode_t val = !(high_performance_en) ? LSM6DS3TR_C_GY_NORMAL
-                                                         : LSM6DS3TR_C_GY_HIGH_PERFORMANCE;
+    lsm6ds3_g_hm_mode_t val = !(high_performance_en) ? LSM6DS3_GY_NORMAL
+                                                     : LSM6DS3_GY_HIGH_PERFORMANCE;
     kprint("[LSM6DS3]: gyro new_lp = 0x%x\r\n", val);
 
-    if (lsm6ds3tr_c_gy_power_mode_set(&lsm6ds3tr_c_dev_ctx, val) != MEMS_SUCCESS) {
+    if (lsm6ds3_gy_power_mode_set(&lsm6ds3_dev_ctx, val) != MEMS_SUCCESS) {
         return STD_FAILED;
     }
 
@@ -130,27 +128,27 @@ static uint8_t acc_gyro_hal_checkOut(void)
     uint8_t whoamI = 0, rst;
 
     for (uint8_t i = 0; i <= 10; i++) {
-        if (lsm6ds3tr_c_device_id_get(&lsm6ds3tr_c_dev_ctx, &whoamI) != MEMS_SUCCESS) {
+        if (lsm6ds3_device_id_get(&lsm6ds3_dev_ctx, &whoamI) != MEMS_SUCCESS) {
             continue;
         }
 
-        if (whoamI != LSM6DS3TR_C_ID && i == 10) {
-            kprint("[LSM6DS3]: failed - %u ID = 0x%x , Read ID = 0x%x\r\n", i, LSM6DS3TR_C_ID, whoamI);
-            return STD_FAILED;
+        if (whoamI != LSM6DS3_ID) {
+            if (i == 10) {
+                kprint("[LSM6DS3]: failed - %u ID = 0x%x , Read ID = 0x%x\r\n", i, LSM6DS3_ID, whoamI);
+                return STD_FAILED;
+            }
+        } else {
+            break;
         }
     }
     kprint("[LSM6DS3]: True - Read ID 0x%x (LSM6DS3 0x6a - LSM6DS3 0x69)\r\n", whoamI);
 
     /* Restore default configuration */
-    lsm6ds3tr_c_reset_set(&lsm6ds3tr_c_dev_ctx, PROPERTY_ENABLE);
-
-    do {
-        lsm6ds3tr_c_reset_get(&lsm6ds3tr_c_dev_ctx, &rst);
-    } while (rst);
+    lsm6ds3_reset_set(&lsm6ds3_dev_ctx, PROPERTY_ENABLE);
 
     for (uint8_t i = 0; i <= 10; i++) {
-        if ((lsm6ds3tr_c_reset_get(&lsm6ds3tr_c_dev_ctx, &rst) != MEMS_SUCCESS) || rst) {
-            continue;
+        if ((lsm6ds3_reset_get(&lsm6ds3_dev_ctx, &rst) == MEMS_SUCCESS) || !rst) {
+            break;
         }
 
         if (i == 10) {
@@ -165,33 +163,33 @@ static uint8_t acc_gyro_hal_checkOut(void)
 
 static uint8_t acc_gyro_hal_init_tap()
 {
-    if (lsm6ds3tr_c_tap_detection_on_z_set(&lsm6ds3tr_c_dev_ctx, PROPERTY_ENABLE) != MEMS_SUCCESS) {
+    if (lsm6ds3_tap_detection_on_z_set(&lsm6ds3_dev_ctx, PROPERTY_ENABLE) != MEMS_SUCCESS) {
         goto clean;
     }
 
-    if (lsm6ds3tr_c_tap_detection_on_y_set(&lsm6ds3tr_c_dev_ctx, PROPERTY_ENABLE) != MEMS_SUCCESS) {
+    if (lsm6ds3_tap_detection_on_y_set(&lsm6ds3_dev_ctx, PROPERTY_ENABLE) != MEMS_SUCCESS) {
         goto clean;
     }
 
-    if (lsm6ds3tr_c_tap_detection_on_x_set(&lsm6ds3tr_c_dev_ctx, PROPERTY_ENABLE) != MEMS_SUCCESS) {
+    if (lsm6ds3_tap_detection_on_x_set(&lsm6ds3_dev_ctx, PROPERTY_ENABLE) != MEMS_SUCCESS) {
         goto clean;
     }
 
-    if (lsm6ds3tr_c_int_notification_set(&lsm6ds3tr_c_dev_ctx, LSM6DS3TR_C_INT_LATCHED) != MEMS_SUCCESS) {
+    if (lsm6ds3_int_notification_set(&lsm6ds3_dev_ctx, LSM6DS3_INT_LATCHED) != MEMS_SUCCESS) {
         goto clean;
     }
 
     // 1*FS_XL/2**5   500mg
-    if (lsm6ds3tr_c_tap_threshold_x_set(&lsm6ds3tr_c_dev_ctx, 0x1) != MEMS_SUCCESS) {
+    if (lsm6ds3_tap_threshold_set(&lsm6ds3_dev_ctx, 0x1) != MEMS_SUCCESS) {
         goto clean;
     }
     //2*8 / ODR_XL   2*8/100 = 160ms    3*8/832 = 28ms
-    if (lsm6ds3tr_c_tap_shock_set(&lsm6ds3tr_c_dev_ctx, 0x1) != MEMS_SUCCESS) {
+    if (lsm6ds3_tap_shock_set(&lsm6ds3_dev_ctx, 0x1) != MEMS_SUCCESS) {
         goto clean;
     }
 
     //1*4 / ODR_XL   3*4/100 = 120ms  6*8/832 = 28ms
-    if (lsm6ds3tr_c_tap_quiet_set(&lsm6ds3tr_c_dev_ctx, 0x3) != MEMS_SUCCESS) {
+    if (lsm6ds3_tap_quiet_set(&lsm6ds3_dev_ctx, 0x3) != MEMS_SUCCESS) {
         goto clean;
     }
 
@@ -206,9 +204,9 @@ clean:
 static uint8_t acc_gyro_hal_init(ACC_GYRO_CONFIG_TypeDef *config)
 {
     /* Initialize mems driver interface */
-    lsm6ds3tr_c_dev_ctx.write_reg = config->write_buffer;
-    lsm6ds3tr_c_dev_ctx.read_reg  = config->read_buffer;
-    lsm6ds3tr_c_dev_ctx.handle    = config->handle;
+    lsm6ds3_dev_ctx.write_reg = config->write_buffer;
+    lsm6ds3_dev_ctx.read_reg  = config->read_buffer;
+    lsm6ds3_dev_ctx.handle    = config->handle;
 
     acc_gyro_irq          = config->irq_enable;
     acc_sensitivity       = config->acc_scale;
@@ -224,12 +222,12 @@ static uint8_t acc_gyro_hal_init(ACC_GYRO_CONFIG_TypeDef *config)
 
     /* Enable register address automatically incremented during a multiple byte
 	access with a serial interface. */
-    if (lsm6ds3tr_c_auto_increment_set(&lsm6ds3tr_c_dev_ctx, PROPERTY_ENABLE) != MEMS_SUCCESS) {
+    if (lsm6ds3_auto_increment_set(&lsm6ds3_dev_ctx, PROPERTY_ENABLE) != MEMS_SUCCESS) {
         goto clean;
     }
 
     /* Enable Block Data Update */
-    if (lsm6ds3tr_c_block_data_update_set(&lsm6ds3tr_c_dev_ctx, PROPERTY_ENABLE) != MEMS_SUCCESS) {
+    if (lsm6ds3_block_data_update_set(&lsm6ds3_dev_ctx, PROPERTY_ENABLE) != MEMS_SUCCESS) {
         goto clean;
     }
 
@@ -251,28 +249,28 @@ static uint8_t acc_gyro_hal_init(ACC_GYRO_CONFIG_TypeDef *config)
 
     /* Configure filtering chain(No aux interface) */
     /* Accelerometer - analog filter */
-    if (lsm6ds3tr_c_xl_filter_analog_set(&lsm6ds3tr_c_dev_ctx, LSM6DS3TR_C_XL_ANA_BW_400Hz) != MEMS_SUCCESS) {
+    if (lsm6ds3_xl_filter_analog_set(&lsm6ds3_dev_ctx, LSM6DS3_ANTI_ALIASING_400Hz) != MEMS_SUCCESS) {
         goto clean;
     }
     /* Accelerometer - LPF1 path ( LPF2 not used )*/
-    // lsm6ds3tr_c_xl_lp1_bandwidth_set(&dev_ctx, LSM6DS3TR_C_XL_LP1_ODR_DIV_4);
+    // lsm6ds3_xl_lp1_bandwidth_set(&dev_ctx, LSM6DS3_XL_LP1_ODR_DIV_4);
     /* Accelerometer - LPF1 + LPF2 path */
-    if (lsm6ds3tr_c_xl_lp2_bandwidth_set(&lsm6ds3tr_c_dev_ctx, LSM6DS3TR_C_XL_LOW_NOISE_LP_ODR_DIV_100) != MEMS_SUCCESS) {
+    if (lsm6ds3_xl_lp2_bandwidth_set(&lsm6ds3_dev_ctx, LSM6DS3_XL_LP_ODR_DIV_100) != MEMS_SUCCESS) {
         goto clean;
     }
     /* Accelerometer - High Pass / Slope path */
-    // lsm6ds3tr_c_xl_reference_mode_set(&lsm6ds3tr_c_dev_ctx, PROPERTY_DISABLE);
-    // lsm6ds3tr_c_xl_hp_bandwidth_set(&lsm6ds3tr_c_dev_ctx, LSM6DS3TR_C_XL_HP_ODR_DIV_100);
+    // lsm6ds3_xl_reference_mode_set(&lsm6ds3_dev_ctx, PROPERTY_DISABLE);
+    // lsm6ds3_xl_hp_bandwidth_set(&lsm6ds3_dev_ctx, LSM6DS3_XL_HP_ODR_DIV_100);
     /* Gyroscope - filtering chain */
-    if (lsm6ds3tr_c_gy_band_pass_set(&lsm6ds3tr_c_dev_ctx, LSM6DS3TR_C_HP_260mHz_LP1_STRONG) != MEMS_SUCCESS) {
+    if (lsm6ds3_gy_hp_bandwidth_set(&lsm6ds3_dev_ctx, LSM6DS3_HP_CUT_OFF_2Hz07) != MEMS_SUCCESS) {
         goto clean;
     }
 
-    if (lsm6ds3tr_c_gy_data_rate_set(&lsm6ds3tr_c_dev_ctx, LSM6DS3TR_C_GY_ODR_OFF) != MEMS_SUCCESS) {
+    if (lsm6ds3_gy_data_rate_set(&lsm6ds3_dev_ctx, LSM6DS3_GY_ODR_OFF) != MEMS_SUCCESS) {
         goto clean;
     }
 
-    if (lsm6ds3tr_c_xl_data_rate_set(&lsm6ds3tr_c_dev_ctx, LSM6DS3TR_C_XL_ODR_OFF) != MEMS_SUCCESS) {
+    if (lsm6ds3_xl_data_rate_set(&lsm6ds3_dev_ctx, LSM6DS3_XL_ODR_OFF) != MEMS_SUCCESS) {
         goto clean;
     }
 
@@ -281,8 +279,8 @@ static uint8_t acc_gyro_hal_init(ACC_GYRO_CONFIG_TypeDef *config)
     }
 
     //使能G数据中断
-    lsm6ds3tr_c_int1_route_t int1_route_val;
-    lsm6ds3tr_c_int2_route_t int2_route_val;
+    lsm6ds3_int1_route_t int1_route_val;
+    lsm6ds3_int2_route_t int2_route_val;
 
     memset(&int1_route_val, 0, sizeof(int1_route_val));
     memset(&int2_route_val, 0, sizeof(int2_route_val));
@@ -296,10 +294,10 @@ static uint8_t acc_gyro_hal_init(ACC_GYRO_CONFIG_TypeDef *config)
     int2_route_val.int2_drdy_g     = PROPERTY_ENABLE;
 #endif
 
-    if (lsm6ds3tr_c_pin_int1_route_set(&lsm6ds3tr_c_dev_ctx, int1_route_val) != MEMS_SUCCESS) {
+    if (lsm6ds3_pin_int1_route_set(&lsm6ds3_dev_ctx, &int1_route_val) != MEMS_SUCCESS) {
         goto clean;
     }
-    if (lsm6ds3tr_c_pin_int2_route_set(&lsm6ds3tr_c_dev_ctx, int2_route_val) != MEMS_SUCCESS) {
+    if (lsm6ds3_pin_int2_route_set(&lsm6ds3_dev_ctx, &int2_route_val) != MEMS_SUCCESS) {
         goto clean;
     }
 
@@ -318,11 +316,11 @@ static uint8_t acc_gyro_hal_disable()
     if (acc_gyro_irq)
         acc_gyro_irq(false);
 
-    if (lsm6ds3tr_c_gy_data_rate_set(&lsm6ds3tr_c_dev_ctx, LSM6DS3TR_C_GY_ODR_OFF) != MEMS_SUCCESS) {
+    if (lsm6ds3_gy_data_rate_set(&lsm6ds3_dev_ctx, LSM6DS3_GY_ODR_OFF) != MEMS_SUCCESS) {
         return STD_FAILED;
     }
 
-    if (lsm6ds3tr_c_xl_data_rate_set(&lsm6ds3tr_c_dev_ctx, LSM6DS3TR_C_XL_ODR_OFF) != MEMS_SUCCESS) {
+    if (lsm6ds3_xl_data_rate_set(&lsm6ds3_dev_ctx, LSM6DS3_XL_ODR_OFF) != MEMS_SUCCESS) {
         return STD_FAILED;
     }
 
@@ -336,11 +334,11 @@ static uint8_t acc_gyro_hal_deinit()
 
 static uint8_t acc_gyro_hal_enable()
 {
-    if (lsm6ds3tr_c_gy_data_rate_set(&lsm6ds3tr_c_dev_ctx, gyro_output_data_rate) != MEMS_SUCCESS) {
+    if (lsm6ds3_gy_data_rate_set(&lsm6ds3_dev_ctx, gyro_output_data_rate) != MEMS_SUCCESS) {
         return STD_FAILED;
     }
 
-    if (lsm6ds3tr_c_xl_data_rate_set(&lsm6ds3tr_c_dev_ctx, acc_output_data_rate) != MEMS_SUCCESS) {
+    if (lsm6ds3_xl_data_rate_set(&lsm6ds3_dev_ctx, acc_output_data_rate) != MEMS_SUCCESS) {
         return STD_FAILED;
     }
 
@@ -350,34 +348,34 @@ static uint8_t acc_gyro_hal_enable()
     return STD_SUCCESS;
 }
 
-static uint8_t acc_gyro_hal_get_acc_mg(ACC_GYRO_FDATA_T *fData, int16_t x_raw, int16_t y_raw, int16_t z_raw, lsm6ds3tr_c_fs_xl_t fs_xl)
+static uint8_t acc_gyro_hal_get_acc_mg(ACC_GYRO_FDATA_T *fData, int16_t x_raw, int16_t y_raw, int16_t z_raw, lsm6ds3_xl_fs_t fs_xl)
 {
     if (!fData)
         return STD_FAILED;
 
     switch (fs_xl) {
-    case LSM6DS3TR_C_2g:
-        fData->acc.x = lsm6ds3tr_c_from_fs2g_to_mg(x_raw);
-        fData->acc.y = lsm6ds3tr_c_from_fs2g_to_mg(y_raw);
-        fData->acc.z = lsm6ds3tr_c_from_fs2g_to_mg(z_raw);
+    case LSM6DS3_2g:
+        fData->acc.x = lsm6ds3_from_fs2g_to_mg(x_raw);
+        fData->acc.y = lsm6ds3_from_fs2g_to_mg(y_raw);
+        fData->acc.z = lsm6ds3_from_fs2g_to_mg(z_raw);
         break;
 
-    case LSM6DS3TR_C_4g:
-        fData->acc.x = lsm6ds3tr_c_from_fs4g_to_mg(x_raw);
-        fData->acc.y = lsm6ds3tr_c_from_fs4g_to_mg(y_raw);
-        fData->acc.z = lsm6ds3tr_c_from_fs4g_to_mg(z_raw);
+    case LSM6DS3_4g:
+        fData->acc.x = lsm6ds3_from_fs4g_to_mg(x_raw);
+        fData->acc.y = lsm6ds3_from_fs4g_to_mg(y_raw);
+        fData->acc.z = lsm6ds3_from_fs4g_to_mg(z_raw);
         break;
 
-    case LSM6DS3TR_C_8g:
-        fData->acc.x = lsm6ds3tr_c_from_fs8g_to_mg(x_raw);
-        fData->acc.y = lsm6ds3tr_c_from_fs8g_to_mg(y_raw);
-        fData->acc.z = lsm6ds3tr_c_from_fs8g_to_mg(z_raw);
+    case LSM6DS3_8g:
+        fData->acc.x = lsm6ds3_from_fs8g_to_mg(x_raw);
+        fData->acc.y = lsm6ds3_from_fs8g_to_mg(y_raw);
+        fData->acc.z = lsm6ds3_from_fs8g_to_mg(z_raw);
         break;
 
-    case LSM6DS3TR_C_16g:
-        fData->acc.x = lsm6ds3tr_c_from_fs16g_to_mg(x_raw);
-        fData->acc.y = lsm6ds3tr_c_from_fs16g_to_mg(y_raw);
-        fData->acc.z = lsm6ds3tr_c_from_fs16g_to_mg(z_raw);
+    case LSM6DS3_16g:
+        fData->acc.x = lsm6ds3_from_fs16g_to_mg(x_raw);
+        fData->acc.y = lsm6ds3_from_fs16g_to_mg(y_raw);
+        fData->acc.z = lsm6ds3_from_fs16g_to_mg(z_raw);
         break;
 
     default:
@@ -390,40 +388,40 @@ static uint8_t acc_gyro_hal_get_acc_mg(ACC_GYRO_FDATA_T *fData, int16_t x_raw, i
     return STD_SUCCESS;
 }
 
-static uint8_t acc_gyro_hal_get_gyro_mdps(ACC_GYRO_FDATA_T *fData, int16_t x_raw, int16_t y_raw, int16_t z_raw, lsm6ds3tr_c_fs_g_t fs_g)
+static uint8_t acc_gyro_hal_get_gyro_mdps(ACC_GYRO_FDATA_T *fData, int16_t x_raw, int16_t y_raw, int16_t z_raw, lsm6ds3_fs_g_t fs_g)
 {
     if (!fData)
         return STD_FAILED;
 
     switch (fs_g) {
-    case LSM6DS3TR_C_125dps:
-        fData->gyro.x = lsm6ds3tr_c_from_fs125dps_to_mdps(x_raw);
-        fData->gyro.y = lsm6ds3tr_c_from_fs125dps_to_mdps(y_raw);
-        fData->gyro.z = lsm6ds3tr_c_from_fs125dps_to_mdps(z_raw);
+    case LSM6DS3_125dps:
+        fData->gyro.x = lsm6ds3_from_fs125dps_to_mdps(x_raw);
+        fData->gyro.y = lsm6ds3_from_fs125dps_to_mdps(y_raw);
+        fData->gyro.z = lsm6ds3_from_fs125dps_to_mdps(z_raw);
         break;
 
-    case LSM6DS3TR_C_250dps:
-        fData->gyro.x = lsm6ds3tr_c_from_fs250dps_to_mdps(x_raw);
-        fData->gyro.y = lsm6ds3tr_c_from_fs250dps_to_mdps(y_raw);
-        fData->gyro.z = lsm6ds3tr_c_from_fs250dps_to_mdps(z_raw);
+    case LSM6DS3_250dps:
+        fData->gyro.x = lsm6ds3_from_fs250dps_to_mdps(x_raw);
+        fData->gyro.y = lsm6ds3_from_fs250dps_to_mdps(y_raw);
+        fData->gyro.z = lsm6ds3_from_fs250dps_to_mdps(z_raw);
         break;
 
-    case LSM6DS3TR_C_500dps:
-        fData->gyro.x = lsm6ds3tr_c_from_fs500dps_to_mdps(x_raw);
-        fData->gyro.y = lsm6ds3tr_c_from_fs500dps_to_mdps(y_raw);
-        fData->gyro.z = lsm6ds3tr_c_from_fs500dps_to_mdps(z_raw);
+    case LSM6DS3_500dps:
+        fData->gyro.x = lsm6ds3_from_fs500dps_to_mdps(x_raw);
+        fData->gyro.y = lsm6ds3_from_fs500dps_to_mdps(y_raw);
+        fData->gyro.z = lsm6ds3_from_fs500dps_to_mdps(z_raw);
         break;
 
-    case LSM6DS3TR_C_1000dps:
-        fData->gyro.x = lsm6ds3tr_c_from_fs1000dps_to_mdps(x_raw);
-        fData->gyro.y = lsm6ds3tr_c_from_fs1000dps_to_mdps(y_raw);
-        fData->gyro.z = lsm6ds3tr_c_from_fs1000dps_to_mdps(z_raw);
+    case LSM6DS3_1000dps:
+        fData->gyro.x = lsm6ds3_from_fs1000dps_to_mdps(x_raw);
+        fData->gyro.y = lsm6ds3_from_fs1000dps_to_mdps(y_raw);
+        fData->gyro.z = lsm6ds3_from_fs1000dps_to_mdps(z_raw);
         break;
 
-    case LSM6DS3TR_C_2000dps:
-        fData->gyro.x = lsm6ds3tr_c_from_fs2000dps_to_mdps(x_raw);
-        fData->gyro.y = lsm6ds3tr_c_from_fs2000dps_to_mdps(y_raw);
-        fData->gyro.z = lsm6ds3tr_c_from_fs2000dps_to_mdps(z_raw);
+    case LSM6DS3_2000dps:
+        fData->gyro.x = lsm6ds3_from_fs2000dps_to_mdps(x_raw);
+        fData->gyro.y = lsm6ds3_from_fs2000dps_to_mdps(y_raw);
+        fData->gyro.z = lsm6ds3_from_fs2000dps_to_mdps(z_raw);
         break;
 
     default:
@@ -436,40 +434,40 @@ static uint8_t acc_gyro_hal_get_gyro_mdps(ACC_GYRO_FDATA_T *fData, int16_t x_raw
     return STD_SUCCESS;
 }
 
-static uint8_t acc_gyro_hal_get_result(ACC_GYRO_FDATA_T *fData[], uint32_t number)
+static uint8_t acc_gyro_hal_get_result(ACC_GYRO_FDATA_T *fData, uint32_t number)
 {
     int16_t  raw_data[3];
     int16_t  data_raw_angular_rate[3];
     uint16_t retry = 0, num = 0;
 
-    if (lsm6ds3tr_c_gy_data_rate_set(&lsm6ds3tr_c_dev_ctx, gyro_output_data_rate) != MEMS_SUCCESS) {
+    if (lsm6ds3_gy_data_rate_set(&lsm6ds3_dev_ctx, gyro_output_data_rate) != MEMS_SUCCESS) {
         return STD_FAILED;
     }
 
-    if (lsm6ds3tr_c_xl_data_rate_set(&lsm6ds3tr_c_dev_ctx, acc_output_data_rate) != MEMS_SUCCESS) {
+    if (lsm6ds3_xl_data_rate_set(&lsm6ds3_dev_ctx, acc_output_data_rate) != MEMS_SUCCESS) {
         return STD_FAILED;
     }
 
     /* Read samples in polling mode (no int) */
     for (; retry < 15 && num < number; retry++) {
         /* Read output only if new value is available */
-        lsm6ds3tr_c_reg_t reg;
+        lsm6ds3_status_reg_t reg_status;
 
-        if ((lsm6ds3tr_c_status_reg_get(&lsm6ds3tr_c_dev_ctx, &reg.status_reg) != MEMS_SUCCESS) ||
-            !(reg.status_reg.xlda) || !(reg.status_reg.gda))
+        if ((lsm6ds3_status_reg_get(&lsm6ds3_dev_ctx, &reg_status) != MEMS_SUCCESS) ||
+            !(reg_status.xlda) || !(reg_status.gda))
             continue;
 
         /* Read magnetic field data */
         memset(raw_data, 0x00, 3 * sizeof(int16_t));
-        if (lsm6ds3tr_c_acceleration_raw_get(&lsm6ds3tr_c_dev_ctx, raw_data) != MEMS_SUCCESS) {
+        if (lsm6ds3_acceleration_raw_get(&lsm6ds3_dev_ctx, raw_data) != MEMS_SUCCESS) {
             continue;
         }
 
-        acc_gyro_hal_get_acc_mg(fData[num],
+        acc_gyro_hal_get_acc_mg(&fData[num],
                                 raw_data[0],
                                 raw_data[1],
                                 raw_data[2],
-                                lsm6ds3tr_c_acc_scale);
+                                lsm6ds3_acc_scale);
 
         kprint("Acceleration [mg]:%4.2f\t%4.2f\t%4.2f\r\n",
                fData[num]->acc.x, fData[num]->acc.y, fData[num]->acc.z);
@@ -477,15 +475,15 @@ static uint8_t acc_gyro_hal_get_result(ACC_GYRO_FDATA_T *fData[], uint32_t numbe
         /* Read magnetic field data */
         memset(raw_data, 0x00, 3 * sizeof(int16_t));
 
-        if (lsm6ds3tr_c_angular_rate_raw_get(&lsm6ds3tr_c_dev_ctx, raw_data) != MEMS_SUCCESS) {
+        if (lsm6ds3_angular_rate_raw_get(&lsm6ds3_dev_ctx, raw_data) != MEMS_SUCCESS) {
             continue;
         }
 
-        acc_gyro_hal_get_gyro_mdps(fData[num],
+        acc_gyro_hal_get_gyro_mdps(&fData[num],
                                    raw_data[0],
                                    raw_data[1],
                                    raw_data[2],
-                                   lsm6ds3tr_c_gypo_scale);
+                                   lsm6ds3_gypo_scale);
 
         kprint("Angular rate [mdps]:%4.2f\t%4.2f\t%4.2f\r\n",
                fData[num]->gyro.x, fData[num]->gyro.y, fData[num]->gyro.z);
@@ -499,8 +497,8 @@ static uint8_t acc_gyro_hal_get_result(ACC_GYRO_FDATA_T *fData[], uint32_t numbe
         if (reg.status_reg.tda) {
             /* Read temperature data */
             memset(&data_raw_temperature, 0x00, sizeof(int16_t));
-            lsm6ds3tr_c_temperature_raw_get(&dev_ctx, &data_raw_temperature);
-            temperature_degC = lsm6ds3tr_c_from_lsb_to_celsius(
+            lsm6ds3_temperature_raw_get(&dev_ctx, &data_raw_temperature);
+            temperature_degC = lsm6ds3_from_lsb_to_celsius(
                 data_raw_temperature);
             sprintf((char *)tx_buffer, "Temperature [degC]:%6.2f\r\n",
                     temperature_degC);
@@ -515,11 +513,11 @@ static uint8_t acc_gyro_hal_get_result(ACC_GYRO_FDATA_T *fData[], uint32_t numbe
     return STD_SUCCESS;
 }
 
-static uint8_t acc_gyro_hal_get_tap_status(lsm6ds3tr_c_tap_src_t *value)
+static uint8_t acc_gyro_hal_get_tap_status(lsm6ds3_tap_src_t *value)
 {
-    lsm6ds3tr_c_all_sources_t sources;
+    lsm6ds3_all_src_t sources;
 
-    if (!lsm6ds3tr_c_all_sources_get(&lsm6ds3tr_c_dev_ctx, &sources))
+    if (!lsm6ds3_all_sources_get(&lsm6ds3_dev_ctx, &sources))
         return STD_FAILED;
 
     *value = sources.tap_src;
@@ -537,7 +535,7 @@ static uint8_t acc_gyro_hal_set_tap_threshold(uint32_t value)
     uint8_t threshold = (uint8_t)value & 0xff;
     //9 * FS_XL / 2 * *5   562.5mg
 
-    if (lsm6ds3tr_c_tap_threshold_x_set(&lsm6ds3tr_c_dev_ctx, threshold) != MEMS_SUCCESS) {
+    if (lsm6ds3_tap_threshold_set(&lsm6ds3_dev_ctx, threshold) != MEMS_SUCCESS) {
         return STD_FAILED;
     }
 
@@ -571,14 +569,14 @@ uint8_t acc_gyro_disable()
     return acc_gyro_hal_disable();
 }
 
-uint8_t acc_gyro_get_result(ACC_GYRO_FDATA_T *buff[], uint32_t number)
+uint8_t acc_gyro_get_result(ACC_GYRO_FDATA_T *buff, uint32_t number)
 {
     return acc_gyro_hal_get_result(buff, number);
 }
 
 uint8_t acc_gyro_get_tap_status(uint8_t *value)
 {
-    return acc_gyro_hal_get_tap_status((lsm6ds3tr_c_tap_src_t *)value);
+    return acc_gyro_hal_get_tap_status((lsm6ds3_tap_src_t *)value);
 }
 
 uint8_t acc_gyro_set_tap_threshold(uint32_t value)

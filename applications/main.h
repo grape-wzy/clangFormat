@@ -11,9 +11,7 @@
 #ifndef __MAIN_H
 #define __MAIN_H
 
-
-
-
+#include "stm32wbxx_hal.h"
 #include "user_drivers.h"
 #include "platform_init.h"
 #include "itask.h"

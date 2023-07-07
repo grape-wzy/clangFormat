@@ -12,7 +12,7 @@
 #include "skt_if.h"
 #include "saber_drv.h"
 #include "saber_config.h"
-#include "spi_a_hw_if.h"
+#include "spi_if.h"
 
 
 #ifdef ENABLE_SKT_SENSOR
@@ -211,7 +211,7 @@ void skt_proc(void)
 
 
 	static uint32_t count = 0;
-	
+
 	count++;
 	if (count == SABER_OUTPUT_RATE)
 	{
@@ -321,4 +321,3 @@ uint8_t skt_test(void)
 /*******************************************************************************
 END
 *******************************************************************************/
-

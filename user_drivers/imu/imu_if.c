@@ -8,7 +8,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "imu_if.h"
 #include "adis16505_dev.h"
-#include "spi_a_hw_if.h"
+#include "spi_if.h"
 #include "standard_lib.h"
 
 static __GYRO_ACC_CONFIG_TypeDef    sGyroAccConfig;

@@ -88,7 +88,7 @@ uint8_t acc_gyro_deinit(void);
 uint8_t acc_gyro_disable(void);
 uint8_t acc_gyro_enable(void);
 
-uint8_t acc_gyro_get_result(ACC_GYRO_FDATA_T *buff[], uint32_t number);
+uint8_t acc_gyro_get_result(ACC_GYRO_FDATA_T *buff, uint32_t number);
 
 uint8_t acc_gyro_get_tap_status(uint8_t *v);
 uint8_t acc_gyro_set_tap_threshold(uint32_t value);

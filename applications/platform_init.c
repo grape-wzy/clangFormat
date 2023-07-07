@@ -13,7 +13,10 @@
 #include "pm_proc.h"
 #include "pd_proc.h"
 #include "acc_gyro_if.h"
-#include "spi_a_hw_if.h"
+#include "spi_if.h"
+
+#include "drv_pin.h"
+#include "driver_cfg.h"
 
 void Error_Handler(void);
 
@@ -76,34 +79,46 @@ void platform_init(void)
 
 #define TIMEOUT_DURATION 100
 
+static struct ym_spi_interface acc_dev;
+
 uint8_t spi_ReadReg(void *handle, uint8_t reg, uint8_t *data, uint16_t size)
 {
-    uint8_t  aTxBuffer[8] = { 0 };
-    uint16_t buffersize   = size + 1;
+    uint8_t read = (reg | 0x80);
 
-    aTxBuffer[0] = reg;
+    if (YM_EOK != ym_spi_interface_send_then_recv(&acc_dev,
+                                                  &read,
+                                                  1,
+                                                  data,
+                                                  size)) {
+        return STD_FAILED;
+    }
 
-    return spi_a_hw_transmit_receive((uint8_t *)aTxBuffer, data, 1, TIMEOUT_DURATION);
+    return 0;
 }
 
 uint8_t spi_WriteReg(void *handle, uint8_t reg, uint8_t *data, uint16_t size)
 {
-    uint8_t aTxBuffer[32] = { 0 };
-    uint8_t aRxBuffer[32] = { 0 };
+    uint8_t read = (reg & 0x7F);
 
-    uint16_t buffersize = size + 1;
-    aTxBuffer[0]        = reg;
-    memcpy(&aTxBuffer[1], data, size);
+    if (YM_EOK != ym_spi_interface_send_then_send(&acc_dev,
+                                                  &read,
+                                                  1,
+                                                  data,
+                                                  size)) {
+        return STD_FAILED;
+    }
 
-    return spi_a_hw_transmit_receive((uint8_t *)aTxBuffer, (uint8_t *)aRxBuffer, buffersize, TIMEOUT_DURATION);
-}
-
-uint8_t spi_read_buffer(void *handle, uint8_t, uint8_t *, uint16_t)
-{
+    return 0;
 }
 
 void acc_gpro_init(void)
 {
+    ym_interface_t spi_bus = ym_interface_find_by_name("spi1");
+    ym_spi_interface_register(&acc_dev,
+                              "acc_gyro",
+                              (struct ym_spi_inf_bus *)spi_bus,
+                              GET_PIN(A, 4), 0);
+
     ACC_GYRO_CONFIG_TypeDef acc_gyro_config = {
         AHRS_ACC_GYRO_DATA_RATE,
         AHRS_GYRO_SCALE,
@@ -387,24 +402,6 @@ void Error_Handler(void)
 	kprint("Error\r\n");
 	//log_flush();
 }
-
-
-#pragma region 回调
-void HAL_MspInit(void)
-{
-
-	__HAL_RCC_HSEM_CLK_ENABLE();
-
-	/* System interrupt init*/
-	/* PendSV_IRQn interrupt configuration */
-	//HAL_NVIC_SetPriority(PendSV_IRQn, 15, 0);
-
-	/* Peripheral interrupt init */
-	/* HSEM_IRQn interrupt configuration */
-	HAL_NVIC_SetPriority(HSEM_IRQn, HSEM_NVIC_PreemptionPriority, HSEM_NVIC_SubPriority);
-	HAL_NVIC_EnableIRQ(HSEM_IRQn);
-}
-#pragma endregion
 
 /*******************************************************************************
 END
