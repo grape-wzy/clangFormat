@@ -605,22 +605,22 @@
             "name": "ble",
             "files": [
               {
-                "path": "../../components/STM32_WPAN/ble/core/auto/ble_gap_aci.c"
+                "path": "../../components/ST/STM32_WPAN/ble/core/auto/ble_gap_aci.c"
               },
               {
-                "path": "../../components/STM32_WPAN/ble/core/auto/ble_gatt_aci.c"
+                "path": "../../components/ST/STM32_WPAN/ble/core/auto/ble_gatt_aci.c"
               },
               {
-                "path": "../../components/STM32_WPAN/ble/core/auto/ble_hal_aci.c"
+                "path": "../../components/ST/STM32_WPAN/ble/core/auto/ble_hal_aci.c"
               },
               {
-                "path": "../../components/STM32_WPAN/ble/core/auto/ble_hci_le.c"
+                "path": "../../components/ST/STM32_WPAN/ble/core/auto/ble_hci_le.c"
               },
               {
-                "path": "../../components/STM32_WPAN/ble/core/auto/ble_l2cap_aci.c"
+                "path": "../../components/ST/STM32_WPAN/ble/core/auto/ble_l2cap_aci.c"
               },
               {
-                "path": "../../components/STM32_WPAN/ble/core/template/osal.c"
+                "path": "../../components/ST/STM32_WPAN/ble/core/template/osal.c"
               }
             ],
             "folders": []
@@ -629,22 +629,22 @@
             "name": "interface",
             "files": [
               {
-                "path": "../../components/STM32_WPAN/interface/patterns/ble_thread/shci/shci.c"
+                "path": "../../components/ST/STM32_WPAN/interface/patterns/ble_thread/shci/shci.c"
               },
               {
-                "path": "../../components/STM32_WPAN/interface/patterns/ble_thread/tl/hci_tl_if.c"
+                "path": "../../components/ST/STM32_WPAN/interface/patterns/ble_thread/tl/hci_tl_if.c"
               },
               {
-                "path": "../../components/STM32_WPAN/interface/patterns/ble_thread/tl/hci_tl.c"
+                "path": "../../components/ST/STM32_WPAN/interface/patterns/ble_thread/tl/hci_tl.c"
               },
               {
-                "path": "../../components/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c"
+                "path": "../../components/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c"
               },
               {
-                "path": "../../components/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl.c"
+                "path": "../../components/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl.c"
               },
               {
-                "path": "../../components/STM32_WPAN/interface/patterns/ble_thread/tl/tl_mbox.c"
+                "path": "../../components/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_mbox.c"
               }
             ],
             "folders": []
@@ -653,16 +653,16 @@
             "name": "utilities",
             "files": [
               {
-                "path": "../../components/STM32_WPAN/utilities/dbg_trace.c"
+                "path": "../../components/ST/STM32_WPAN/utilities/dbg_trace.c"
               },
               {
-                "path": "../../components/STM32_WPAN/utilities/otp.c"
+                "path": "../../components/ST/STM32_WPAN/utilities/otp.c"
               },
               {
-                "path": "../../components/STM32_WPAN/utilities/stm_list.c"
+                "path": "../../components/ST/STM32_WPAN/utilities/stm_list.c"
               },
               {
-                "path": "../../components/STM32_WPAN/utilities/stm_queue.c"
+                "path": "../../components/ST/STM32_WPAN/utilities/stm_queue.c"
               }
             ],
             "folders": []
@@ -928,19 +928,19 @@
         "name": "default",
         "incList": [
           ".eide/deps",
-          "../../components/STM32_WPAN/ble/core",
-          "../../components/STM32_WPAN/ble/core/auto",
-          "../../components/STM32_WPAN/ble/core/template",
-          "../../components/STM32_WPAN/ble/svc/Inc",
-          "../../components/STM32_WPAN/ble/svc/Src",
-          "../../components/STM32_WPAN/ble",
-          "../../components/STM32_WPAN/interface/patterns/ble_thread/conf",
-          "../../components/STM32_WPAN/interface/patterns/ble_thread/lhci",
-          "../../components/STM32_WPAN/interface/patterns/ble_thread",
-          "../../components/STM32_WPAN/interface/patterns/ble_thread/shci",
-          "../../components/STM32_WPAN/interface/patterns/ble_thread/tl",
-          "../../components/STM32_WPAN/utilities",
-          "../../components/STM32_WPAN",
+          "../../components/ST/STM32_WPAN/ble/core",
+          "../../components/ST/STM32_WPAN/ble/core/auto",
+          "../../components/ST/STM32_WPAN/ble/core/template",
+          "../../components/ST/STM32_WPAN/ble/svc/Inc",
+          "../../components/ST/STM32_WPAN/ble/svc/Src",
+          "../../components/ST/STM32_WPAN/ble",
+          "../../components/ST/STM32_WPAN/interface/patterns/ble_thread/conf",
+          "../../components/ST/STM32_WPAN/interface/patterns/ble_thread/lhci",
+          "../../components/ST/STM32_WPAN/interface/patterns/ble_thread",
+          "../../components/ST/STM32_WPAN/interface/patterns/ble_thread/shci",
+          "../../components/ST/STM32_WPAN/interface/patterns/ble_thread/tl",
+          "../../components/ST/STM32_WPAN/utilities",
+          "../../components/ST/STM32_WPAN",
           "../../Utilities/sequencer",
           "../../hal_drivers/CMSIS/Core/Include",
           "../../hal_drivers/CMSIS/Device/ST/STM32WBxx/Include",
@@ -1035,19 +1035,19 @@
         "name": "default",
         "incList": [
           ".eide/deps",
-          "../../../Drivers/Middlewares/ST/STM32_WPAN/ble/core",
-          "../../../Drivers/Middlewares/ST/STM32_WPAN/ble/core/auto",
-          "../../../Drivers/Middlewares/ST/STM32_WPAN/ble/core/template",
-          "../../../Drivers/Middlewares/ST/STM32_WPAN/ble/svc/Inc",
-          "../../../Drivers/Middlewares/ST/STM32_WPAN/ble/svc/Src",
-          "../../../Drivers/Middlewares/ST/STM32_WPAN/ble",
-          "../../../Drivers/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/conf",
-          "../../../Drivers/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/lhci",
-          "../../../Drivers/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread",
-          "../../../Drivers/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci",
-          "../../../Drivers/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl",
-          "../../../Drivers/Middlewares/ST/STM32_WPAN/utilities",
-          "../../../Drivers/Middlewares/ST/STM32_WPAN",
+          "../../../Drivers/Middlewares/ST/ST/STM32_WPAN/ble/core",
+          "../../../Drivers/Middlewares/ST/ST/STM32_WPAN/ble/core/auto",
+          "../../../Drivers/Middlewares/ST/ST/STM32_WPAN/ble/core/template",
+          "../../../Drivers/Middlewares/ST/ST/STM32_WPAN/ble/svc/Inc",
+          "../../../Drivers/Middlewares/ST/ST/STM32_WPAN/ble/svc/Src",
+          "../../../Drivers/Middlewares/ST/ST/STM32_WPAN/ble",
+          "../../../Drivers/Middlewares/ST/ST/STM32_WPAN/interface/patterns/ble_thread/conf",
+          "../../../Drivers/Middlewares/ST/ST/STM32_WPAN/interface/patterns/ble_thread/lhci",
+          "../../../Drivers/Middlewares/ST/ST/STM32_WPAN/interface/patterns/ble_thread",
+          "../../../Drivers/Middlewares/ST/ST/STM32_WPAN/interface/patterns/ble_thread/shci",
+          "../../../Drivers/Middlewares/ST/ST/STM32_WPAN/interface/patterns/ble_thread/tl",
+          "../../../Drivers/Middlewares/ST/ST/STM32_WPAN/utilities",
+          "../../../Drivers/Middlewares/ST/ST/STM32_WPAN",
           "../../../Drivers/Utilities/sequencer",
           "../../../Drivers/CMSIS/Core/Include",
           "../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include",
@@ -1061,7 +1061,7 @@
           "../../../User_Drivers/imu",
           "../../../User_Drivers/inc",
           "../../../User_Drivers/saber",
-          "../../../User_Drivers/STM32_WPAN",
+          "../../../User_Drivers/ST/STM32_WPAN",
           "../../../User_Drivers/timer",
           "../../../User_Drivers/utilities",
           "../../../User_Drivers/log"
