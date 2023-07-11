@@ -49,7 +49,7 @@ ym_err_t ym_spi_interface_send_then_send(struct ym_spi_interface *spi_inf,
     message.cs_release = 0;
     message.next       = YM_NULL;
 
-    length = spi_inf->bus->ops->xfer(spi_inf, &message);
+    length = spi_inf->bus->ops->xfer(spi_inf, &message); //TODO: 传输失败后释放CS线
     if (length == 0) {
         return -YM_EFAILED;
     }
@@ -103,7 +103,7 @@ ym_err_t ym_spi_interface_send_then_recv(struct ym_spi_interface *spi_inf,
     message.cs_release = 0;
     message.next       = YM_NULL;
 
-    spi_inf->bus->ops->xfer(spi_inf, &message);
+    spi_inf->bus->ops->xfer(spi_inf, &message); // TODO: 传输失败，释放CS并返回
 
     /* send data2 */
     message.send_buf   = YM_NULL;
@@ -230,6 +230,7 @@ ym_err_t ym_spi_interface_register(struct ym_spi_interface *spi_inf,
 
     memset(&spi_inf->config, 0, sizeof(spi_inf->config));
 
+    //TODO: 将cs_pin的初始化移动至初始化中
     ym_pin_write(spi_inf->cs_pin, PIN_HIGH);
     ym_pin_mode(spi_inf->cs_pin, PIN_MODE_OUTPUT, PIN_SPEED_LOW);
 

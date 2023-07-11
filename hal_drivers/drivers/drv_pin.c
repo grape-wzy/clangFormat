@@ -10,12 +10,12 @@
 #if defined(SOC_SERIES_STM32MP1)
 #if defined(GPIOZ)
 #define gpioz_port_base (175) /* PIN_STPORT_MAX * 16 - 16 */
-#define PIN_STPORT(pin) ((pin > gpioz_port_base) ? ((GPIO_TypeDef *)(GPIOZ_BASE)) : ((GPIO_TypeDef *)(GPIOA_BASE + (0x1000u * PIN_PORT(pin)))))
+#define PIN_STPORT(pin) ((pin > gpioz_port_base) ? ((GPIO_TypeDef *)(GPIOZ_BASE)) : ((GPIO_TypeDef *)(GPIOA_BASE + ((PIN_PORT(pin) << 12)))))
 #else
-#define PIN_STPORT(pin) ((GPIO_TypeDef *)(GPIOA_BASE + (0x1000u * PIN_PORT(pin))))
+#define PIN_STPORT(pin) ((GPIO_TypeDef *)(GPIOA_BASE + (PIN_PORT(pin) << 12)))
 #endif /* GPIOZ */
 #else
-#define PIN_STPORT(pin) ((GPIO_TypeDef *)(GPIOA_BASE + (0x400u * PIN_PORT(pin))))
+#define PIN_STPORT(pin) ((GPIO_TypeDef *)(GPIOA_BASE + (PIN_PORT(pin) << 10)))
 #endif /* SOC_SERIES_STM32MP1 */
 
 #define PIN_STPIN(pin) ((uint16_t)(1u << PIN_NO(pin)))
@@ -59,8 +59,80 @@ struct pin_irq_map {
 static void stm32_pin_mode(struct ym_pin_device *device, int pin, pin_mode_e mode, pin_speed_e speed)
 {
     GPIO_InitTypeDef GPIO_InitStruct;
+    GPIO_TypeDef    *gpio_port;
 
     if (PIN_PORT(pin) >= PIN_STPORT_MAX) {
+        return;
+    }
+
+    gpio_port = PIN_STPORT(pin);
+
+    /* Enable GPIO RCC Clock */
+    switch ((uint32_t)gpio_port) {
+#if defined(GPIOA) && defined(__HAL_RCC_GPIOA_CLK_ENABLE)
+    case ((uint32_t)GPIOA):
+        __HAL_RCC_GPIOA_CLK_ENABLE();
+        break;
+#endif
+#if defined(GPIOB) && defined(__HAL_RCC_GPIOB_CLK_ENABLE)
+    case ((uint32_t)GPIOB):
+        __HAL_RCC_GPIOB_CLK_ENABLE();
+        break;
+#endif
+#if defined(GPIOC) && defined(__HAL_RCC_GPIOC_CLK_ENABLE)
+    case ((uint32_t)GPIOC):
+        __HAL_RCC_GPIOC_CLK_ENABLE();
+        break;
+#endif
+#if defined(GPIOD) && defined(__HAL_RCC_GPIOD_CLK_ENABLE)
+    case ((uint32_t)GPIOD):
+        __HAL_RCC_GPIOD_CLK_ENABLE();
+        break;
+#endif
+#if defined(GPIOE) && defined(__HAL_RCC_GPIOE_CLK_ENABLE)
+    case ((uint32_t)GPIOE):
+        __HAL_RCC_GPIOE_CLK_ENABLE();
+        break;
+#endif
+#if defined(GPIOF) && defined(__HAL_RCC_GPIOF_CLK_ENABLE)
+    case ((uint32_t)GPIOF):
+        __HAL_RCC_GPIOF_CLK_ENABLE();
+        break;
+#endif
+#if defined(GPIOG) && defined(__HAL_RCC_GPIOG_CLK_ENABLE)
+    case ((uint32_t)GPIOG):
+#ifdef SOC_SERIES_STM32L4
+        HAL_PWREx_EnableVddIO2();
+#endif
+        __HAL_RCC_GPIOG_CLK_ENABLE();
+        break;
+#endif
+#if defined(GPIOH) && defined(__HAL_RCC_GPIOH_CLK_ENABLE)
+    case ((uint32_t)GPIOH):
+        __HAL_RCC_GPIOH_CLK_ENABLE();
+        break;
+#endif
+#if defined(GPIOI) && defined(__HAL_RCC_GPIOI_CLK_ENABLE)
+    case ((uint32_t)GPIOI):
+        __HAL_RCC_GPIOI_CLK_ENABLE();
+        break;
+#endif
+#if defined(GPIOJ) && defined(__HAL_RCC_GPIOJ_CLK_ENABLE)
+    case ((uint32_t)GPIOJ):
+        __HAL_RCC_GPIOJ_CLK_ENABLE();
+        break;
+#endif
+#if defined(GPIOK) && defined(__HAL_RCC_GPIOK_CLK_ENABLE)
+    case ((uint32_t)GPIOK):
+        __HAL_RCC_GPIOK_CLK_ENABLE();
+        break;
+#endif
+#if defined(GPIOZ) && defined(__HAL_RCC_GPIOZ_CLK_ENABLE)
+    case ((uint32_t)GPIOZ):
+        __HAL_RCC_GPIOZ_CLK_ENABLE();
+        break;
+#endif
+    default:
         return;
     }
 
@@ -98,7 +170,7 @@ static void stm32_pin_mode(struct ym_pin_device *device, int pin, pin_mode_e mod
         GPIO_InitStruct.Pull = GPIO_NOPULL;
     }
 
-    HAL_GPIO_Init(PIN_STPORT(pin), &GPIO_InitStruct);
+    HAL_GPIO_Init(gpio_port, &GPIO_InitStruct);
 }
 
 static void stm32_pin_write(struct ym_pin_device *device, int pin, pin_level_e level)
@@ -156,52 +228,5 @@ static const struct ym_pin_ops _stm32_pin_ops = {
 
 int ym_hw_pin_init(void)
 {
-#if defined(__HAL_RCC_GPIOA_CLK_ENABLE)
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-#endif
-
-#if defined(__HAL_RCC_GPIOB_CLK_ENABLE)
-    __HAL_RCC_GPIOB_CLK_ENABLE();
-#endif
-
-#if defined(__HAL_RCC_GPIOC_CLK_ENABLE)
-    __HAL_RCC_GPIOC_CLK_ENABLE();
-#endif
-
-#if defined(__HAL_RCC_GPIOD_CLK_ENABLE)
-    __HAL_RCC_GPIOD_CLK_ENABLE();
-#endif
-
-#if defined(__HAL_RCC_GPIOE_CLK_ENABLE)
-    __HAL_RCC_GPIOE_CLK_ENABLE();
-#endif
-
-#if defined(__HAL_RCC_GPIOF_CLK_ENABLE)
-    __HAL_RCC_GPIOF_CLK_ENABLE();
-#endif
-
-#if defined(__HAL_RCC_GPIOG_CLK_ENABLE)
-#ifdef SOC_SERIES_STM32L4
-    HAL_PWREx_EnableVddIO2();
-#endif
-    __HAL_RCC_GPIOG_CLK_ENABLE();
-#endif
-
-#if defined(__HAL_RCC_GPIOH_CLK_ENABLE)
-    __HAL_RCC_GPIOH_CLK_ENABLE();
-#endif
-
-#if defined(__HAL_RCC_GPIOI_CLK_ENABLE)
-    __HAL_RCC_GPIOI_CLK_ENABLE();
-#endif
-
-#if defined(__HAL_RCC_GPIOJ_CLK_ENABLE)
-    __HAL_RCC_GPIOJ_CLK_ENABLE();
-#endif
-
-#if defined(__HAL_RCC_GPIOK_CLK_ENABLE)
-    __HAL_RCC_GPIOK_CLK_ENABLE();
-#endif
-
     return ym_pin_register("pin", &_stm32_pin_ops, 0);
 }

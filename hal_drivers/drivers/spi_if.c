@@ -48,6 +48,7 @@ static ym_err_t spi1_hw_configure(struct ym_spi_interface *spi_inf, struct ym_sp
     return YM_EOK;
 }
 
+//TODO: 其它SPi接口的移植及防嵌套处理
 static ym_uint32_t spi1_hw_xfer(struct ym_spi_interface *spi_inf, struct ym_spi_message *message)
 {
     HAL_StatusTypeDef state;
@@ -114,7 +115,7 @@ static ym_uint32_t spi1_hw_xfer(struct ym_spi_interface *spi_inf, struct ym_spi_
 
             _bus->spi_handle.State = HAL_SPI_STATE_READY;
         } else {
-            while (_bus->state != TRANSFER_COMPLETE) {
+            while (_bus->state != TRANSFER_COMPLETE) { //TODO: 传输等待过程中任务的嵌套调用及超时判断
                 // if (Clock_Time() > time_end) {
                 //     kprint("spi1 transfer timeout\r\n");
                 //     message->length = 0;
