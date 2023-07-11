@@ -23,7 +23,7 @@ typedef struct
 	float mag[MFX_NUM_AXES];                 /* Calibrated mag [uT/50] */
 	float acc[MFX_NUM_AXES];                 /* Acceleration in [g] */
 	float gyro[MFX_NUM_AXES];                /* Angular rate [dps] */
-} MFX_input_t;
+} MFX_input_t1;
 
 typedef struct
 {
@@ -33,7 +33,7 @@ typedef struct
 	float linear_acceleration[MFX_NUM_AXES]; /* device frame linear acceleration */
 	float heading;                           /* heading */
 	float headingErr;                        /* heading error in deg */
-} MFX_output_t;
+} MFX_output_t1;
 
 
 typedef struct
@@ -76,4 +76,3 @@ void skt_irq_handle(void);
 
 uint8_t skt_test(void);
 #endif /*__SKT_IF_H */
-

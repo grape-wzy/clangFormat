@@ -26,8 +26,20 @@
 - MotionTL 倾斜测量
 - MotionVC 垂直环境库
 
-![Alt text](X-CUBE-MEMS1.png)
+![Alt text](.readme/X-CUBE-MEMS1.png)
 
 ## STM32_WPAN
 
 该组件移植自 [STM32CubeWB software]/Middlewares/ST/STM32_WPAN，提供了BLE层的通讯API
+
+## 静态库命名规则
+
+> 规则参考自 `emwin`
+
+![Alt text](.readme/Naming_Rule.png)
+
+## 参考链接
+
+[将STemWin526_CM3_Keil.lib更换成STemWin V5.44版本](https://blog.csdn.net/qq_41359157/article/details/112363485)
+
+[关于移植STemwin时候最新.a库的调用方法](https://blog.csdn.net/weixin_43159515/article/details/104969070)

@@ -500,12 +500,6 @@
             "path": "../../applications/pm_proc.c"
           },
           {
-            "path": "../../applications/stm32wbxx_it.c"
-          },
-          {
-            "path": "../../applications/system_stm32wbxx.c"
-          },
-          {
             "path": "../../applications/user_global.c"
           }
         ],
@@ -598,74 +592,89 @@
         ]
       },
       {
-        "name": "STM32_WPAN",
+        "name": "st_middlewares",
         "files": [],
         "folders": [
           {
-            "name": "ble",
+            "name": "MotionFX",
             "files": [
               {
-                "path": "../../components/ST/STM32_WPAN/ble/core/auto/ble_gap_aci.c"
-              },
-              {
-                "path": "../../components/ST/STM32_WPAN/ble/core/auto/ble_gatt_aci.c"
-              },
-              {
-                "path": "../../components/ST/STM32_WPAN/ble/core/auto/ble_hal_aci.c"
-              },
-              {
-                "path": "../../components/ST/STM32_WPAN/ble/core/auto/ble_hci_le.c"
-              },
-              {
-                "path": "../../components/ST/STM32_WPAN/ble/core/auto/ble_l2cap_aci.c"
-              },
-              {
-                "path": "../../components/ST/STM32_WPAN/ble/core/template/osal.c"
+                "path": "../../components/ST/STM32_MotionFX_Library/Lib/MotionFX_CM4F_wc32_ot_hard.a"
               }
             ],
             "folders": []
           },
           {
-            "name": "interface",
-            "files": [
+            "name": "STM32_WPAN",
+            "files": [],
+            "folders": [
               {
-                "path": "../../components/ST/STM32_WPAN/interface/patterns/ble_thread/shci/shci.c"
+                "name": "ble",
+                "files": [
+                  {
+                    "path": "../../components/ST/STM32_WPAN/ble/core/auto/ble_gap_aci.c"
+                  },
+                  {
+                    "path": "../../components/ST/STM32_WPAN/ble/core/auto/ble_gatt_aci.c"
+                  },
+                  {
+                    "path": "../../components/ST/STM32_WPAN/ble/core/auto/ble_hal_aci.c"
+                  },
+                  {
+                    "path": "../../components/ST/STM32_WPAN/ble/core/auto/ble_hci_le.c"
+                  },
+                  {
+                    "path": "../../components/ST/STM32_WPAN/ble/core/auto/ble_l2cap_aci.c"
+                  },
+                  {
+                    "path": "../../components/ST/STM32_WPAN/ble/core/template/osal.c"
+                  }
+                ],
+                "folders": []
               },
               {
-                "path": "../../components/ST/STM32_WPAN/interface/patterns/ble_thread/tl/hci_tl_if.c"
+                "name": "interface",
+                "files": [
+                  {
+                    "path": "../../components/ST/STM32_WPAN/interface/patterns/ble_thread/shci/shci.c"
+                  },
+                  {
+                    "path": "../../components/ST/STM32_WPAN/interface/patterns/ble_thread/tl/hci_tl_if.c"
+                  },
+                  {
+                    "path": "../../components/ST/STM32_WPAN/interface/patterns/ble_thread/tl/hci_tl.c"
+                  },
+                  {
+                    "path": "../../components/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c"
+                  },
+                  {
+                    "path": "../../components/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl.c"
+                  },
+                  {
+                    "path": "../../components/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_mbox.c"
+                  }
+                ],
+                "folders": []
               },
               {
-                "path": "../../components/ST/STM32_WPAN/interface/patterns/ble_thread/tl/hci_tl.c"
-              },
-              {
-                "path": "../../components/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c"
-              },
-              {
-                "path": "../../components/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl.c"
-              },
-              {
-                "path": "../../components/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_mbox.c"
+                "name": "utilities",
+                "files": [
+                  {
+                    "path": "../../components/ST/STM32_WPAN/utilities/dbg_trace.c"
+                  },
+                  {
+                    "path": "../../components/ST/STM32_WPAN/utilities/otp.c"
+                  },
+                  {
+                    "path": "../../components/ST/STM32_WPAN/utilities/stm_list.c"
+                  },
+                  {
+                    "path": "../../components/ST/STM32_WPAN/utilities/stm_queue.c"
+                  }
+                ],
+                "folders": []
               }
-            ],
-            "folders": []
-          },
-          {
-            "name": "utilities",
-            "files": [
-              {
-                "path": "../../components/ST/STM32_WPAN/utilities/dbg_trace.c"
-              },
-              {
-                "path": "../../components/ST/STM32_WPAN/utilities/otp.c"
-              },
-              {
-                "path": "../../components/ST/STM32_WPAN/utilities/stm_list.c"
-              },
-              {
-                "path": "../../components/ST/STM32_WPAN/utilities/stm_queue.c"
-              }
-            ],
-            "folders": []
+            ]
           }
         ]
       },
@@ -874,12 +883,14 @@
         "<virtual_root>/Utilities/lpm",
         "<virtual_root>/applications/stm32wbxx_it.c",
         "<virtual_root>/applications/system_stm32wbxx.c",
-        "<virtual_root>/user_drivers/acc_gyro/lsm6ds3tr-c_reg.c"
+        "<virtual_root>/user_drivers/acc_gyro/lsm6ds3tr-c_reg.c",
+        "<virtual_root>/st_middlewares/MotionFX/MotionFX_CM4F_wc32_ot.a",
+        "<virtual_root>/bsp/syscalls.c"
       ],
       "toolchain": "GCC",
       "compileConfig": {
         "cpuType": "Cortex-M4",
-        "floatingPointHardware": "none",
+        "floatingPointHardware": "single",
         "scatterFilePath": "../../hal_drivers/compiler/gcc/stm32wb55xx_flash_cm4.ld",
         "useCustomScatterFile": true,
         "storageLayout": {
@@ -966,16 +977,20 @@
           "../../hal_drivers/drivers/include",
           "../../components/drivers",
           "../../include",
-          "../../components/imu/lsm6ds3_STdC/driver"
+          "../../components/imu/lsm6ds3_STdC/driver",
+          "../../components/ST/STM32_MotionFX_Library/Inc"
         ],
-        "libList": [],
+        "libList": [
+          "../../components/ST/STM32_MotionFX_Library/Lib"
+        ],
         "sourceDirList": [],
         "defineList": [
           "STM32WB55xx",
           "ARM_MATH_CM4",
           "STM32WB55CE",
           "USE_HAL_DRIVER",
-          "USE_FULL_LL_DRIVER "
+          "USE_FULL_LL_DRIVER ",
+          "DEBUG"
         ]
       }
     },

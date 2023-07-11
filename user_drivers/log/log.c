@@ -387,7 +387,7 @@ uint8_t klog_get(void)
 #pragma endregion
 
 #pragma region 中断
-#if 0
+#if 1
 void KLOG_USARTx_IRQHandler(void)
 {
     HAL_UART_IRQHandler(&sKlogHandle);
@@ -645,7 +645,7 @@ void *_sbrk(ptrdiff_t incr)
 }
 #endif
 #endif
-#if 0
+#if 1
 /* Functions */
 void initialise_monitor_handles()
 {

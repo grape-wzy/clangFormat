@@ -469,8 +469,8 @@ static uint8_t acc_gyro_hal_get_result(ACC_GYRO_FDATA_T *fData, uint32_t number)
                                 raw_data[2],
                                 lsm6ds3_acc_scale);
 
-        kprint("Acceleration [mg]:%4.2f\t%4.2f\t%4.2f\r\n",
-               fData[num]->acc.x, fData[num]->acc.y, fData[num]->acc.z);
+        // kprint("Acceleration [mg]:%4.2f\t%4.2f\t%4.2f\r\n",
+        //        fData[num]->acc.x, fData[num]->acc.y, fData[num]->acc.z);
 
         /* Read magnetic field data */
         memset(raw_data, 0x00, 3 * sizeof(int16_t));
@@ -485,8 +485,8 @@ static uint8_t acc_gyro_hal_get_result(ACC_GYRO_FDATA_T *fData, uint32_t number)
                                    raw_data[2],
                                    lsm6ds3_gypo_scale);
 
-        kprint("Angular rate [mdps]:%4.2f\t%4.2f\t%4.2f\r\n",
-               fData[num]->gyro.x, fData[num]->gyro.y, fData[num]->gyro.z);
+        // kprint("Angular rate [mdps]:%4.2f\t%4.2f\t%4.2f\r\n",
+        //        fData[num]->gyro.x, fData[num]->gyro.y, fData[num]->gyro.z);
 
         retry = 0;
         num++;

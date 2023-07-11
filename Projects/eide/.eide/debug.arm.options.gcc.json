@@ -20,6 +20,6 @@
         "output-format": "elf",
         "remove-unused-input-sections": true,
         "LIB_FLAGS": "-lm",
-        "not-print-mem-usage": true
+        "LD_FLAGS": "-u _printf_float"
     }
 }
