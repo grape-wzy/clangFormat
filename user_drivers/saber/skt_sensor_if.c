@@ -12,8 +12,6 @@
 #include "skt_if.h"
 #include "saber_drv.h"
 #include "saber_config.h"
-#include "spi_if.h"
-
 
 #ifdef ENABLE_SKT_SENSOR
 

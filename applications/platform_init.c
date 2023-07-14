@@ -13,10 +13,6 @@
 #include "pm_proc.h"
 #include "pd_proc.h"
 #include "acc_gyro_if.h"
-#include "spi_if.h"
-
-#include "drv_pin.h"
-#include "driver_cfg.h"
 
 void Error_Handler(void);
 
@@ -75,62 +71,6 @@ void platform_init(void)
 
 	kprint("ok\r\n");
 
-}
-
-#define TIMEOUT_DURATION 100
-
-static struct ym_spi_interface acc_dev;
-
-uint8_t spi_ReadReg(void *handle, uint8_t reg, uint8_t *data, uint16_t size)
-{
-    uint8_t read = (reg | 0x80);
-
-    if (YM_EOK != ym_spi_interface_send_then_recv(&acc_dev,
-                                                  &read,
-                                                  1,
-                                                  data,
-                                                  size)) {
-        return STD_FAILED;
-    }
-
-    return 0;
-}
-
-uint8_t spi_WriteReg(void *handle, uint8_t reg, uint8_t *data, uint16_t size)
-{
-    uint8_t read = (reg & 0x7F);
-
-    if (YM_EOK != ym_spi_interface_send_then_send(&acc_dev,
-                                                  &read,
-                                                  1,
-                                                  data,
-                                                  size)) {
-        return STD_FAILED;
-    }
-
-    return 0;
-}
-
-void acc_gpro_init(void)
-{
-    ym_interface_t spi_bus = ym_interface_find_by_name("spi1");
-    ym_spi_interface_register(&acc_dev,
-                              "acc_gyro",
-                              (struct ym_spi_inf_bus *)spi_bus,
-                              GET_PIN(A, 4), 0);
-
-    ACC_GYRO_CONFIG_TypeDef acc_gyro_config = {
-        AHRS_ACC_GYRO_DATA_RATE,
-        AHRS_GYRO_SCALE,
-        AHRS_ACC_SCALE,
-        AHRS_ACC_GYRO_POWER_MODE,
-        spi_WriteReg,
-        spi_ReadReg,
-        NULL,
-        NULL,
-    };
-
-    acc_gyro_init(&acc_gyro_config);
 }
 
 /*******************************************************************************

@@ -66,7 +66,7 @@ uint32_t crc32_accumulate(uint32_t pBuffer[], uint32_t BufferLength, bool reset)
 
 	return HAL_CRC_Accumulate(&CrcHandle, pBuffer, BufferLength / 4);
 }
-#if 0
+
 void HAL_CRC_MspInit(CRC_HandleTypeDef* hcrc)
 {
 	/* CRC Peripheral clock enable */
@@ -90,8 +90,6 @@ void HAL_CRC_MspDeInit(CRC_HandleTypeDef* hcrc)
 
 	__HAL_RCC_CRC_CLK_DISABLE();
 }
-
-#endif
 
 const uint8_t aDataBufferByte[] = {
 	  0x00,0x00,0x10,0x21, 0x20,0x42,0x30,0x63, 0x40,0x84,0x50,0xa5, 0x60,0xc6,0x70,0xe7, 0x91,0x29,0xa1,0x4a, 0xb1,0x6b,0xc1,0x8c,

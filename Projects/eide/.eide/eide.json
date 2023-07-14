@@ -500,70 +500,16 @@
             "path": "../../applications/pm_proc.c"
           },
           {
+            "path": "../../applications/system_stm32wbxx.c"
+          },
+          {
             "path": "../../applications/user_global.c"
           }
         ],
         "folders": []
       },
       {
-        "name": "bsp",
-        "files": [
-          {
-            "path": "../../bsp/bsp_init.c"
-          },
-          {
-            "path": "../../bsp/CubeMX_config/Core/Src/stm32wbxx_hal_msp.c"
-          },
-          {
-            "path": "../../bsp/CubeMX_config/Core/Src/stm32wbxx_it.c"
-          },
-          {
-            "path": "../../bsp/CubeMX_config/Core/Src/syscalls.c"
-          },
-          {
-            "path": "../../bsp/CubeMX_config/Core/Src/sysmem.c"
-          },
-          {
-            "path": "../../bsp/CubeMX_config/Core/Src/system_stm32wbxx.c"
-          }
-        ],
-        "folders": []
-      },
-      {
-        "name": "components",
-        "files": [],
-        "folders": [
-          {
-            "name": "IMU",
-            "files": [
-              {
-                "path": "../../components/imu/lsm6ds3tr-c_STdC/driver/lsm6ds3tr-c_reg.c"
-              }
-            ],
-            "folders": []
-          }
-        ]
-      },
-      {
-        "name": "drivers",
-        "files": [
-          {
-            "path": "../../components/drivers/interface/interface.c"
-          },
-          {
-            "path": "../../components/drivers/interface/spi/spi_interface.c"
-          },
-          {
-            "path": "../../components/drivers/misc/pin.c"
-          },
-          {
-            "path": "../../hal_drivers/drivers/spi_if.c"
-          }
-        ],
-        "folders": []
-      },
-      {
-        "name": "hal",
+        "name": "hal_driver",
         "files": [],
         "folders": [
           {
@@ -571,15 +517,6 @@
             "files": [
               {
                 "path": "../../hal_drivers/compiler/gcc/startup_stm32wb55xx_cm4.s"
-              }
-            ],
-            "folders": []
-          },
-          {
-            "name": "drivers",
-            "files": [
-              {
-                "path": "../../hal_drivers/drivers/drv_pin.c"
               }
             ],
             "folders": []
@@ -597,11 +534,7 @@
         "folders": [
           {
             "name": "MotionFX",
-            "files": [
-              {
-                "path": "../../components/ST/STM32_MotionFX_Library/Lib/MotionFX_CM4F_wc32_ot_hard.a"
-              }
-            ],
+            "files": [],
             "folders": []
           },
           {
@@ -683,31 +616,13 @@
         "files": [],
         "folders": [
           {
-            "name": "acc_gyro",
-            "files": [
-              {
-                "path": "../../components/imu/lsm6ds3_STdC/driver/lsm6ds3_reg.c"
-              },
-              {
-                "path": "../../components/imu/lsm6ds3tr-c_STdC/driver/lsm6ds3tr-c_reg.c"
-              },
-              {
-                "path": "../../user_drivers/imu/acc_gyro_if.c"
-              }
-            ],
-            "folders": []
-          },
-          {
             "name": "ahrs",
             "files": [
               {
+                "path": "../../components/ST/STM32_MotionFX_Library/Lib/MotionFX_CM4F_wc32_ot_hard.a"
+              },
+              {
                 "path": "../../user_drivers/ahrs/ahrs_if.c"
-              },
-              {
-                "path": "../../user_drivers/ahrs/motionFX/motion_fx_manager.c"
-              },
-              {
-                "path": "../../user_drivers/ahrs/motionFX/MotionFX_CM4F_wc32_ot_hard.a"
               }
             ],
             "folders": []
@@ -777,6 +692,18 @@
               },
               {
                 "path": "../../user_drivers/iap/iap.c"
+              }
+            ],
+            "folders": []
+          },
+          {
+            "name": "imu",
+            "files": [
+              {
+                "path": "../../components/imu/lsm6ds3_STdC/driver/lsm6ds3_reg.c"
+              },
+              {
+                "path": "../../user_drivers/imu/acc_gyro_if.c"
               }
             ],
             "folders": []
@@ -879,13 +806,18 @@
         "<virtual_root>/user_drivers/ahrs/ahrs_if.c",
         "<virtual_root>/bsp/startup_stm32wb55xx_cm4.c",
         "<virtual_root>/user_drivers/ahrs/motion_fx_manager.c",
-        "<virtual_root>/user_drivers/ahrs/MotionFX_CM4F_wc32_ot_hard.a",
         "<virtual_root>/Utilities/lpm",
         "<virtual_root>/applications/stm32wbxx_it.c",
-        "<virtual_root>/applications/system_stm32wbxx.c",
         "<virtual_root>/user_drivers/acc_gyro/lsm6ds3tr-c_reg.c",
         "<virtual_root>/st_middlewares/MotionFX/MotionFX_CM4F_wc32_ot.a",
-        "<virtual_root>/bsp/syscalls.c"
+        "<virtual_root>/bsp/syscalls.c",
+        "<virtual_root>/bsp/stm32wbxx_hal_msp.c",
+        "<virtual_root>/bsp/sysmem.c",
+        "<virtual_root>/bsp/system_stm32wbxx.c",
+        "<virtual_root>/bsp/stm32wbxx_it.c",
+        "<virtual_root>/bsp/bsp_init.c",
+        "<virtual_root>/bsp",
+        "<virtual_root>/drivers"
       ],
       "toolchain": "GCC",
       "compileConfig": {
