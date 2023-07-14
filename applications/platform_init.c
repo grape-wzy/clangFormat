@@ -54,19 +54,19 @@ void platform_init(void)
 	log_flush();
 
 	crc32_init();
-	iap_init();
+    // iap_init();
 
-	flash_register_callback(ble_is_init);
+    // flash_register_callback(ble_is_init);
 
-	rng_init();
-	pd_init();
+    // rng_init();
+    // pd_init();
 
-	pwr_init();
-	log_flush();
+    // pwr_init();
+    log_flush();
 
-	itask_init();
+    // itask_init();
 
-	led_ctrl(LED_MODE_G_CTRL, 0);
+    led_ctrl(LED_MODE_G_CTRL, 0);
 	led_ctrl(LED_MODE_Y_BLINK, 0);
 
 	kprint("ok\r\n");

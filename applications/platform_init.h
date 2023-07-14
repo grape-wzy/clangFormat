@@ -16,8 +16,6 @@
 
 /*用户外设相关变量、宏定义、函数的声明*/
 
-void acc_gpro_init(void);
-
 void platform_init(void);
 void platform_deinit(void);
 

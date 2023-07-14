@@ -11,13 +11,9 @@
 #include "platform.h"
 #include "standard_lib.h"
 
-
-
 static SPI_HandleTypeDef aSpiHandle;
 
-static 	uint8_t spi_ll_transmit_receive(SPI_HandleTypeDef* hspi, uint8_t *  pTxData, uint8_t *  pRxData, uint16_t Size,
-	uint32_t Timeout);
-
+static uint8_t spi_ll_transmit_receive(SPI_HandleTypeDef *hspi, uint8_t *pTxData, uint8_t *pRxData, uint16_t Size, uint32_t Timeout);
 static void spi_a_hw_mspinit(SPI_HandleTypeDef* hspi);
 static void spi_a_hw_mspdeinit(SPI_HandleTypeDef* hspi);
 
@@ -86,66 +82,77 @@ void spi_a_hw_mspinit(SPI_HandleTypeDef* hspi)
 		SPI_A_HW_MISO_CLK_ENABLE();
 		SPI_A_HW_MOSI_CLK_ENABLE();
 		SPI_A_HW_CS_CLK_ENABLE();
-		SPI_A_HW_READY_CLK_ENABLE();
-		/* Enable SPI clock */
-		SPI_A_HW_CLK_ENABLE();
+#ifdef USE_SENSOR_READY_PIN
+        SPI_A_HW_READY_CLK_ENABLE();
+#endif
+        /* Enable SPI clock */
+        SPI_A_HW_CLK_ENABLE();
 
-		/* SCLK */
-		GPIO_InitStruct.Pin = SPI_A_HW_SCLK_PIN;
-		GPIO_InitStruct.Mode = SPI_A_HW_SCLK_MODE;
-		GPIO_InitStruct.Pull = SPI_A_HW_SCLK_PULL;
-		GPIO_InitStruct.Speed = SPI_A_HW_SCLK_SPEED;
-		GPIO_InitStruct.Alternate = SPI_A_HW_SCLK_ALTERNATE;
-		HAL_GPIO_Init(SPI_A_HW_SCLK_PORT, &GPIO_InitStruct);
+        /* SCLK */
+        GPIO_InitStruct.Pin       = SPI_A_HW_SCLK_PIN;
+        GPIO_InitStruct.Mode      = SPI_A_HW_SCLK_MODE;
+        GPIO_InitStruct.Pull      = SPI_A_HW_SCLK_PULL;
+        GPIO_InitStruct.Speed     = SPI_A_HW_SCLK_SPEED;
+        GPIO_InitStruct.Alternate = SPI_A_HW_SCLK_ALTERNATE;
+        HAL_GPIO_Init(SPI_A_HW_SCLK_PORT, &GPIO_InitStruct);
 
-		/* MISO */
-		GPIO_InitStruct.Pin = SPI_A_HW_MISO_PIN;
-		GPIO_InitStruct.Mode = SPI_A_HW_MISO_MODE;
-		GPIO_InitStruct.Pull = SPI_A_HW_MISO_PULL;
-		GPIO_InitStruct.Speed = SPI_A_HW_MISO_SPEED;
-		GPIO_InitStruct.Alternate = SPI_A_HW_MISO_ALTERNATE;
-		HAL_GPIO_Init(SPI_A_HW_MISO_PORT, &GPIO_InitStruct);
+        /* MISO */
+        GPIO_InitStruct.Pin       = SPI_A_HW_MISO_PIN;
+        GPIO_InitStruct.Mode      = SPI_A_HW_MISO_MODE;
+        GPIO_InitStruct.Pull      = SPI_A_HW_MISO_PULL;
+        GPIO_InitStruct.Speed     = SPI_A_HW_MISO_SPEED;
+        GPIO_InitStruct.Alternate = SPI_A_HW_MISO_ALTERNATE;
+        HAL_GPIO_Init(SPI_A_HW_MISO_PORT, &GPIO_InitStruct);
 
-		/* MOSI */
-		GPIO_InitStruct.Pin = SPI_A_HW_MOSI_PIN;
-		GPIO_InitStruct.Mode = SPI_A_HW_MOSI_MODE;
-		GPIO_InitStruct.Pull = SPI_A_HW_MOSI_PULL;
-		GPIO_InitStruct.Speed = SPI_A_HW_MOSI_SPEED;
-		GPIO_InitStruct.Alternate = SPI_A_HW_MOSI_ALTERNATE;
-		HAL_GPIO_Init(SPI_A_HW_MOSI_PORT, &GPIO_InitStruct);
+        /* MOSI */
+        GPIO_InitStruct.Pin       = SPI_A_HW_MOSI_PIN;
+        GPIO_InitStruct.Mode      = SPI_A_HW_MOSI_MODE;
+        GPIO_InitStruct.Pull      = SPI_A_HW_MOSI_PULL;
+        GPIO_InitStruct.Speed     = SPI_A_HW_MOSI_SPEED;
+        GPIO_InitStruct.Alternate = SPI_A_HW_MOSI_ALTERNATE;
+        HAL_GPIO_Init(SPI_A_HW_MOSI_PORT, &GPIO_InitStruct);
 
+        /* NSS/CSN/CS */
+        GPIO_InitStruct.Pin       = SPI_A_HW_CS_PIN;
+        GPIO_InitStruct.Mode      = SPI_A_HW_CS_MODE;
+        GPIO_InitStruct.Pull      = SPI_A_HW_CS_PULL;
+        GPIO_InitStruct.Speed     = SPI_A_HW_CS_SPEED;
+        GPIO_InitStruct.Alternate = SPI_A_HW_CS_ALTERNATE;
+        HAL_GPIO_Init(SPI_A_HW_CS_PORT, &GPIO_InitStruct);
+        SPI_A_HW_CS(1);
 
-		/* NSS/CSN/CS */
-		GPIO_InitStruct.Pin = SPI_A_HW_CS_PIN;
-		GPIO_InitStruct.Mode = SPI_A_HW_CS_MODE;
-		GPIO_InitStruct.Pull = SPI_A_HW_CS_PULL;
-		GPIO_InitStruct.Speed = SPI_A_HW_CS_SPEED;
-		GPIO_InitStruct.Alternate = SPI_A_HW_CS_ALTERNATE;
-		HAL_GPIO_Init(SPI_A_HW_CS_PORT, &GPIO_InitStruct);
-		SPI_A_HW_CS(1);
+#ifdef USE_SENSOR_RESET_PIN
+        /* RESET */
+        GPIO_InitStruct.Pin       = SPI_A_HW_RESET_PIN;
+        GPIO_InitStruct.Mode      = SPI_A_HW_RESET_MODE;
+        GPIO_InitStruct.Pull      = SPI_A_HW_RESET_PULL;
+        GPIO_InitStruct.Speed     = SPI_A_HW_RESET_SPEED;
+        GPIO_InitStruct.Alternate = SPI_A_HW_RESET_ALTERNATE;
+        HAL_GPIO_Init(SPI_A_HW_RESET_PORT, &GPIO_InitStruct);
+        spi_a_hw_reset(1);
+#endif
 
+#ifdef USE_SENSOR_READY_PIN
+#ifdef ENABLE_READY_HARDWARE_INTERRUPT
 
-		/* RESET */
-		GPIO_InitStruct.Pin = SPI_A_HW_RESET_PIN;
-		GPIO_InitStruct.Mode = SPI_A_HW_RESET_MODE;
-		GPIO_InitStruct.Pull = SPI_A_HW_RESET_PULL;
-		GPIO_InitStruct.Speed = SPI_A_HW_RESET_SPEED;
-		GPIO_InitStruct.Alternate = SPI_A_HW_RESET_ALTERNATE;
-		HAL_GPIO_Init(SPI_A_HW_RESET_PORT, &GPIO_InitStruct);
-		SPI_A_HW_RESET(1);
+        /* READY */
+        GPIO_InitStruct.Pin  = SPI_A_HW_READY_PIN;
+        GPIO_InitStruct.Mode = SPI_A_HW_READY_MODE;
+        GPIO_InitStruct.Pull = SPI_A_HW_READY_PULL;
+        //GPIO_InitStruct.Speed = SPI_A_HW_READY_SPEED;
+        //GPIO_InitStruct.Alternate = SPI_A_HW_READY_ALTERNATE;
+        HAL_GPIO_Init(SPI_A_HW_READY_PORT, &GPIO_InitStruct);
+#else
+        LL_EXTI_DisableEvent_0_31(SPI_A_HW_READY_EXTI_PIN);
+        LL_EXTI_EnableIT_0_31(SPI_A_HW_READY_EXTI_PIN);
+#endif
+#endif
 
-
-		/* READY */
-		GPIO_InitStruct.Pin = SPI_A_HW_READY_PIN;
-		GPIO_InitStruct.Mode = SPI_A_HW_READY_MODE;
-		GPIO_InitStruct.Pull = SPI_A_HW_READY_PULL;
-		//GPIO_InitStruct.Speed = SPI_A_HW_READY_SPEED;
-		//GPIO_InitStruct.Alternate = SPI_A_HW_READY_ALTERNATE;
-		HAL_GPIO_Init(SPI_A_HW_READY_PORT, &GPIO_InitStruct);
-
-		/* Enable and set line 4 Interrupt to the lowest priority */
-		HAL_NVIC_SetPriority(SPI_A_HW_READY_EXTI_IRQn, SPI_A_HW_DRDY_NVIC_PreemptionPriority, SPI_A_HW_DRDY_NVIC_SubPriority);
-		//HAL_NVIC_EnableIRQ(SPI_A_HW_READY_EXTI_IRQn);
+#ifdef USE_SENSOR_READY_PIN
+        /* Enable and set line 4 Interrupt to the lowest priority */
+        HAL_NVIC_SetPriority(SPI_A_HW_READY_EXTI_IRQn, SPI_A_HW_DRDY_NVIC_PreemptionPriority, SPI_A_HW_DRDY_NVIC_SubPriority);
+        //HAL_NVIC_EnableIRQ(SPI_A_HW_READY_EXTI_IRQn);
+#endif
     }
 }
 
@@ -161,49 +168,66 @@ void spi_a_hw_mspdeinit(SPI_HandleTypeDef* hspi)
 		HAL_GPIO_DeInit(SPI_A_HW_MOSI_PORT, SPI_A_HW_MOSI_PIN);
 		HAL_GPIO_DeInit(SPI_A_HW_MISO_PORT, SPI_A_HW_MISO_PIN);
 		HAL_GPIO_DeInit(SPI_A_HW_SCLK_PORT, SPI_A_HW_SCLK_PIN);
-		HAL_GPIO_DeInit(SPI_A_HW_RESET_PORT, SPI_A_HW_RESET_PIN);
-		HAL_GPIO_DeInit(SPI_A_HW_READY_PORT, SPI_A_HW_READY_PIN);
-	}
+#ifdef USE_SENSOR_RESET_PIN
+        HAL_GPIO_DeInit(SPI_A_HW_RESET_PORT, SPI_A_HW_RESET_PIN);
+#endif
+#ifdef ENABLE_READY_HARDWARE_INTERRUPT
+#ifdef USE_SENSOR_READY_PIN
+        HAL_GPIO_DeInit(SPI_A_HW_READY_PORT, SPI_A_HW_READY_PIN);
+#endif
+#endif
+#ifdef USE_SENSOR_SYNC_PIN
+        HAL_GPIO_DeInit(SPI_A_HW_SYNC_PORT, SPI_A_HW_SYNC_PIN);
+#endif
+    }
 }
 
 uint8_t spi_a_hw_transmit_receive(uint8_t* pTxData, uint8_t* pRxData, uint16_t Size, uint32_t Timeout)
 {
     uint8_t ret = STD_SUCCESS;
 	SPI_A_HW_CS(0);
-	//if ((HAL_SPI_TransmitReceive(&aSpiHandle, pTxData, pRxData, Size, Timeout)) != HAL_OK)
-	//{
-	//	ret = STD_FAILED;
-	//}
-	ret = spi_ll_transmit_receive(&aSpiHandle, pTxData, pRxData, Size, Timeout);
-	SPI_A_HW_CS(1);
-	return ret;
+    if ((HAL_SPI_TransmitReceive(&aSpiHandle, pTxData, pRxData, Size, Timeout)) != HAL_OK) {
+        ret = STD_FAILED;
+    }
+    // ret = spi_ll_transmit_receive(&aSpiHandle, pTxData, pRxData, Size, Timeout);
+    SPI_A_HW_CS(1);
+    return ret;
 }
 
 uint8_t spi_a_hw_reset(uint8_t enable)
 {
-	SPI_A_HW_RESET(enable);
-	return STD_SUCCESS;
+#ifdef USE_SENSOR_RESET_PIN
+    SPI_A_HW_RESET(enable);
+#endif
+    return STD_SUCCESS;
 }
 
 uint8_t spi_a_hw_get_ready(void)
 {
-	return SPI_A_HW_READ_READY();
+#ifdef USE_SENSOR_READY_PIN
+    if (__HAL_GPIO_EXTI_GET_IT(SPI_A_HW_READY_EXTI_PIN) != RESET) {
+        __HAL_GPIO_EXTI_CLEAR_IT(SPI_A_HW_READY_EXTI_PIN);
+        return true;
+    } else {
+        return false;
+    }
+
+#endif
+    return true;
 }
 
 uint8_t spi_a_hw_enable_irq(uint8_t en)
 {
-	if (en)
-	{
-		__HAL_GPIO_EXTI_CLEAR_IT(SPI_A_HW_READY_EXTI_PIN);
-		HAL_NVIC_EnableIRQ(SPI_A_HW_READY_EXTI_IRQn);
-	}
-	else
-	{
-
-		HAL_NVIC_DisableIRQ(SPI_A_HW_READY_EXTI_IRQn);
-		__HAL_GPIO_EXTI_CLEAR_IT(SPI_A_HW_READY_EXTI_PIN);
-	}
-	return STD_SUCCESS;
+#ifdef USE_SENSOR_READY_PIN
+    if (en) {
+        __HAL_GPIO_EXTI_CLEAR_IT(SPI_A_HW_READY_EXTI_PIN);
+        HAL_NVIC_EnableIRQ(SPI_A_HW_READY_EXTI_IRQn);
+    } else {
+        HAL_NVIC_DisableIRQ(SPI_A_HW_READY_EXTI_IRQn);
+        __HAL_GPIO_EXTI_CLEAR_IT(SPI_A_HW_READY_EXTI_PIN);
+    }
+#endif
+    return STD_SUCCESS;
 }
 
 uint8_t spi_a_hw_set_cs(uint8_t cs)
@@ -212,6 +236,16 @@ uint8_t spi_a_hw_set_cs(uint8_t cs)
 	return STD_SUCCESS;
 }
 
+uint8_t spi_a_hw_generate_swi(void)
+{
+#ifdef ENABLE_READY_HARDWARE_INTERRUPT
+#else
+#ifdef USE_SENSOR_READY_PIN
+    LL_EXTI_GenerateSWI_0_31(SPI_A_HW_READY_EXTI_PIN);
+#endif
+#endif
+    return STD_SUCCESS;
+}
 
 #pragma region 中断
 
@@ -226,74 +260,61 @@ void spi_a_hw_register_cb(void* cb)
 
 #pragma region Low Level
 
-uint8_t spi_ll_transmit_receive(SPI_HandleTypeDef* hspi, uint8_t* pTxData, uint8_t* pRxData, uint16_t Size,
-	uint32_t Timeout)
+uint8_t spi_ll_transmit_receive(SPI_HandleTypeDef *hspi, uint8_t *pTxData, uint8_t *pRxData, uint16_t Size, uint32_t Timeout)
 {
 
 	uint64_t TimeStart = Clock_Time();//必须
-	uint16_t* pTx = (uint16_t*)pTxData;
-	uint16_t* pRx = (uint16_t*)pRxData;
-	for (uint32_t i = 0; i < Size; i++)
-	{
-		while (!__HAL_SPI_GET_FLAG(hspi, SPI_FLAG_TXE))
-		{
+    uint16_t tx_data, rx_data;
 
-			if ((Clock_Time() - TimeStart) > Timeout)
-			{
-				return STD_FAILED;
-			}
-		}
-		hspi->Instance->DR = pTx[i];
+    for (uint32_t i = 0; i < Size; i += 2) {
+        tx_data = pTxData[i] << 8 | pTxData[i + 1];
 
-        while (!__HAL_SPI_GET_FLAG(hspi, SPI_FLAG_RXNE))
-		{
-			if ((Clock_Time() - TimeStart) > Timeout)
-			{
-				return STD_FAILED;
-			}
-		}
+        while (!__HAL_SPI_GET_FLAG(hspi, SPI_FLAG_TXE)) {
+            if ((Clock_Time() - TimeStart) > Timeout) {
+                return STD_FAILED;
+            }
+        }
+        hspi->Instance->DR = tx_data;
 
-		pRx[i] = hspi->Instance->DR;
+        while (!__HAL_SPI_GET_FLAG(hspi, SPI_FLAG_RXNE)) {
+            if ((Clock_Time() - TimeStart) > Timeout) {
+                return STD_FAILED;
+            }
+        }
 
-	}
+        rx_data = hspi->Instance->DR;
 
+        pRxData[i]     = (uint8_t)(rx_data >> 8) & 0xFF;
+        pRxData[i + 1] = (uint8_t)rx_data & 0xFF;
+    }
 
-	while ((hspi->Instance->SR & SPI_FLAG_FTLVL) != SPI_FTLVL_EMPTY)
-	{
-		if ((Clock_Time() - TimeStart) > Timeout)
-		{
-			return STD_FAILED;
-		}
-	}
+    while ((hspi->Instance->SR & SPI_FLAG_FTLVL) != SPI_FTLVL_EMPTY) {
+        if ((Clock_Time() - TimeStart) > Timeout) {
+            return STD_FAILED;
+        }
+    }
 
+    while (__HAL_SPI_GET_FLAG(hspi, SPI_FLAG_BSY) != RESET)
+    //while ((__HAL_SPI_GET_FLAG(hspi, SPI_FLAG_BSY) ? SET : RESET) != RESET)
+    {
+        if ((Clock_Time() - TimeStart) > Timeout) {
+            return STD_FAILED;
+        }
+    }
 
-	while (__HAL_SPI_GET_FLAG(hspi, SPI_FLAG_BSY) != RESET)
-	//while ((__HAL_SPI_GET_FLAG(hspi, SPI_FLAG_BSY) ? SET : RESET) != RESET)
-	{
-		if ((Clock_Time() - TimeStart) > Timeout)
-		{
-			return STD_FAILED;
-		}
-	}
+    __IO uint8_t tmpreg8 = 0;
+    while ((hspi->Instance->SR & SPI_FLAG_FRLVL) != SPI_FRLVL_EMPTY) {
+        /* Flush Data Register by a blank read */
+        tmpreg8 = READ_REG(*((__IO uint8_t *)&hspi->Instance->DR));
+        /* To avoid GCC warning */
+        UNUSED(tmpreg8);
 
+        if ((Clock_Time() - TimeStart) > Timeout) {
+            return STD_FAILED;
+        }
+    }
 
-
-	__IO uint8_t  tmpreg8 = 0;
-	while ((hspi->Instance->SR & SPI_FLAG_FRLVL) != SPI_FRLVL_EMPTY)
-	{
-
-		/* Flush Data Register by a blank read */
-		tmpreg8 = READ_REG(*((__IO uint8_t*) & hspi->Instance->DR));
-		/* To avoid GCC warning */
-		UNUSED(tmpreg8);
-
-		if ((Clock_Time() - TimeStart) > Timeout)
-		{
-			return STD_FAILED;
-		}
-	}
-
-	return STD_SUCCESS;
+    return STD_SUCCESS;
 }
 
 

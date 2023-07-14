@@ -27,9 +27,7 @@ void gpio_init(void)
 {
 
 	LEDG_CLK_ENABLE();
-	LEDY_CLK_ENABLE();
-	DEVICE_GPIO_CLK_ENABLE();
-	PWR_GPIO_CLK_ENABLE();
+    LEDY_CLK_ENABLE();
 
     GPIO_InitTypeDef GPIO_InitStruct;
 
@@ -45,15 +43,21 @@ void gpio_init(void)
     HAL_GPIO_Init(LEDY_PORT, &GPIO_InitStruct);
     ledy_ctrl(0);
 
+#ifdef USE_SENSOR_PWR_PIN
+    PWR_GPIO_CLK_ENABLE();
     GPIO_InitStruct.Pin = PWR_GPIO_PIN;
     HAL_GPIO_Init(PWR_GPIO_PORT, &GPIO_InitStruct);
     pwr_ctrl(0);
+#endif
 
-	/* Which Device*/
-	GPIO_InitStruct.Pin = DEVICE_GPIO_PIN;
-	GPIO_InitStruct.Mode = DEVICE_GPIO_MODE;
-	GPIO_InitStruct.Pull = DEVICE_GPIO_PULL;
-	HAL_GPIO_Init(DEVICE_GPIO_PORT, &GPIO_InitStruct);
+#ifdef USE_DEVICE_PIN
+    DEVICE_GPIO_CLK_ENABLE();
+    /* Which Device*/
+    GPIO_InitStruct.Pin  = DEVICE_GPIO_PIN;
+    GPIO_InitStruct.Mode = DEVICE_GPIO_MODE;
+    GPIO_InitStruct.Pull = DEVICE_GPIO_PULL;
+    HAL_GPIO_Init(DEVICE_GPIO_PORT, &GPIO_InitStruct);
+#endif
 
     ts_create(0, &(sLedTSID), TS_SingleShot, led_ts_callback);
 	sLedInterval = LED_DEFAULT_ON_INTERVAL;
@@ -63,18 +67,25 @@ void gpio_deinit(void)
 {
     HAL_GPIO_DeInit(LEDG_PORT, LEDG_PIN);
     HAL_GPIO_DeInit(LEDY_PORT, LEDY_PIN);
-	HAL_GPIO_DeInit(PWR_GPIO_PORT, PWR_GPIO_PIN);
-	HAL_GPIO_DeInit(DEVICE_GPIO_PORT, DEVICE_GPIO_PIN);
+#ifdef USE_SENSOR_PWR_PIN
+    HAL_GPIO_DeInit(PWR_GPIO_PORT, PWR_GPIO_PIN);
+#endif
+#ifdef USE_DEVICE_PIN
+    HAL_GPIO_DeInit(DEVICE_GPIO_PORT, DEVICE_GPIO_PIN);
+#endif
 }
-
 
 void pwr_ctrl(uint8_t value)
 {
+#ifdef USE_SENSOR_PWR_PIN
     PWR_GPIO_CTRL(value?0:1);
+    Clock_Wait(10);
+#endif
 }
 
 uint8_t read_device_type(void)
 {
+#ifdef USE_DEVICE_PIN
     //return DEVICE_GPIO_READ();
 
     //20220623， 模块的主从定义切换
@@ -85,6 +96,7 @@ uint8_t read_device_type(void)
     } else {
         return 1;
     }
+#endif
 }
 
 void ledg_ctrl(uint8_t value)

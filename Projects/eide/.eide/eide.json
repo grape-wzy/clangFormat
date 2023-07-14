@@ -500,6 +500,9 @@
             "path": "../../applications/pm_proc.c"
           },
           {
+            "path": "../../applications/stm32wbxx_it.c"
+          },
+          {
             "path": "../../applications/system_stm32wbxx.c"
           },
           {
@@ -623,6 +626,9 @@
               },
               {
                 "path": "../../user_drivers/ahrs/ahrs_if.c"
+              },
+              {
+                "path": "../../user_drivers/ahrs/motion_fx_manager.c"
               }
             ],
             "folders": []
@@ -703,7 +709,10 @@
                 "path": "../../components/imu/lsm6ds3_STdC/driver/lsm6ds3_reg.c"
               },
               {
-                "path": "../../user_drivers/imu/acc_gyro_if.c"
+                "path": "../../user_drivers/imu/acc_gyro_lsm6ds3.c"
+              },
+              {
+                "path": "../../user_drivers/imu/imu_if.c"
               }
             ],
             "folders": []
@@ -754,7 +763,7 @@
                 "path": "../../user_drivers/utilities/rng_if.c"
               },
               {
-                "path": "../../user_drivers/utilities/spi_a_dma_if.c"
+                "path": "../../user_drivers/utilities/spi_a_hw_if.c"
               },
               {
                 "path": "../../user_drivers/utilities/utils.c"
@@ -803,11 +812,8 @@
     "Debug": {
       "excludeList": [
         "<virtual_root>/app/spi_a_hw_if.c",
-        "<virtual_root>/user_drivers/ahrs/ahrs_if.c",
         "<virtual_root>/bsp/startup_stm32wb55xx_cm4.c",
-        "<virtual_root>/user_drivers/ahrs/motion_fx_manager.c",
         "<virtual_root>/Utilities/lpm",
-        "<virtual_root>/applications/stm32wbxx_it.c",
         "<virtual_root>/user_drivers/acc_gyro/lsm6ds3tr-c_reg.c",
         "<virtual_root>/st_middlewares/MotionFX/MotionFX_CM4F_wc32_ot.a",
         "<virtual_root>/bsp/syscalls.c",

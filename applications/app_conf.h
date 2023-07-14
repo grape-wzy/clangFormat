@@ -107,16 +107,22 @@
 /**
  * Device name configuration for Generic Access Service
  */
- // antelope羚羊 
+// antelope羚羊
 #define BLE_MICRO_CONTROLLERS               "STM32WB55CE"
 #ifdef ENABLE_SKT_SENSOR
-#define BLE_LOCAL_NAEM_DEFAULT              {AD_TYPE_COMPLETE_LOCAL_NAME,'A','N','S'} 
-#define BLE_LOCAL_NAEM_NUMBER_INDEX         (6) 
+#define BLE_LOCAL_NAEM_DEFAULT                     \
+    {                                              \
+        AD_TYPE_COMPLETE_LOCAL_NAME, 'A', 'N', 'S' \
+    }
+#define BLE_LOCAL_NAEM_NUMBER_INDEX (6)
 #else
-#define BLE_LOCAL_NAEM_DEFAULT              {AD_TYPE_COMPLETE_LOCAL_NAME,'A','N','T'} 
-#define BLE_LOCAL_NAEM_NUMBER_INDEX         (6) 
+#define BLE_LOCAL_NAEM_DEFAULT                     \
+    {                                              \
+        AD_TYPE_COMPLETE_LOCAL_NAME, 'A', 'N', 'T' \
+    }
+#define BLE_LOCAL_NAEM_NUMBER_INDEX (6)
 #endif
-#define BLE_LOCAL_NAME_MAX_NUMBER	        (999999) 
+#define BLE_LOCAL_NAME_MAX_NUMBER                       (999999)
 
 /**
  * Define PHY
@@ -571,22 +577,22 @@
  */
 
 /**< Add in that list all tasks that may send a ACI/HCI command */
-typedef enum
-{
+typedef enum {
 #if DEBUG
     CFG_TASK_TEST_PROC,
 #endif
     CFG_TASK_STATUS_ID,
     CFG_TASK_TEST_BLE_SPEED_ID,
     CFG_TASK_TIME_KEEPER_ID,
-    CFG_TASK_AHRS_REQ_ID,
+    CFG_TASK_AHRS_READ_ID,
+    CFG_TASK_AHRS_PROC_ID,
     CFG_TASK_BLE_RX_PROC,
+    CFG_TASK_AHRS_REQ_ID,
     CFG_TASK_HCI_ASYNCH_EVT_ID,
-/* USER CODE BEGIN CFG_Task_Id_With_HCI_Cmd_t */
+    /* USER CODE BEGIN CFG_Task_Id_With_HCI_Cmd_t */
 
-
-/* USER CODE END CFG_Task_Id_With_HCI_Cmd_t */
-    CFG_LAST_TASK_ID_WITH_HCICMD,                                               /**< Shall be LAST in the list */
+    /* USER CODE END CFG_Task_Id_With_HCI_Cmd_t */
+    CFG_LAST_TASK_ID_WITH_HCICMD, /**< Shall be LAST in the list */
 } CFG_Task_Id_With_HCI_Cmd_t;
 
 /**< Add in that list all tasks that never send a ACI/HCI command */

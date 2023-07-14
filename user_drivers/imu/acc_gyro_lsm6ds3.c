@@ -3,7 +3,7 @@
 * author   mackgim
 * version  V1.0.0
 * date
-* brief ：
+* brief ??
 *******************************************************************************/
 
 /* Includes ------------------------------------------------------------------*/
@@ -278,7 +278,7 @@ static uint8_t acc_gyro_hal_init(ACC_GYRO_CONFIG_TypeDef *config)
         goto clean;
     }
 
-    //使能G数据中断
+    //???G?????ж?
     lsm6ds3_int1_route_t int1_route_val;
     lsm6ds3_int2_route_t int2_route_val;
 
@@ -348,97 +348,86 @@ static uint8_t acc_gyro_hal_enable()
     return STD_SUCCESS;
 }
 
-static uint8_t acc_gyro_hal_get_acc_mg(ACC_GYRO_FDATA_T *fData, int16_t x_raw, int16_t y_raw, int16_t z_raw, lsm6ds3_xl_fs_t fs_xl)
+static uint8_t acc_gyro_hal_get_acc_mg(float acc[3], int16_t raw[3], lsm6ds3_xl_fs_t fs_xl)
 {
-    if (!fData)
+    if (!acc)
         return STD_FAILED;
 
-    switch (fs_xl) {
-    case LSM6DS3_2g:
-        fData->acc.x = lsm6ds3_from_fs2g_to_mg(x_raw);
-        fData->acc.y = lsm6ds3_from_fs2g_to_mg(y_raw);
-        fData->acc.z = lsm6ds3_from_fs2g_to_mg(z_raw);
-        break;
+    for (uint8_t i = 0; i < 3; i++) {
+        switch (fs_xl) {
+        case LSM6DS3_2g:
+            acc[i] = lsm6ds3_from_fs2g_to_mg(raw[i]);
+            break;
 
-    case LSM6DS3_4g:
-        fData->acc.x = lsm6ds3_from_fs4g_to_mg(x_raw);
-        fData->acc.y = lsm6ds3_from_fs4g_to_mg(y_raw);
-        fData->acc.z = lsm6ds3_from_fs4g_to_mg(z_raw);
-        break;
+        case LSM6DS3_4g:
+            acc[i] = lsm6ds3_from_fs4g_to_mg(raw[i]);
+            break;
 
-    case LSM6DS3_8g:
-        fData->acc.x = lsm6ds3_from_fs8g_to_mg(x_raw);
-        fData->acc.y = lsm6ds3_from_fs8g_to_mg(y_raw);
-        fData->acc.z = lsm6ds3_from_fs8g_to_mg(z_raw);
-        break;
+        case LSM6DS3_8g:
+            acc[i] = lsm6ds3_from_fs8g_to_mg(raw[i]);
+            break;
 
-    case LSM6DS3_16g:
-        fData->acc.x = lsm6ds3_from_fs16g_to_mg(x_raw);
-        fData->acc.y = lsm6ds3_from_fs16g_to_mg(y_raw);
-        fData->acc.z = lsm6ds3_from_fs16g_to_mg(z_raw);
-        break;
+        case LSM6DS3_16g:
+            acc[i] = lsm6ds3_from_fs16g_to_mg(raw[i]);
+            break;
 
-    default:
-        fData->acc.x = 0;
-        fData->acc.y = 0;
-        fData->acc.z = 0;
-        return STD_FAILED;
+        default:
+            acc[0] = 0;
+            acc[1] = 0;
+            acc[2] = 0;
+            return STD_FAILED;
+        }
     }
 
     return STD_SUCCESS;
 }
 
-static uint8_t acc_gyro_hal_get_gyro_mdps(ACC_GYRO_FDATA_T *fData, int16_t x_raw, int16_t y_raw, int16_t z_raw, lsm6ds3_fs_g_t fs_g)
+static uint8_t acc_gyro_hal_get_gyro_mdps(float gyro[3], int16_t raw[3], lsm6ds3_fs_g_t fs_g)
 {
-    if (!fData)
+    if (!gyro)
         return STD_FAILED;
 
-    switch (fs_g) {
-    case LSM6DS3_125dps:
-        fData->gyro.x = lsm6ds3_from_fs125dps_to_mdps(x_raw);
-        fData->gyro.y = lsm6ds3_from_fs125dps_to_mdps(y_raw);
-        fData->gyro.z = lsm6ds3_from_fs125dps_to_mdps(z_raw);
-        break;
+    for (uint8_t i = 0; i < 3; i++) {
+        switch (fs_g) {
+        case LSM6DS3_125dps:
+            gyro[i] = lsm6ds3_from_fs125dps_to_mdps(raw[i]);
+            break;
 
-    case LSM6DS3_250dps:
-        fData->gyro.x = lsm6ds3_from_fs250dps_to_mdps(x_raw);
-        fData->gyro.y = lsm6ds3_from_fs250dps_to_mdps(y_raw);
-        fData->gyro.z = lsm6ds3_from_fs250dps_to_mdps(z_raw);
-        break;
+        case LSM6DS3_250dps:
+            gyro[i] = lsm6ds3_from_fs250dps_to_mdps(raw[i]);
+            break;
 
-    case LSM6DS3_500dps:
-        fData->gyro.x = lsm6ds3_from_fs500dps_to_mdps(x_raw);
-        fData->gyro.y = lsm6ds3_from_fs500dps_to_mdps(y_raw);
-        fData->gyro.z = lsm6ds3_from_fs500dps_to_mdps(z_raw);
-        break;
+        case LSM6DS3_500dps:
+            gyro[i] = lsm6ds3_from_fs500dps_to_mdps(raw[i]);
+            break;
 
-    case LSM6DS3_1000dps:
-        fData->gyro.x = lsm6ds3_from_fs1000dps_to_mdps(x_raw);
-        fData->gyro.y = lsm6ds3_from_fs1000dps_to_mdps(y_raw);
-        fData->gyro.z = lsm6ds3_from_fs1000dps_to_mdps(z_raw);
-        break;
+        case LSM6DS3_1000dps:
+            gyro[i] = lsm6ds3_from_fs1000dps_to_mdps(raw[i]);
+            break;
 
-    case LSM6DS3_2000dps:
-        fData->gyro.x = lsm6ds3_from_fs2000dps_to_mdps(x_raw);
-        fData->gyro.y = lsm6ds3_from_fs2000dps_to_mdps(y_raw);
-        fData->gyro.z = lsm6ds3_from_fs2000dps_to_mdps(z_raw);
-        break;
+        case LSM6DS3_2000dps:
+            gyro[i] = lsm6ds3_from_fs2000dps_to_mdps(raw[i]);
+            break;
 
-    default:
-        fData->gyro.x = 0;
-        fData->gyro.y = 0;
-        fData->gyro.z = 0;
-        return STD_FAILED;
+        default:
+            gyro[0] = 0;
+            gyro[1] = 0;
+            gyro[2] = 0;
+            return STD_FAILED;
+        }
     }
 
     return STD_SUCCESS;
 }
 
-static uint8_t acc_gyro_hal_get_result(ACC_GYRO_FDATA_T *fData, uint32_t number)
+static uint8_t acc_gyro_hal_get_result(float acc[3], float gyro[3], uint32_t number)
 {
     int16_t  raw_data[3];
-    int16_t  data_raw_angular_rate[3];
     uint16_t retry = 0, num = 0;
+
+    uint8_t whoamI = 0;
+
+    lsm6ds3_device_id_get(&lsm6ds3_dev_ctx, &whoamI);
 
     if (lsm6ds3_gy_data_rate_set(&lsm6ds3_dev_ctx, gyro_output_data_rate) != MEMS_SUCCESS) {
         return STD_FAILED;
@@ -463,14 +452,7 @@ static uint8_t acc_gyro_hal_get_result(ACC_GYRO_FDATA_T *fData, uint32_t number)
             continue;
         }
 
-        acc_gyro_hal_get_acc_mg(&fData[num],
-                                raw_data[0],
-                                raw_data[1],
-                                raw_data[2],
-                                lsm6ds3_acc_scale);
-
-        // kprint("Acceleration [mg]:%4.2f\t%4.2f\t%4.2f\r\n",
-        //        fData[num]->acc.x, fData[num]->acc.y, fData[num]->acc.z);
+        acc_gyro_hal_get_acc_mg(acc, raw_data, lsm6ds3_acc_scale);
 
         /* Read magnetic field data */
         memset(raw_data, 0x00, 3 * sizeof(int16_t));
@@ -479,14 +461,7 @@ static uint8_t acc_gyro_hal_get_result(ACC_GYRO_FDATA_T *fData, uint32_t number)
             continue;
         }
 
-        acc_gyro_hal_get_gyro_mdps(&fData[num],
-                                   raw_data[0],
-                                   raw_data[1],
-                                   raw_data[2],
-                                   lsm6ds3_gypo_scale);
-
-        // kprint("Angular rate [mdps]:%4.2f\t%4.2f\t%4.2f\r\n",
-        //        fData[num]->gyro.x, fData[num]->gyro.y, fData[num]->gyro.z);
+        acc_gyro_hal_get_gyro_mdps(gyro, raw_data, lsm6ds3_gypo_scale);
 
         retry = 0;
         num++;
@@ -549,12 +524,14 @@ static uint8_t acc_gyro_hal_set_tap_threshold(uint32_t value)
 
 #pragma region acc gyro interface
 
-uint8_t acc_gyro_init(ACC_GYRO_CONFIG_TypeDef *config)
+uint8_t acc_gyro_init(void *config)
 {
-    return acc_gyro_hal_init(config);
+    ACC_GYRO_CONFIG_TypeDef *cfg = config;
+
+    return acc_gyro_hal_init(cfg);
 }
 
-uint8_t acc_gyro_deinit()
+uint8_t acc_gyro_deinit(void *)
 {
     return acc_gyro_hal_deinit();
 }
@@ -569,9 +546,9 @@ uint8_t acc_gyro_disable()
     return acc_gyro_hal_disable();
 }
 
-uint8_t acc_gyro_get_result(ACC_GYRO_FDATA_T *buff, uint32_t number)
+uint8_t acc_gyro_get_result(float acc[3], float gyro[3], uint32_t number)
 {
-    return acc_gyro_hal_get_result(buff, number);
+    return acc_gyro_hal_get_result(acc, gyro, number);
 }
 
 uint8_t acc_gyro_get_tap_status(uint8_t *value)

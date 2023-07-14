@@ -18,30 +18,27 @@
  *******************************************************************************
  */
 
- /* Includes ------------------------------------------------------------------*/
-#include "motion_fx_manager.h"
-#include "motion_fx.h"
+/* Includes ------------------------------------------------------------------*/
 #include "standard_lib.h"
+#include "motion_fx.h"
 
 /* Extern variables ----------------------------------------------------------*/
 /* Private defines -----------------------------------------------------------*/
-#define STATE_SIZE                      (size_t)(2432)
+#define STATE_SIZE       (2560)
 
 //#define GBIAS_ACC_TH_SC                 (2.0f*0.000765f)
 //#define GBIAS_GYRO_TH_SC                (2.0f*0.002f)
 //#define GBIAS_MAG_TH_SC                 (2.0f*0.001500f)
 
-#define GBIAS_ACC_TH_SC                 (0.000115)
-#define GBIAS_GYRO_TH_SC                (0.000159)
-#define GBIAS_MAG_TH_SC                 (2.0f*0.001500f)
+#define GBIAS_ACC_TH_SC  (0.000115)
+#define GBIAS_GYRO_TH_SC (0.000159)
+#define GBIAS_MAG_TH_SC  (2.0f * 0.001500f)
 
-#define DECIMATION                      1U
+#define DECIMATION       1U
 
 /* Private variables ---------------------------------------------------------*/
-static MFX_knobs_t iKnobs;
-static MFX_knobs_t* ipKnobs = &iKnobs;
 
-static uint8_t mfxstate[STATE_SIZE];
+static uint8_t motion_fx_state_buff[STATE_SIZE];
 
 /* Private typedef -----------------------------------------------------------*/
 /* Exported function prototypes ----------------------------------------------*/
@@ -53,64 +50,64 @@ static uint8_t mfxstate[STATE_SIZE];
  */
 uint8_t MotionFX_manager_init(void)
 {
-	size_t size = MotionFX_GetStateSize();
-	kprint("size=%u\r\n", size);
-	if (STATE_SIZE < size)
-	{
-		kprint("size error\r\n");
-		return STD_FAILED;
-	}
+    MFX_knobs_t iKnobs;
 
-	MotionFX_initialize((MFXState_t*)mfxstate);
+    size_t size = MotionFX_GetStateSize();
+    kprint("size=%u\r\n", size);
+    if (STATE_SIZE < size) {
+        kprint("size error\r\n");
+        return STD_FAILED;
+    }
 
-	uint8_t version[64];
-	MotionFX_GetLibVersion((char *)version);
-	kprint("version=%s\r\n", (char*)version);
+    MotionFX_initialize((MFXState_t *)motion_fx_state_buff);
 
-	MotionFX_getKnobs(mfxstate, ipKnobs);
+    uint8_t version[64];
+    MotionFX_GetLibVersion((char *)version);
+    kprint("version=%s\r\n", (char *)version);
 
-	kprint("ATime = %f\r\n", (float)iKnobs.ATime);
-	kprint("MTime = %f\r\n", iKnobs.MTime);
-	kprint("FrTime = %f\r\n", iKnobs.FrTime);
-	kprint("LMode = %u\r\n", iKnobs.LMode);
-	kprint("modx = %u\r\n", iKnobs.modx);
-	kprint("acc_orientation = %s\r\n", iKnobs.acc_orientation);
-	kprint("gyro_orientation = %s\r\n", iKnobs.gyro_orientation);
-	kprint("mag_orientation = %s\r\n", iKnobs.mag_orientation);
-	kprint("output_type = %u\r\n", iKnobs.output_type);
-	kprint("start_automatic_gbias_calculation = %d\r\n", iKnobs.start_automatic_gbias_calculation);
-	kprint("gbias_acc_th_sc = %f\r\n", iKnobs.gbias_acc_th_sc);
-	kprint("gbias_gyro_th_sc = %f\r\n", iKnobs.gbias_gyro_th_sc);
-	kprint("gbias_mag_th_sc = %f\r\n", iKnobs.gbias_mag_th_sc);
+    MotionFX_getKnobs((MFXState_t *)motion_fx_state_buff, &iKnobs);
 
+    kprint("ATime = %f\r\n", (float)iKnobs.ATime);
+    kprint("MTime = %f\r\n", iKnobs.MTime);
+    kprint("FrTime = %f\r\n", iKnobs.FrTime);
+    kprint("LMode = %u\r\n", iKnobs.LMode);
+    kprint("modx = %u\r\n", iKnobs.modx);
+    kprint("acc_orientation = %s\r\n", iKnobs.acc_orientation);
+    kprint("gyro_orientation = %s\r\n", iKnobs.gyro_orientation);
+    kprint("mag_orientation = %s\r\n", iKnobs.mag_orientation);
+    kprint("output_type = %u\r\n", iKnobs.output_type);
+    kprint("start_automatic_gbias_calculation = %d\r\n", iKnobs.start_automatic_gbias_calculation);
+    kprint("gbias_acc_th_sc = %f\r\n", iKnobs.gbias_acc_th_sc);
+    kprint("gbias_gyro_th_sc = %f\r\n", iKnobs.gbias_gyro_th_sc);
+    kprint("gbias_mag_th_sc = %f\r\n", iKnobs.gbias_mag_th_sc);
 
-	ipKnobs->acc_orientation[0] = 'e';
-	ipKnobs->acc_orientation[1] = 'n';
-	ipKnobs->acc_orientation[2] = 'u';
-	ipKnobs->gyro_orientation[0] = 'e';
-	ipKnobs->gyro_orientation[1] = 'n';
-	ipKnobs->gyro_orientation[2] = 'u';
+    // iKnobs.acc_orientation[0]  = 'e';
+    // iKnobs.acc_orientation[1]  = 'n';
+    // iKnobs.acc_orientation[2]  = 'u';
+    // iKnobs.gyro_orientation[0] = 'e';
+    // iKnobs.gyro_orientation[1] = 'n';
+    // iKnobs.gyro_orientation[2] = 'u';
 
-	ipKnobs->mag_orientation[0] = 'e';
-	ipKnobs->mag_orientation[1] = 'n';
-	ipKnobs->mag_orientation[2] = 'u';
+    // iKnobs.mag_orientation[0] = 'e';
+    // iKnobs.mag_orientation[1] = 'n';
+    // iKnobs.mag_orientation[2] = 'u';
 
+    // iKnobs.gbias_acc_th_sc  = GBIAS_ACC_TH_SC;
+    // iKnobs.gbias_gyro_th_sc = GBIAS_GYRO_TH_SC;
+    // iKnobs.gbias_mag_th_sc  = GBIAS_MAG_TH_SC;
 
-	ipKnobs->gbias_acc_th_sc = GBIAS_ACC_TH_SC;
-	ipKnobs->gbias_gyro_th_sc = GBIAS_GYRO_TH_SC;
-	ipKnobs->gbias_mag_th_sc = GBIAS_MAG_TH_SC;
+    iKnobs.output_type = MFX_ENGINE_OUTPUT_ENU;
+    iKnobs.LMode       = 1;
+    iKnobs.modx        = DECIMATION;
 
-	ipKnobs->output_type = MFX_ENGINE_OUTPUT_ENU;
-	ipKnobs->LMode = 1;
-	ipKnobs->modx = DECIMATION;
+    MotionFX_setKnobs(motion_fx_state_buff, &iKnobs);
 
-	MotionFX_setKnobs(mfxstate, ipKnobs);
-
-	MotionFX_enable_6X(mfxstate, MFX_ENGINE_DISABLE);
-	MotionFX_enable_9X(mfxstate, MFX_ENGINE_DISABLE);
-	return STD_SUCCESS;
+    MotionFX_enable_6X(motion_fx_state_buff, MFX_ENGINE_DISABLE);
+    MotionFX_enable_9X(motion_fx_state_buff, MFX_ENGINE_DISABLE);
+    return STD_SUCCESS;
 }
 
+#include "platform.h"
 /**
  * @brief  Run Motion Sensor Data Fusion algorithm
  * @param  data_in  Structure containing input data
@@ -118,11 +115,20 @@ uint8_t MotionFX_manager_init(void)
  * @param  delta_time Delta time
  * @retval None
  */
-uint8_t MotionFX_manager_run(void* data_in, void* data_out, float delta_time)
+uint8_t MotionFX_manager_run(void *data_in, void *data_out, float delta_time)
 {
-		MotionFX_propagate(mfxstate, (MFX_output_t*)data_out, (MFX_input_t*)data_in, &delta_time);
-		MotionFX_update(mfxstate, (MFX_output_t*)data_out, (MFX_input_t*)data_in, &delta_time, NULL);
-		return STD_SUCCESS;
+    static uint8_t cacl_counter = 0;
+
+    if (cacl_counter++ < DECIMATION) {
+        MotionFX_propagate(motion_fx_state_buff, (MFX_output_t *)data_out, (MFX_input_t *)data_in, &delta_time);
+    } else {
+        cacl_counter = 0;
+        LEDG_CTRL(1);
+        MotionFX_update(motion_fx_state_buff, (MFX_output_t *)data_out, (MFX_input_t *)data_in, &delta_time, NULL);
+        LEDG_CTRL(0);
+    }
+
+    return STD_SUCCESS;
 }
 
 /**
@@ -132,8 +138,8 @@ uint8_t MotionFX_manager_run(void* data_in, void* data_out, float delta_time)
  */
 uint8_t MotionFX_manager_start(void)
 {
-	MotionFX_enable_6X(mfxstate, MFX_ENGINE_ENABLE);
-	return STD_SUCCESS;
+    MotionFX_enable_6X(motion_fx_state_buff, MFX_ENGINE_ENABLE);
+    return STD_SUCCESS;
 }
 
 /**
@@ -143,26 +149,28 @@ uint8_t MotionFX_manager_start(void)
  */
 uint8_t MotionFX_manager_stop(void)
 {
-	MotionFX_enable_6X(mfxstate, MFX_ENGINE_DISABLE);
-	return STD_SUCCESS;
+    MotionFX_enable_6X(motion_fx_state_buff, MFX_ENGINE_DISABLE);
+    return STD_SUCCESS;
 }
 
 uint8_t MotionFX_manager_calib(int32_t en)
 {
-	float gbias[3];
-	MotionFX_getGbias(mfxstate, gbias);
-	kprint("bias, g0=%f, g1=%f, g2=%f.\r\n", gbias[0], gbias[1], gbias[2]);
+    float       gbias[3];
+    MFX_knobs_t iKnobs;
 
-	MotionFX_getKnobs(mfxstate, ipKnobs);
-	kprint("gbias_acc_th_sc = %f\r\n", iKnobs.gbias_acc_th_sc);
-	kprint("gbias_gyro_th_sc = %f\r\n", iKnobs.gbias_gyro_th_sc);
-	kprint("gbias_mag_th_sc = %f\r\n", iKnobs.gbias_mag_th_sc);
+    MotionFX_getGbias(motion_fx_state_buff, gbias);
 
-	ipKnobs->start_automatic_gbias_calculation = en;
-	MotionFX_setKnobs(mfxstate, ipKnobs);
+    kprint("bias, g0=%f, g1=%f, g2=%f.\r\n", gbias[0], gbias[1], gbias[2]);
 
+    MotionFX_getKnobs(motion_fx_state_buff, &iKnobs);
+    kprint("gbias_acc_th_sc = %f\r\n", iKnobs.gbias_acc_th_sc);
+    kprint("gbias_gyro_th_sc = %f\r\n", iKnobs.gbias_gyro_th_sc);
+    kprint("gbias_mag_th_sc = %f\r\n", iKnobs.gbias_mag_th_sc);
 
-	return STD_SUCCESS;
+    iKnobs.start_automatic_gbias_calculation = en;
+    MotionFX_setKnobs(motion_fx_state_buff, &iKnobs);
+
+    return STD_SUCCESS;
 }
 
-  /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

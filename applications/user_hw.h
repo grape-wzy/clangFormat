@@ -129,7 +129,8 @@ extern "C"
 #pragma endregion
 
 #pragma region imu
-	// SPI Instance
+
+// SPI Instance
 #define SPI_A_HW_INSTANCE					SPI1
 #define SPI_A_HW_CLK_ENABLE()				__HAL_RCC_SPI1_CLK_ENABLE()
 #define SPI_A_HW_CLK_DISABLE()				__HAL_RCC_SPI1_CLK_DISABLE()
@@ -154,10 +155,10 @@ extern "C"
 #endif
 #define SPI_A_HW_CRCCALCULATION				SPI_CRCCALCULATION_DISABLED
 
-// SCLK: PA.1
+// SCLK: PA.5
 #define SPI_A_HW_SCLK_PIN                   GPIO_PIN_5
 #define SPI_A_HW_SCLK_MODE					GPIO_MODE_AF_PP
-#define SPI_A_HW_SCLK_PULL					GPIO_PULLDOWN
+#define SPI_A_HW_SCLK_PULL                  GPIO_PULLUP
 #define SPI_A_HW_SCLK_SPEED		        	GPIO_SPEED_FREQ_LOW
 #define SPI_A_HW_SCLK_ALTERNATE				GPIO_AF5_SPI1
 #define SPI_A_HW_SCLK_PORT					GPIOA
@@ -166,7 +167,7 @@ extern "C"
 // MISO (Master Input Slave Output): PA.6
 #define SPI_A_HW_MISO_PIN					GPIO_PIN_6
 #define SPI_A_HW_MISO_MODE					GPIO_MODE_AF_PP
-#define SPI_A_HW_MISO_PULL					GPIO_NOPULL
+#define SPI_A_HW_MISO_PULL                  GPIO_PULLUP
 #define SPI_A_HW_MISO_SPEED		        	GPIO_SPEED_FREQ_LOW
 #define SPI_A_HW_MISO_ALTERNATE				GPIO_AF5_SPI1
 #define SPI_A_HW_MISO_PORT					GPIOA
@@ -176,7 +177,7 @@ extern "C"
 // MOSI (Master Output Slave Input): PA.7
 #define SPI_A_HW_MOSI_PIN					GPIO_PIN_7
 #define SPI_A_HW_MOSI_MODE					GPIO_MODE_AF_PP
-#define SPI_A_HW_MOSI_PULL					GPIO_NOPULL
+#define SPI_A_HW_MOSI_PULL                  GPIO_PULLUP
 #define SPI_A_HW_MOSI_SPEED					GPIO_SPEED_FREQ_LOW
 #define SPI_A_HW_MOSI_ALTERNATE				GPIO_AF5_SPI1
 #define SPI_A_HW_MOSI_PORT					GPIOA
@@ -192,6 +193,21 @@ extern "C"
 #define SPI_A_HW_CS_CLK_ENABLE()			__HAL_RCC_GPIOA_CLK_ENABLE()
 #define SPI_A_HW_CS(n)						HAL_GPIO_WritePin(SPI_A_HW_CS_PORT, SPI_A_HW_CS_PIN, n?GPIO_PIN_SET:GPIO_PIN_RESET)
 
+#define SPI_A_HW_DMAMUX_CLK_ENABLE()        __HAL_RCC_DMAMUX1_CLK_ENABLE()
+#define SPI_A_HW_DMA_CLK_ENABLE()           __HAL_RCC_DMA1_CLK_ENABLE()
+
+#define SPI_A_HW_DMAMUX_CLK_DISABLE()       __HAL_RCC_DMAMUX1_CLK_DISABLE()
+#define SPI_A_HW_DMA_CLK_DISABLE()          __HAL_RCC_DMA1_CLK_DISABLE()
+
+#define SPI_A_RX_DMA_CHANNEL                DMA1_Channel2
+#define SPI_A_RX_DMA_IRQn                   DMA1_Channel2_IRQn
+#define SPI_A_RX_DMA_IRQHandler             DMA1_Channel2_IRQHandler
+
+#define SPI_A_TX_DMA_CHANNEL                DMA1_Channel3
+#define SPI_A_TX_DMA_IRQn                   DMA1_Channel3_IRQn
+#define SPI_A_TX_DMA_IRQHandler             DMA1_Channel3_IRQHandler
+
+#ifdef USE_SENSOR_SYNC_PIN
 #define SPI_A_HW_SYNC_PIN                   GPIO_PIN_0
 #define SPI_A_HW_SYNC_MODE			        GPIO_MODE_OUTPUT_PP
 #define SPI_A_HW_SYNC_PULL			        GPIO_PULLUP
@@ -199,10 +215,10 @@ extern "C"
 #define SPI_A_HW_SYNC_ALTERNATE		        0
 #define SPI_A_HW_SYNC_PORT			        GPIOB
 #define SPI_A_HW_SYNC_CLK_ENABLE()			__HAL_RCC_GPIOB_CLK_ENABLE()
+#endif
 
-
+#ifdef USE_SENSOR_READY_PIN
 // ready : PB.4
-
 #define SPI_A_HW_READY_PIN                  GPIO_PIN_1
 #define SPI_A_HW_READY_MODE					GPIO_MODE_IT_RISING
 #define SPI_A_HW_READY_PULL					GPIO_PULLUP
@@ -213,13 +229,14 @@ extern "C"
 #define SPI_A_HW_READ_READY()				(HAL_GPIO_ReadPin(SPI_A_HW_READY_PORT, SPI_A_HW_READY_PIN))
 #define SPI_A_HW_READY_CTRL(n)				HAL_GPIO_WritePin(SPI_A_HW_READY_PORT, SPI_A_HW_READY_PIN, n ? GPIO_PIN_SET : GPIO_PIN_RESET)
 
-
 //#define SPI_A_HW_READY_EXTI_LINE			LL_EXTI_LINE_4
 #define SPI_A_HW_READY_EXTI_IRQn			EXTI4_IRQn
 #define SPI_A_HW_READY_EXTI_IRQHandler		EXTI4_IRQHandler
 #define SPI_A_HW_READY_EXTI_PIN				SPI_A_HW_READY_PIN
 #define SPI_A_HW_READY_EXTI_PORT			SPI_A_HW_READY_PORT
+#endif
 
+#ifdef USE_SENSOR_RESET_PIN
 // RESET: PA.5
 #define SPI_A_HW_RESET_PIN                  GPIO_PIN_8
 #define SPI_A_HW_RESET_MODE			        GPIO_MODE_OUTPUT_PP
@@ -229,39 +246,28 @@ extern "C"
 #define SPI_A_HW_RESET_PORT			        GPIOA
 #define SPI_A_HW_RESET_CLK_ENABLE()			__HAL_RCC_GPIOA_CLK_ENABLE()
 #define SPI_A_HW_RESET(n)					HAL_GPIO_WritePin(SPI_A_HW_RESET_PORT, SPI_A_HW_RESET_PIN, n?GPIO_PIN_SET:GPIO_PIN_RESET)
-
-
-#define SPI_A_HW_DMAMUX_CLK_ENABLE()		__HAL_RCC_DMAMUX1_CLK_ENABLE()
-#define SPI_A_HW_DMA_CLK_ENABLE()			__HAL_RCC_DMA1_CLK_ENABLE()
-
-#define SPI_A_HW_DMAMUX_CLK_DISABLE()		__HAL_RCC_DMAMUX1_CLK_DISABLE()
-#define SPI_A_HW_DMA_CLK_DISABLE()			__HAL_RCC_DMA1_CLK_DISABLE()
-
-#define SPI_A_TX_DMA_CHANNEL				DMA1_Channel3
-#define SPI_A_RX_DMA_CHANNEL				DMA1_Channel2
-
-#define SPI_A_TX_DMA_IRQn					DMA1_Channel3_IRQn
-#define SPI_A_RX_DMA_IRQn					DMA1_Channel2_IRQn
-
-#define SPI_A_TX_DMA_IRQHandler				DMA1_Channel3_IRQHandler
-#define SPI_A_RX_DMA_IRQHandler				DMA1_Channel2_IRQHandler
+#endif
 #pragma endregion
 
 #pragma region Power Switch
 
 //设备IO
+#ifdef USE_DEVICE_PIN
 #define DEVICE_GPIO_PIN					GPIO_PIN_1
 #define DEVICE_GPIO_MODE				GPIO_MODE_INPUT
 #define DEVICE_GPIO_PULL				GPIO_NOPULL
 #define DEVICE_GPIO_PORT				GPIOB
 #define DEVICE_GPIO_CLK_ENABLE()		__HAL_RCC_GPIOB_CLK_ENABLE()
 #define DEVICE_GPIO_READ()				(HAL_GPIO_ReadPin(DEVICE_GPIO_PORT, DEVICE_GPIO_PIN))
+#endif
 
+#ifdef USE_SENSOR_PWR_PIN
 //传感器电源
 #define PWR_GPIO_PIN					GPIO_PIN_2
 #define PWR_GPIO_PORT					GPIOA
 #define PWR_GPIO_CTRL(n)				HAL_GPIO_WritePin(PWR_GPIO_PORT, PWR_GPIO_PIN, n?GPIO_PIN_SET:GPIO_PIN_RESET)
 #define PWR_GPIO_CLK_ENABLE()			__HAL_RCC_GPIOA_CLK_ENABLE()
+#endif
 
 #define MCU_PWR_PIN                     GPIO_PIN_11
 #define MCU_PWR_PORT                    GPIOA
@@ -290,7 +296,6 @@ extern "C"
 
 #pragma region 中断优先级配置
 
-
 #define 	GTIMER_LPTIM_NVIC_PreemptionPriority      			0
 #define 	GTIMER_LPTIM_NVIC_SubPriority             			0
 
@@ -314,11 +319,6 @@ extern "C"
 
 #define 	SPI_A_HW_DMA_NVIC_PreemptionPriority      			1
 #define 	SPI_A_HW_DMA_NVIC_SubPriority						0
-
-#define AHRS_GYRO_SCALE                                         (2)             // GYPO_SCALE_500dps
-#define AHRS_ACC_SCALE                                          (0)             // ACC_SCALE_2g
-#define AHRS_ACC_GYRO_DATA_RATE                                 (104)           //104Hz
-#define AHRS_ACC_GYRO_POWER_MODE                                ((uint16_t)(0)) // high_performance, 0 disable, 1 enable
 
 #pragma endregion
 

@@ -14,18 +14,33 @@
 #include "stdint.h"
 // #include "gcompiler.h"
 
-#define A     \
-    int aaaa; \
-    int b;    \
-    int dddddddddd;
+typedef enum {
+    ACC_SCALE_2g = 0,
+    ACC_SCALE_4g,
+    ACC_SCALE_8g,
+    ACC_SCALE_16g,
+} ACC_SCALE_E;
+
+typedef enum {
+    GYPO_SCALE_125dps = 0,
+    GYPO_SCALE_250dps,
+    GYPO_SCALE_500dps,
+    GYPO_SCALE_1000dps,
+    GYPO_SCALE_2000dps,
+} GYRO_SCALE_E;
 
 typedef struct
 {
-    uint16_t BitDepth; // 0 high, 1 low
-    uint16_t DataRate;
-    float    GyroSensitivity;
-    float    AccSensitivity;
+    uint16_t     output_data_rate;
+    GYRO_SCALE_E gyro_scale;
+    ACC_SCALE_E  acc_scale;
+    uint8_t      high_performance; // 0 disable, 1 enable
 } __GYRO_ACC_CONFIG_TypeDef;
+
+typedef struct {
+    float acc[3];
+    float gyro[3];
+} IMU_RESULT_TypeDef;
 
 typedef struct
 {
@@ -42,12 +57,13 @@ typedef struct
 
 typedef struct
 {
-    uint8_t (*init)(void *);
+    uint8_t (*init)(void *config);
     uint8_t (*deinit)(void *);
     uint8_t (*restore)(void *);
-    uint8_t (*enable)(void *);
-    uint8_t (*disable)(void *);
-    uint8_t (*read_raw)(void *, uint8_t *, uint16_t);
+    uint8_t (*enable)(void);
+    uint8_t (*disable)(void);
+    uint8_t (*read_raw)(void *handle, uint8_t *, uint16_t);
+    uint8_t (*read_result)(float acc[3], float gyro[3], uint32_t number);
 } __GYRO_ACC_DEV_DRIVER_TypeDef;
 
 typedef struct
@@ -57,31 +73,6 @@ typedef struct
     __GYRO_ACC_CONFIG_TypeDef     *config;
 } __GYRO_ACC_HANDLE_TypeDef;
 
-#define BURST16_DATA_LENGTH (sizeof(__ADIS16505_BURST16_DATA_TypeDef))
-typedef struct
-{
-    uint16_t TxCmd;
-    uint16_t DiagStat;
-    int16_t  G[3];
-    int16_t  A[3];
-    int16_t  Temp;
-    uint16_t DataCntr;
-    uint16_t Checksum;
-} __ADIS16505_BURST16_DATA_TypeDef;
-
-#define BURST32_DATA_LENGTH (sizeof(__ADIS16505_BURST32_DATA_TypeDef) - 2)
-typedef struct
-{
-    uint16_t Reserved;
-    uint16_t DiagStat;
-    int32_t  Gyro[3];
-    int32_t  Acc[3];
-    int16_t  Temp;
-    uint16_t DataCntr;
-    uint16_t Checksum;
-    uint16_t Reserved1;
-} __ADIS16505_BURST32_DATA_TypeDef;
-
 uint8_t imu_init(__GYRO_ACC_CONFIG_TypeDef *config);
 uint8_t imu_deinit(void);
 
@@ -89,6 +80,8 @@ uint8_t imu_disable(void);
 uint8_t imu_enable(void);
 
 uint8_t imu_get_raw(uint8_t *buff, uint16_t size);
+
+uint8_t imu_get_result(IMU_RESULT_TypeDef *buff, uint32_t number);
 
 uint8_t imu_get_all_reg(void);
 
