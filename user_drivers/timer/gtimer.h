@@ -11,7 +11,20 @@
 #define __GTIMER_IF_H
 
 #include "stdint.h"
+#include "hw_timerserver.h"
+#include "app_conf.h"
+#include "standard_lib.h"
 
+#define GTIMER_LPTIM_PRESCALER   LPTIM_PRESCALER_DIV4
+#define GTIMER_LPTIM_FREQ        (LSE_VALUE / 4)
+#define GTIMER_LPTIM_TICK_PERIOD (0xffff)
+
+#define TICKS_TO_US(n)           (((n)*1000000) / GTIMER_LPTIM_FREQ)
+#define TICKS_TO_MS(n)           (((n)*1000) / GTIMER_LPTIM_FREQ)
+#define TICKS_TO_S(n)            ((n) / GTIMER_LPTIM_FREQ)
+
+#define MS_TO_TICK(n)            (((n)*GTIMER_LPTIM_FREQ) / 1000)
+#define US_TO_TICK(n)            (((n)*GTIMER_LPTIM_FREQ) / 1000000)
 
 typedef struct
 {

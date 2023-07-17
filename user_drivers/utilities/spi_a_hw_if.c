@@ -185,7 +185,8 @@ void spi_a_hw_mspdeinit(SPI_HandleTypeDef* hspi)
 uint8_t spi_a_hw_transmit_receive(uint8_t* pTxData, uint8_t* pRxData, uint16_t Size, uint32_t Timeout)
 {
     uint8_t ret = STD_SUCCESS;
-	SPI_A_HW_CS(0);
+
+    SPI_A_HW_CS(0);
     if ((HAL_SPI_TransmitReceive(&aSpiHandle, pTxData, pRxData, Size, Timeout)) != HAL_OK) {
         ret = STD_FAILED;
     }

@@ -138,6 +138,16 @@ void ledy_ctrl(uint8_t value)
 
 static uint8_t sLedMode = 0;
 static volatile uint8_t sLedTimeStart = 0;
+
+/**
+ * @brief
+ *
+ * @param mode
+ *
+ * @param status
+ *
+ * @return
+ */
 void led_ctrl(uint8_t mode, uint8_t status)
 {
 	sLedMode = mode;

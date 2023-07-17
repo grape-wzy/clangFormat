@@ -420,32 +420,19 @@ static uint8_t acc_gyro_hal_get_gyro_mdps(float gyro[3], int16_t raw[3], lsm6ds3
     return STD_SUCCESS;
 }
 
+#include "platform.h"
 static uint8_t acc_gyro_hal_get_result(float acc[3], float gyro[3], uint32_t number)
 {
     int16_t  raw_data[3];
     uint16_t retry = 0, num = 0;
-
-    uint8_t whoamI = 0;
-
-    lsm6ds3_device_id_get(&lsm6ds3_dev_ctx, &whoamI);
-
-    if (lsm6ds3_gy_data_rate_set(&lsm6ds3_dev_ctx, gyro_output_data_rate) != MEMS_SUCCESS) {
-        return STD_FAILED;
-    }
-
-    if (lsm6ds3_xl_data_rate_set(&lsm6ds3_dev_ctx, acc_output_data_rate) != MEMS_SUCCESS) {
-        return STD_FAILED;
-    }
+    lsm6ds3_status_reg_t reg_status;
 
     /* Read samples in polling mode (no int) */
     for (; retry < 15 && num < number; retry++) {
         /* Read output only if new value is available */
-        lsm6ds3_status_reg_t reg_status;
-
         if ((lsm6ds3_status_reg_get(&lsm6ds3_dev_ctx, &reg_status) != MEMS_SUCCESS) ||
             !(reg_status.xlda) || !(reg_status.gda))
             continue;
-
         /* Read magnetic field data */
         memset(raw_data, 0x00, 3 * sizeof(int16_t));
         if (lsm6ds3_acceleration_raw_get(&lsm6ds3_dev_ctx, raw_data) != MEMS_SUCCESS) {

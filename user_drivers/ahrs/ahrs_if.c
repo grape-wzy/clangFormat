@@ -1,3 +1,12 @@
+/*
+ * @Author       : Zhaoyu.Wu
+ * @Date         : 2023-06-26 18:16
+ * @LastEditTime : 2023-07-17 09:30
+ * @LastEditors  : Zhaoyu.Wu
+ * @Description  :
+ * @FilePath     : d:/eMed/product/osteotomy_simple_1/user_drivers/ahrs/ahrs_if.c
+ * If you have any questions, email to zhaoyu.wu@diehl.com.
+ */
 /*******************************************************************************
 * file    ahrs_if.c
 * author  mackgim
@@ -7,7 +16,6 @@
 accurate information about the inclination of your device relative
 to the ground plane
 *******************************************************************************/
-
 
 #include "ahrs.h"
 #include "imu_if.h"
@@ -19,17 +27,14 @@ to the ground plane
 #define AHRS_GYRO_SCALE           (2)             // GYPO_SCALE_500dps
 #define AHRS_ACC_SCALE            (0)             // ACC_SCALE_2g
 #define AHRS_ACC_GYRO_DATA_RATE   (400)           // 500Hz
-#define AHRS_ALGO_DELTA_TIME      ((float)1.0 / AHRS_ACC_GYRO_DATA_RATE)
-#define AHRS_ACC_GYRO_POWER_MODE  ((uint16_t)(1)) // high_performance, 0 disable, 1 enable
+#define AHRS_ACC_GYRO_POWER_MODE  (1)             // high_performance, 0 disable, 1 enable
 
-#define AHRS_DATA_REPORT_MIN_TIME (20)
-
-#pragma region 函数
+#define AHRS_DATA_REPORT_MIN_TIME (MS_TO_TICK(1000 / 30))
 
 typedef struct {
     float    G[3];
     float    A[3];
-    uint64_t time_point;
+    uint64_t tick;
 } __AHRS_INPUT_TypeDef;
 
 typedef struct {
@@ -44,7 +49,9 @@ typedef uint8_t (*AHRS_SEND_CALLBACK_TYPE)(uint8_t *, uint8_t);
 
 #define IMU_INPUT_BUFF_LENGTH AHRS_ACC_GYRO_DATA_RATE
 
-static uint32_t sInPtr = 0, sOutPtr = 0;
+static uint8_t      sTSAhrsRunID = 0, sAhrsStartFlag = 0;
+static uint32_t     sInPtr = 0, sOutPtr = 0;
+static MFX_output_t sAhrsOutput;
 
 static __AHRS_INPUT_TypeDef sAhrsInput[IMU_INPUT_BUFF_LENGTH];
 
@@ -56,26 +63,11 @@ static __AHRS_ALG_API_TypeDef sAhrsAlgApi = {
     .calib = MotionFX_manager_calib,
 };
 
-static MFX_output_t sAhrsOutput;
-static uint8_t      sAhrsStartFlag = 0;
-static uint8_t      sTSAhrsRunID;
-
-#pragma endregion
-
-#pragma region 函数
-
 static AHRS_SEND_CALLBACK_TYPE send_callback;
 
 void ahrs_register_cb(void *cb)
 {
     send_callback = cb;
-}
-
-#pragma endregion
-
-static void ahrs_run_ts_callback(void)
-{
-    UTIL_SEQ_SetTask(1 << CFG_TASK_AHRS_READ_ID, CFG_SCH_PRIO_0);
 }
 
 void ahrs_read_task(void)
@@ -99,7 +91,7 @@ void ahrs_read_task(void)
 
     inp = sInPtr;
 
-    sAhrsInput[inp].time_point = Clock_Time();
+    sAhrsInput[inp].tick = Clock_Tick();
 
     for (uint8_t i = 0; i < 3; i++) {
         sAhrsInput[inp].G[i] = (float)(ahrs_result_buf.gyro[i] / 1000.00);
@@ -123,10 +115,9 @@ void ahrs_read_task(void)
 /* process the imu data and report it */
 void ahrs_proc_task(void)
 {
-    // LEDG_CTRL(1);
     MFX_input_t mfx_input_buf;
 
-    static uint64_t cal_time = 0, report_time_point_recode = 0;
+    static uint64_t cal_tick = 0, report_time_point_recode = 0;
     static uint64_t current_time = 0;
     float           during_time  = 0.00;
 
@@ -142,15 +133,15 @@ void ahrs_proc_task(void)
         mfx_input_buf.gyro[1] = sAhrsInput[sOutPtr].G[1];
         mfx_input_buf.gyro[2] = sAhrsInput[sOutPtr].G[2];
 
-        during_time = (float)(sAhrsInput[sOutPtr].time_point - cal_time) / 1000.00;
-        cal_time    = sAhrsInput[sOutPtr].time_point;
+        during_time = (float)(sAhrsInput[sOutPtr].tick - cal_tick) / (float)(GTIMER_LPTIM_FREQ);
+        cal_tick    = sAhrsInput[sOutPtr].tick;
 
         sAhrsAlgApi.run(&mfx_input_buf, &sAhrsOutput, during_time);
 
         // if (send_callback != NULL)
         {
-            if (sAhrsInput[sOutPtr].time_point > AHRS_DATA_REPORT_MIN_TIME + report_time_point_recode) {
-                report_time_point_recode = sAhrsInput[sOutPtr].time_point;
+            if (sAhrsInput[sOutPtr].tick > AHRS_DATA_REPORT_MIN_TIME + report_time_point_recode) {
+                report_time_point_recode = sAhrsInput[sOutPtr].tick;
 
                 // sSktRefFrame.HeadSize = 15;
                 // sSktRefFrame.HeadType = 0x81;
@@ -174,11 +165,11 @@ void ahrs_proc_task(void)
 
 #ifdef DEBUG
 
-                // nprint("%lf, %lf, %lf, %lf\r\n",
-                //        sAhrsOutput.quaternion[0], // 四元数
-                //        sAhrsOutput.quaternion[1],
-                //        sAhrsOutput.quaternion[2],
-                //        sAhrsOutput.quaternion[3]);
+                nprint("%lf, %lf, %lf, %lf\r\n",
+                       sAhrsOutput.quaternion[0], // 四元数
+                       sAhrsOutput.quaternion[1],
+                       sAhrsOutput.quaternion[2],
+                       sAhrsOutput.quaternion[3]);
 
                 //kprint("Q0=%f,Q1=%f,Q2=%f,Q3=%f\r\n", sAhrsOutput.quaternion[0], sAhrsOutput.quaternion[1], sAhrsOutput.quaternion[2], sAhrsOutput.quaternion[3]);
                 //kprint("G0=%f,G1=%f,G2=%f\r\n", sAhrsOutput.gravity[0], sAhrsOutput.gravity[1], sAhrsOutput.gravity[2]);
@@ -199,7 +190,12 @@ void ahrs_proc_task(void)
     if (sInPtr != sOutPtr) {
         UTIL_SEQ_SetTask(1 << CFG_TASK_AHRS_PROC_ID, CFG_PRIO_NBR_1); /* restart current task */
     }
-    // LEDG_CTRL(0);
+}
+
+static void ahrs_run_ts_callback(void)
+{
+    UTIL_SEQ_SetTask(1 << CFG_TASK_AHRS_READ_ID, CFG_SCH_PRIO_0);
+    // ahrs_read_task();
 }
 
 uint8_t ahrs_init(void)

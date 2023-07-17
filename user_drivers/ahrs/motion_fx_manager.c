@@ -34,7 +34,7 @@
 #define GBIAS_GYRO_TH_SC (0.000159)
 #define GBIAS_MAG_TH_SC  (2.0f * 0.001500f)
 
-#define DECIMATION       1U
+#define DECIMATION       2U
 
 /* Private variables ---------------------------------------------------------*/
 
@@ -117,16 +117,18 @@ uint8_t MotionFX_manager_init(void)
  */
 uint8_t MotionFX_manager_run(void *data_in, void *data_out, float delta_time)
 {
-    static uint8_t cacl_counter = 0;
+    MotionFX_propagate(motion_fx_state_buff, (MFX_output_t *)data_out, (MFX_input_t *)data_in, &delta_time);
 
-    if (cacl_counter++ < DECIMATION) {
-        MotionFX_propagate(motion_fx_state_buff, (MFX_output_t *)data_out, (MFX_input_t *)data_in, &delta_time);
-    } else {
+#if (DECIMATION > 1)
+    static uint8_t cacl_counter = 0;
+    cacl_counter++;
+    if (cacl_counter >= DECIMATION) {
         cacl_counter = 0;
-        LEDG_CTRL(1);
         MotionFX_update(motion_fx_state_buff, (MFX_output_t *)data_out, (MFX_input_t *)data_in, &delta_time, NULL);
-        LEDG_CTRL(0);
     }
+#else
+    MotionFX_update(motion_fx_state_buff, (MFX_output_t *)data_out, (MFX_input_t *)data_in, &delta_time, NULL);
+#endif
 
     return STD_SUCCESS;
 }

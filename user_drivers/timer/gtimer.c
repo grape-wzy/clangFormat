@@ -25,11 +25,11 @@
 #define gtnpt(...) nprint(__VA_ARGS__)
 #else
 #define gtkpt(...)
-#define gtnpt(...) 
+#define gtnpt(...)
 #endif
 #else
 #define gtkpt(...)
-#define gtnpt(...) 
+#define gtnpt(...)
 #endif
 
 
@@ -100,30 +100,16 @@ void HAL_Delay(uint32_t Delay)
 
 #pragma endregion
 
+#pragma region 系统计时模块, 基于lptim, 最小尺度为122us, lptim tick
 
-#pragma region 系统计时模块, 基于lptim, 最小尺度为122us, lptim tick 
+#define GTIMER_LPTIM_IRQn        LPTIM1_IRQn
+#define GTIMER_LPTIM_IRQHandler  LPTIM1_IRQHandler
+#define GTIMER_LPTIM             LPTIM1
 
-#define GTIMER_LPTIM_IRQn				LPTIM1_IRQn
-#define GTIMER_LPTIM_IRQHandler			LPTIM1_IRQHandler
-#define GTIMER_LPTIM					LPTIM1
+#define GET_TICK()               lptim_get_tick()
 
-#define GTIMER_LPTIM_PRESCALER			LPTIM_PRESCALER_DIV4
-#define GTIMER_LPTIM_FREQ				(LSE_VALUE/4)
-#define GTIMER_LPTIM_TICK_PERIOD		(0xffff)
-
-#define GET_TICK()						lptim_get_tick()	
-
-#define TICKS_TO_US(n)					(((n) * 1000000) / GTIMER_LPTIM_FREQ)
-#define TICKS_TO_MS(n)					(((n) * 1000) / GTIMER_LPTIM_FREQ)
-#define TICKS_TO_S(n)					((n) / GTIMER_LPTIM_FREQ)
-
-#define MS_TO_TICK(n)					(((n) * GTIMER_LPTIM_FREQ) / 1000)
-#define US_TO_TICK(n)					(((n) * GTIMER_LPTIM_FREQ) / 1000000)
-
-#define REAL_TICKS_TO_S()				TICKS_TO_S(Clock_Tick())
-#define REAL_TICKS_TO_MS()				TICKS_TO_MS(Clock_Tick())
-
-
+#define REAL_TICKS_TO_S()        TICKS_TO_S(Clock_Tick())
+#define REAL_TICKS_TO_MS()       TICKS_TO_MS(Clock_Tick())
 
 #pragma region 变量
 
@@ -792,4 +778,3 @@ void sys_get_tick(__SYSTEM_TIME64_TypeDef* t)
 	t->RunTime = sSystemBaseTick.RunTime + Clock_Tick();
 }
 #pragma endregion
-
