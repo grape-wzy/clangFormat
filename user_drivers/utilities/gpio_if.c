@@ -238,8 +238,14 @@ void led_ts_callback(void)
 	}
 }
 
-
-
+void led_ctl_for_sensor(void)
+{
+    if (ble_is_connected()) {
+        led_ctrl(LED_MODE_G_BLINK, 200);   // 绿灯闪烁
+    } else if (sDeviceAgeing) {
+        led_ctrl(LED_MODE_Y_G_BLINK, 200); // 蓝绿灯闪烁
+    }
+}
 
 #pragma region 固件升级时，灯的状态
 

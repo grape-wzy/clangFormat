@@ -46,4 +46,6 @@ uint8_t pd_check_mcu_mark(void* mark);
 uint8_t pd_device_is_checked(void);
 void pd_clear_device_check(void);
 
+uint8_t pd_proc_private(uint8_t command, uint8_t sequence, uint8_t *buffer, uint8_t buff_len);
+
 #endif /*__PD_PROC_H */

@@ -16,15 +16,13 @@
 #include <sys/stat.h>
 #endif
 
-#ifdef __cplusplus
-extern "C"
-#endif
-
 #ifdef DEBUG
 
+#include <stdio.h>
+
 #pragma region 函数
-    uint8_t
-        klog_send_by_poll(uint8_t *pBuffer, int size);
+
+uint8_t klog_send_by_poll(uint8_t *pBuffer, int size);
 uint8_t klog_send_by_dma(void);
 
 static void klog_mspinit(UART_HandleTypeDef *huart);
@@ -35,6 +33,7 @@ static void klog_uart_error_callback(UART_HandleTypeDef *huart);
 #pragma endregion
 
 #pragma region           变量
+
 static uint8_t           sKlogTxBuff[KLOG_TX_MAX_BUFF];
 static volatile uint32_t sKlogTxBuffPtrIn      = 0;
 static volatile uint32_t sKlogTxBuffPtrOut     = 0;
@@ -51,7 +50,8 @@ static LOG_RX_CALLBACK_TYPE rx_callback;
 #pragma endregion
 
 #pragma region 基本功能
-uint8_t        klog_init(void)
+
+uint8_t klog_init(void)
 {
     if (sKlogHwIsInit == false) {
         sKlogHandle.Instance                    = KLOG_USARTx;
@@ -403,7 +403,8 @@ void KLOG_USARTx_TX_DMAx_IRQHandler(void)
 #pragma region 回调
 
 static DMA_HandleTypeDef hdma_tx;
-void                     klog_mspinit(UART_HandleTypeDef *huart)
+
+void klog_mspinit(UART_HandleTypeDef *huart)
 //void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 {
     if (huart->Instance == KLOG_USARTx) {

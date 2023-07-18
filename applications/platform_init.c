@@ -12,6 +12,7 @@
 #include "itask.h"
 #include "pm_proc.h"
 #include "pd_proc.h"
+#include "utest.h"
 #include "acc_gyro_if.h"
 
 void Error_Handler(void);
@@ -23,6 +24,27 @@ void Error_Handler(void);
 * Output         : None
 * Return         : None
 *******************************************************************************/
+
+// 注册BLE回调函数
+static __BLE_CALLBACK_TypeDef ble_proc_cbs = {
+    .connected     = itask_ble_connected,
+    .disconnected  = itask_ble_disconnected,
+    .rx_proc       = itask_rx_proc,
+    .data_proc     = itask_data_proc,
+    .image_proc    = itask_image_proc,
+    .disable_sleep = pwr_disable_sleep,
+};
+
+// 注册4秒中断回调,中断为gtimer的周期中断
+static __GTIMER_CALLBACK_TypeDef gTimer_cbs = {
+    .irq_cb   = pwr_check_mcu_alive,
+    .sleep_cb = pwr_stop_mcu_for_delay,
+};
+
+static __SKT_CALLBACK_TypeDef skt_cbs = {
+    .send     = ble_update_data,
+    .led_ctrl = led_ctl_for_sensor,
+};
 
 void platform_init(void)
 {
@@ -37,23 +59,25 @@ void platform_init(void)
 	SystemClock_64M_Config();
 #endif
 
-	log_init();
-	gtimer_init();
-	gpio_init();
-	led_ctrl(LED_MODE_Y_CTRL, 1);
-	led_ctrl(LED_MODE_G_CTRL, 1);
+    log_init();
 
-	kprint("[RCC]: WB55 Start:\r\n");
-	nprint("\r\n");
-	kprint("[RCC]: SysClockFreq = %u\r\n", (unsigned int)HAL_RCC_GetSysClockFreq());
-	kprint("[RCC]: HCLKFreq = %u\r\n", (unsigned int)HAL_RCC_GetHCLKFreq());
-	kprint("[RCC]: PCLK1Freq = %u\r\n", (unsigned int)HAL_RCC_GetPCLK1Freq());
-	kprint("[RCC]: PCLK2Freq = %u\r\n", (unsigned int)HAL_RCC_GetPCLK2Freq());
-	kprint("SMPS = 0x%x\r\n", (unsigned int)LL_RCC_GetSMPSClockSelection());
+    kprint("[RCC]: WB55 Start:\r\n");
+    nprint("\r\n");
+    kprint("[RCC]: SysClockFreq = %u\r\n", (unsigned int)HAL_RCC_GetSysClockFreq());
+    kprint("[RCC]: HCLKFreq = %u\r\n", (unsigned int)HAL_RCC_GetHCLKFreq());
+    kprint("[RCC]: PCLK1Freq = %u\r\n", (unsigned int)HAL_RCC_GetPCLK1Freq());
+    kprint("[RCC]: PCLK2Freq = %u\r\n", (unsigned int)HAL_RCC_GetPCLK2Freq());
+    kprint("SMPS = 0x%x\r\n", (unsigned int)LL_RCC_GetSMPSClockSelection());
+    log_flush();
 
-	log_flush();
+    gtimer_register_callback(&gTimer_cbs);
+    gtimer_init();
 
-	crc32_init();
+    gpio_init();
+    led_ctrl(LED_MODE_Y_CTRL, 1);
+    led_ctrl(LED_MODE_G_CTRL, 1);
+
+    crc32_init();
     // iap_init();
 
     // flash_register_callback(ble_is_init);
@@ -64,7 +88,25 @@ void platform_init(void)
     // pwr_init();
     log_flush();
 
-    // itask_init();
+    itask_init();
+
+    skt_register_cb(&skt_cbs);
+    if (pd_read_skt_config() == STD_SUCCESS) {
+        skt_set_config(gSKTConfig);
+        kprint("have a skt config\r\n\r\n");
+    } else {
+        kprint("no skt config\r\n\r\n");
+    }
+    uint8_t device = read_device_type();
+    skt_init(device, (uint32_t)&gAlgoPara.Value[0]);
+
+    log_flush();
+
+    ble_register_callback(&ble_proc_cbs);
+    ble_set_local_id(device, (uint8_t *)&gFlashBleInfo.Mac[0]); /* 在pd_init中已更新gFlashBleMac */
+    ble_init();
+
+    utest_init();
 
     led_ctrl(LED_MODE_G_CTRL, 0);
 	led_ctrl(LED_MODE_Y_BLINK, 0);

@@ -31,6 +31,7 @@ void gpio_init(void);
 void gpio_deinit(void);
 
 void led_blink_while_upgrading_fw(void);
+void led_ctl_for_sensor(void);
 
 uint8_t read_device_type(void);
 void pwr_ctrl(uint8_t value);

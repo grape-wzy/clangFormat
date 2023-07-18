@@ -14,6 +14,10 @@
 void itask_init(void);
 void itask_proc(void);
 
+uint8_t itask_ble_connected();
+uint8_t itask_ble_disconnected();
+uint8_t itask_rx_proc(uint8_t *data, uint8_t size);
+uint8_t itask_data_proc(uint8_t *data, uint8_t size);
+uint8_t itask_image_proc(uint8_t *data, uint8_t size);
 
 #endif /*__ITASK_H */
-

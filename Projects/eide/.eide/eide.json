@@ -491,7 +491,10 @@
             "path": "../../applications/main.c"
           },
           {
-            "path": "../../applications/pd_proc.c"
+            "path": "../../applications/pd_proc_private.c"
+          },
+          {
+            "path": "../../applications/pd_proc_public.c"
           },
           {
             "path": "../../applications/platform_init.c"
@@ -754,6 +757,15 @@
             "folders": []
           },
           {
+            "name": "utest",
+            "files": [
+              {
+                "path": "../../user_drivers/utest/utest.c"
+              }
+            ],
+            "folders": []
+          },
+          {
             "name": "utilities",
             "files": [
               {
@@ -916,7 +928,8 @@
           "../../components/drivers",
           "../../include",
           "../../components/imu/lsm6ds3_STdC/driver",
-          "../../components/ST/STM32_MotionFX_Library/Inc"
+          "../../components/ST/STM32_MotionFX_Library/Inc",
+          "../../user_drivers/utest"
         ],
         "libList": [
           "../../components/ST/STM32_MotionFX_Library/Lib"

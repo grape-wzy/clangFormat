@@ -111,7 +111,7 @@ void pwr_disable_sleep(uint8_t en)
 }
 
 //功耗管理前流程
-void pm_proc_pre_idle(uint8_t status)
+static void pm_proc_pre_idle(uint8_t status)
 {
 #if (PWR_ENABLE_STANBY == 1)
 	pwr_shutdown_proc_pre_idle();
@@ -127,8 +127,9 @@ void pm_proc_pre_idle(uint8_t status)
 	uint64_t diff = sys_diff_time();
 	sys_update_work_time(diff);
 }
+
 //功耗管理后流程
-void pm_proc_post_idle(uint8_t status)
+static void pm_proc_post_idle(uint8_t status)
 {
 	uint64_t diff = sys_diff_time();
 	//工作状态，外部电源打开，器件同时在消耗能量，需要把这部分时间纳入工作时间中
@@ -147,8 +148,9 @@ void pm_proc_post_idle(uint8_t status)
 	}
 #endif
 }
+
 //功耗管理中流程
-void pm_proc_idle(uint8_t status)
+static void pm_proc_idle(uint8_t status)
 {
 	sMcuRunCount++;
 	//1秒钟，唤醒一次，保持灯闪烁一次，提醒开机状态,同时进入这个流程一次
@@ -166,6 +168,29 @@ void pm_proc_idle(uint8_t status)
 #endif
 
 }
+
+/* UTIL_SEQ_PreIdle 接口重定义 */
+void UTIL_SEQ_PreIdle(void)
+{
+    pm_proc_pre_idle(sSystemStatus);
+}
+
+/* UTIL_SEQ_Idle 接口重定义 */
+void UTIL_SEQ_Idle(void)
+{
+    pm_proc_idle(sSystemStatus);
+}
+
+/* UTIL_SEQ_PostIdle 接口重定义 */
+void UTIL_SEQ_PostIdle(void)
+{
+    pm_proc_post_idle(sSystemStatus);
+}
+
+// void UTIL_SEQ_EvtIdle(UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm)
+// {
+//     UTIL_SEQ_Run(UTIL_SEQ_DEFAULT);
+// }
 
 static uint8_t sEnableShutDown = false;
 void pwr_shutdown_proc_pre_idle(void)
@@ -993,4 +1018,3 @@ uint8_t pwr_get_power_relative(void)
 }
 
 #pragma endregion
-

@@ -29,7 +29,10 @@
             "editor.tabSize": 4,
             "editor.autoIndent": "advanced"
         },
-        "cortex-debug.variableUseNaturalFormat": true
+        "cortex-debug.variableUseNaturalFormat": true,
+        "cSpell.words": [
+            "utest"
+        ]
     },
     "extensions": {
         "recommendations": [

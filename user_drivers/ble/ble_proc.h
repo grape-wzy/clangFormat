@@ -69,9 +69,9 @@ typedef struct {
 //连接事件
 typedef  struct
 {
-	//uint16_t ServerType;	//设备类型, 
-	uint16_t ConnHandle;	//连接句柄
-	uint16_t ServiceHandle;	//服务根句柄
+    //uint16_t ServerType;	//设备类型,
+    uint16_t ConnHandle;    //连接句柄
+    uint16_t ServiceHandle;	//服务根句柄
 	uint16_t MTU;			//rx mtu
 	uint32_t NotifyStatus;
 	uint8_t DisconnWaitForCplt; //主动断开
@@ -135,8 +135,7 @@ typedef struct
 #define DOWNLOAD_IMAGE_HANDLE					0x0018
 
 //蓝牙名称，最大数值
-#define BLE_LOCAL_NAME_MAX_NUMBER				(999999) 
-
+#define BLE_LOCAL_NAME_MAX_NUMBER               (999999)
 
 //通知使能宏定义
 #define NOTIFY_TXEVENT_ENABLED                  0x1
@@ -144,9 +143,9 @@ typedef struct
 #define NOTIFY_STATUS_ENABLED					0x4
 #define NOTIFY_IMAGE_ENABLED					0x8
 
-#define NOTIFY_FLAG(flag)		(sConnEvent.NotifyStatus & flag) 
+#define NOTIFY_FLAG(flag)                       (sConnEvent.NotifyStatus & flag)
 #define NOTIFY_FLAG_SET(flag)	(sConnEvent.NotifyStatus |= flag)
-#define NOTIFY_FLAG_CLEAR(flag) (sConnEvent.NotifyStatus &= ~flag)   
+#define NOTIFY_FLAG_CLEAR(flag)                 (sConnEvent.NotifyStatus &= ~flag)
 #define NOTIFY_FLAG_ALLCLEAR()	(sConnEvent.NotifyStatus = 0)
 
 
@@ -195,9 +194,7 @@ uint32_t ble_get_send_bytes(void);
 
 //数据应答
 uint8_t ble_reply_cmd(uint8_t cmd, uint8_t seq);
-uint8_t ble_reply_buffer(uint8_t cmd, uint8_t seq, uint8_t* buffer, uint8_t buffersize);
-#define ble_reply_command(c)  ble_reply_cmd(c,rx->Sequence)
-#define ble_reply_data(b,s)  ble_reply_buffer(rx->Cmd,rx->Sequence,b,s)
+uint8_t ble_reply_buffer(uint8_t cmd, uint8_t seq, uint8_t *buffer, uint8_t buffersize);
 //主动上传
 uint8_t ble_update_status(uint8_t cmd, uint8_t* buffer, uint8_t buffersize);
 uint8_t ble_update_data(uint8_t* buffer, uint8_t buffersize);
