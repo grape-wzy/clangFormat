@@ -172,19 +172,19 @@ static void pm_proc_idle(uint8_t status)
 /* UTIL_SEQ_PreIdle 接口重定义 */
 void UTIL_SEQ_PreIdle(void)
 {
-    pm_proc_pre_idle(sSystemStatus);
+    pm_proc_pre_idle(itask_get_system_status());
 }
 
 /* UTIL_SEQ_Idle 接口重定义 */
 void UTIL_SEQ_Idle(void)
 {
-    pm_proc_idle(sSystemStatus);
+    pm_proc_idle(itask_get_system_status());
 }
 
 /* UTIL_SEQ_PostIdle 接口重定义 */
 void UTIL_SEQ_PostIdle(void)
 {
-    pm_proc_post_idle(sSystemStatus);
+    pm_proc_post_idle(itask_get_system_status());
 }
 
 // void UTIL_SEQ_EvtIdle(UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm)

@@ -485,16 +485,16 @@
         "name": "applications",
         "files": [
           {
+            "path": "../../applications/cmd_handle_proc.c"
+          },
+          {
             "path": "../../applications/itask.c"
           },
           {
             "path": "../../applications/main.c"
           },
           {
-            "path": "../../applications/pd_proc_private.c"
-          },
-          {
-            "path": "../../applications/pd_proc_public.c"
+            "path": "../../applications/pd_proc.c"
           },
           {
             "path": "../../applications/platform_init.c"
@@ -737,9 +737,6 @@
               },
               {
                 "path": "../../user_drivers/saber/skt_if.c"
-              },
-              {
-                "path": "../../user_drivers/saber/skt_sensor_if.c"
               }
             ],
             "folders": []

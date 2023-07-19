@@ -11,7 +11,7 @@
 #define __BLE_PROC_H
 
 #include <stdint.h>
-#include "large_event.h"
+#include "gcompiler.h"
 /*******************结构定义****************************************************/
 // 蓝牙故障统计信息
 // ErrorTotalCount   ----------- 所有故障累计次数

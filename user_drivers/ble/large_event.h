@@ -2,7 +2,7 @@
 * file    large_event.h
 * author  mackgim
 * version 1.0.0
-* date    
+* date
 * brief   ble 超过mtu长度的数据传输事件
 *******************************************************************************/
 
@@ -57,29 +57,21 @@ typedef struct {
 	uint8_t	  Reserved;
 	uint32_t  DataCount;
 	uint8_t*  DataP;//数据指针
-	uint32_t  DataSize;//数据大小
-	uint8_t(*is_head)(void*, uint8_t*, uint8_t);
-	uint8_t(*set)(void *, uint8_t*, uint8_t);
-	uint8_t(*get)(void*, uint8_t*, uint8_t, uint8_t* , uint8_t*);
+    uint32_t  DataSize; //数据大小
 }__LARGE_EVENT_Typedef;
 
-
-
-#define LARGE_EVNT_DEFAULT()  {\
-0,\
-0,\
-0,\
-0,\
-0,\
-0,\
-0,\
-NULL,\
-0,\
-large_event_is_head,\
-large_event_set,\
-large_event_get,\
-}
-
+#define LARGE_EVNT_DEFAULT \
+    {                      \
+        0,                 \
+            0,             \
+            0,             \
+            0,             \
+            0,             \
+            0,             \
+            0,             \
+            NULL,          \
+            0              \
+    }
 
 uint8_t large_event_is_head(void* handle, uint8_t* buffer, uint8_t buffersize);
 uint8_t large_event_set(void* handle, uint8_t* buffer, uint8_t buffersize);

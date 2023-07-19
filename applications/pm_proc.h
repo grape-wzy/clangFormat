@@ -29,10 +29,6 @@ void pwr_gpio_init(void);
 void pwr_gpio_deinit(void);
 uint8_t pwr_check_wakeup(void);
 
-void pm_proc_pre_idle(uint8_t status);
-void pm_proc_post_idle(uint8_t status);
-void pm_proc_idle(uint8_t status);
-
 void pwr_check_mcu_alive(void);
 
 uint8_t pwr_get_power_relative(void);

@@ -14,6 +14,7 @@ to the ground plane
 #define __SKT_IF_H
 
 #include "stdint.h"
+#include "com_struct.h"
 
 #define MFX_NUM_AXES    3
 #define MFX_QNUM_AXES   4

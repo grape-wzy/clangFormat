@@ -19,15 +19,10 @@
 #define tkkpf(...)
 #endif
 
-// 新定义: 1、休眠(新版改进，苏醒即休眠)，2、关机，3、休眠，4、复位，5、工作、6、校准，7、测试，8、固件升级
-// 除了工作，其他时候尽可能休眠
-static uint8_t sSystemStatus = SYSTEM_STATUS_NULL;
 // 状态任务
 static uint8_t sTSItaskStatusID;
 // 时间保存任务
 static uint8_t sTSItaskTimeKeeperID;
-// 设备是否正在老化
-static uint8_t sDeviceAgeing = false;
 // 速度测试
 static __TESTSPEED_SETTING_TypeDef SpeedTestBuff;
 
@@ -46,21 +41,6 @@ static void itask_time_keeper_proc(void)
 /* 更新日常状态 */
 static void itask_update_general_status(void)
 {
-    // 日常状态
-    //__GENERAL_STATUS_TypeDef sGeneralStatus = { 0 };
-    //__SYSTEM_TIME32_TypeDef t;
-    // sys_get_time(&t);
-    // sGeneralStatus.RunTime = t.RunTime;
-    // sGeneralStatus.WorkTime = t.WorkTime;
-    // sGeneralStatus.UpTime = t.UpTime;
-
-    // sGeneralStatus.BleTransmitBytes = ble_get_send_bytes() + sizeof(sGeneralStatus) + 1;        //1为命令字的byte数
-    // sGeneralStatus.Power = pwr_get_power_relative();       													 //pm_get_power_relative();
-
-    // if (ble_update_status(STATUS_GENERAL_INDEX, (uint8_t*)&sGeneralStatus, sizeof(sGeneralStatus)) == STD_SUCCESS)
-    //{
-    // }
-
     __GENERAL_LONG_STATUS_TypeDef lstatus = { 0 };
     lstatus.Length                        = sizeof(lstatus) - 1;
     lstatus.DataType                      = STATUS_LONG_TYPE_0X02_INDEX;
@@ -76,8 +56,7 @@ static void itask_update_general_status(void)
     lstatus.Power = pwr_get_power_relative();
     lstatus.Role  = skt_get_role();
 
-    if (ble_update_status(STATUS_LONG_GENERAL_INDEX, (uint8_t *)&lstatus, sizeof(lstatus)) == STD_SUCCESS) {
-    }
+    ble_update_status(STATUS_LONG_GENERAL_INDEX, (uint8_t *)&lstatus, sizeof(lstatus));
 }
 
 static void itask_status_ts_callback(void)
@@ -89,22 +68,26 @@ static void itask_status_ts_callback(void)
 // 状态任务，当蓝牙连接之后，以2秒的频率运行
 static void itask_status_proc(void)
 {
-    switch (sSystemStatus) {
+    uint8_t status = itask_get_system_status();
+    switch (status) {
     case SYSTEM_STATUS_NULL:
+
     case SYSTEM_STATUS_WORKING: {
         itask_update_general_status();
     }
+
     case SYSTEM_STATUS_UPDATING_IMAGE: {
         // 超时故障,如果蓝牙没有断开，迅速断开
         if (fw_timeout() == STD_TIMEOUT) {
-            sSystemStatus = SYSTEM_STATUS_NULL;
-            kprint("fw,timeout\r\n");
+            itask_set_system_status(SYSTEM_STATUS_NULL);
+            kprint("fw, timeout\r\n");
 
             if (ble_is_connected()) {
                 ble_disconnect();
             }
         }
     } break;
+
     default:
         break;
     }
@@ -132,57 +115,14 @@ static void itask_test_ble_speed_proc(void)
         ble_tx_full_wait();
     }
 
-    if (SYSTEM_STATUS_TESTING == sSystemStatus) {
+    if (SYSTEM_STATUS_TESTING == itask_get_system_status()) {
         UTIL_SEQ_SetTask(1 << CFG_TASK_TEST_BLE_SPEED_ID, CFG_PRIO_NBR_4);
     }
 }
 
-static __LARGE_EVENT_Typedef sLargeEvent = LARGE_EVNT_DEFAULT();
-
-static uint8_t itask_set_alg_para(uint8_t *buffer, uint8_t buffersize)
+__WEAK uint8_t cmd_handle_proc(uint8_t command, uint8_t sequence, uint8_t *buffer, uint8_t buff_len)
 {
-    // 查询帧头
-    uint8_t ret = sLargeEvent.is_head(&sLargeEvent, buffer, buffersize);
-    // 如果是帧头的话，先导入数据
-    if (ret == STD_SUCCESS) {
-        sLargeEvent.DataP    = &gAlgoPara.Value[0];
-        sLargeEvent.DataSize = sizeof(gAlgoPara.Value);
-        tkkpf("init\r\n");
-    }
-
-    ret = sLargeEvent.set(&sLargeEvent, buffer, buffersize);
-
-    if (ret == STD_SUCCESS) {
-        if (skt_check_keywork((uint32_t)&gAlgoPara.Value[0]) == STD_SUCCESS) {
-            tkkpf("save alg para\r\n");
-            pd_save_algo_para();
-        } else {
-            return STD_FAILED;
-        }
-    } else if (ret == STD_FAILED) {
-        return STD_FAILED;
-    }
-
-    return STD_SUCCESS;
-}
-
-static uint8_t itask_get_alg_para(uint8_t *input, uint8_t inputsize, uint8_t *out, uint8_t *outsize)
-{
-    uint8_t ret = sLargeEvent.is_head(&sLargeEvent, input, inputsize);
-    // 如果是帧头的话，先导入数据
-    if (ret == STD_SUCCESS) {
-        pd_read_algo_para();
-        sLargeEvent.DataP    = &gAlgoPara.Value[0];
-        sLargeEvent.DataSize = sizeof(gAlgoPara.Value);
-        tkkpf("init\r\n");
-    }
-
-    ret = sLargeEvent.get(&sLargeEvent, input, inputsize, out, outsize);
-    // 获取帧头
-    if (ret == STD_FAILED) {
-        return STD_FAILED;
-    }
-    return STD_SUCCESS;
+    return STD_ERROR;
 }
 
 void itask_init(void)
@@ -217,7 +157,7 @@ uint8_t itask_ble_disconnected()
 {
     led_ctrl(LED_MODE_G_CTRL, 0);  // 绿灯灭
     led_ctrl(LED_MODE_Y_BLINK, 0); // 黄灯闪烁
-    // sSystemStatus = SYSTEM_STATUS_NULL;
+    // itask_set_system_status(SYSTEM_STATUS_NULL);
     ts_stop(sTSItaskStatusID);
     return STD_SUCCESS;
 }
@@ -230,7 +170,8 @@ uint8_t itask_rx_proc(uint8_t *data, uint8_t size)
     uint8_t rx_length = size - 2;
 
     tkkpf("rx=0x%x,seq=0x%x\r\n", rx->Cmd, rx->Sequence);
-
+    return (cmd_handle_proc(rx->Cmd, rx->Sequence, rx->Buffer, rx_length));
+#if 0
     switch (rx->Cmd) {
 #pragma region 初始化指令
     case ET_GET_Device_Status: {
@@ -707,6 +648,7 @@ uint8_t itask_rx_proc(uint8_t *data, uint8_t size)
     }
 
     return STD_SUCCESS;
+#endif
 }
 
 // 数据通道，数据流，没有回复
@@ -741,14 +683,52 @@ uint8_t itask_image_proc(uint8_t *data, uint8_t size)
     uint8_t ret = fw_proc(data, size);
 
     if (ret != STD_SUCCESS) {
-        if (sSystemStatus == SYSTEM_STATUS_UPDATING_IMAGE) {
-            sSystemStatus = SYSTEM_STATUS_NULL;
+        if (itask_get_system_status() == SYSTEM_STATUS_UPDATING_IMAGE) {
+            itask_set_system_status(SYSTEM_STATUS_NULL);
         }
         if (ble_is_connected()) {
             ble_disconnect();
         }
     }
     return ret;
+}
+
+// 新定义: 1、休眠(新版改进，苏醒即休眠)，2、关机，3、休眠，4、复位，5、工作、6、校准，7、测试，8、固件升级
+// 除了工作，其他时候尽可能休眠
+static volatile uint8_t sSystemStatus = SYSTEM_STATUS_NULL;
+
+uint8_t itask_get_system_status(void)
+{
+    return sSystemStatus;
+}
+
+void itask_set_system_status(uint8_t status)
+{
+    if (status >= SYSTEM_STATUS_NULL && status < SYSTEM_STATUS_EMAX)
+        sSystemStatus = status;
+}
+
+// 设备是否正在老化
+static uint8_t sDeviceAgeing = 0;
+
+uint8_t itask_get_ageing_status(void)
+{
+    return sDeviceAgeing;
+}
+
+void itask_set_ageing_status(uint8_t status)
+{
+    sDeviceAgeing = !!(status);
+}
+
+void itask_set_speed_test_buff(uint32_t id, uint32_t size)
+{
+    if ((size > BLE_GATT_CHAR_MAX_LENGTH) || (size == 0)) {
+        tkkpf("set speed test: error size = %lu\r\n", size);
+        return;
+    }
+    SpeedTestBuff.ID       = id;
+    SpeedTestBuff.DataSize = size;
 }
 
 #if 0

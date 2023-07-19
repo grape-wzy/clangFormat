@@ -9,7 +9,8 @@
 #include "gpio_if.h"
 #include "platform.h"
 #include "standard_lib.h"
-
+#include "ble_proc.h"
+#include "itask.h"
 
 #define LED_DEFAULT_OFF_INTERVAL	(960)
 #define LED_DEFAULT_ON_INTERVAL		(40)
@@ -242,7 +243,7 @@ void led_ctl_for_sensor(void)
 {
     if (ble_is_connected()) {
         led_ctrl(LED_MODE_G_BLINK, 200);   // 绿灯闪烁
-    } else if (sDeviceAgeing) {
+    } else if (itask_get_ageing_status()) {
         led_ctrl(LED_MODE_Y_G_BLINK, 200); // 蓝绿灯闪烁
     }
 }
