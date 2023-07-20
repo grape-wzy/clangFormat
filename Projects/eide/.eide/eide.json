@@ -730,13 +730,10 @@
             "folders": []
           },
           {
-            "name": "saber",
+            "name": "skt",
             "files": [
               {
-                "path": "../../user_drivers/saber/saber_drv.c"
-              },
-              {
-                "path": "../../user_drivers/saber/skt_if.c"
+                "path": "../../user_drivers/skt/skt_if.c"
               }
             ],
             "folders": []
@@ -926,7 +923,8 @@
           "../../include",
           "../../components/imu/lsm6ds3_STdC/driver",
           "../../components/ST/STM32_MotionFX_Library/Inc",
-          "../../user_drivers/utest"
+          "../../user_drivers/utest",
+          "../../user_drivers/skt"
         ],
         "libList": [
           "../../components/ST/STM32_MotionFX_Library/Lib"

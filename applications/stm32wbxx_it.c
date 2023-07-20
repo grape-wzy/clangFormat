@@ -147,12 +147,9 @@ void IPCC_C1_RX_IRQHandler(void)
 	return;
 }
 
-
-void SPI_A_HW_READY_EXTI_IRQHandler(void)
-{
-
-	skt_irq_handle();
-
-}
+// void SPI_A_HW_READY_EXTI_IRQHandler(void)
+// {
+// 	skt_irq_handle();
+// }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

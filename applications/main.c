@@ -20,10 +20,6 @@ int main()
 
 	platform_init();
 
-    ahrs_init();
-
-    ahrs_start();
-
     kprint("\r\n");
     kprint("----run----\r\n");
     kprint("\r\n");

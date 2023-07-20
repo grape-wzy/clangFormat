@@ -1,7 +1,7 @@
 /*
  * @Author       : Zhaoyu.Wu
  * @Date         : 2023-06-26 18:16
- * @LastEditTime : 2023-07-17 09:30
+ * @LastEditTime : 2023-07-20 13:51
  * @LastEditors  : Zhaoyu.Wu
  * @Description  :
  * @FilePath     : d:/eMed/product/osteotomy_simple_1/user_drivers/ahrs/ahrs_if.c
@@ -54,6 +54,8 @@ static uint32_t     sInPtr = 0, sOutPtr = 0;
 static MFX_output_t sAhrsOutput;
 
 static __AHRS_INPUT_TypeDef sAhrsInput[IMU_INPUT_BUFF_LENGTH];
+
+static __SKT_MASTER_DEVICE_BLE_DATA_TypeDef sSktMasterFrame; // BLE上传的master帧
 
 static __AHRS_ALG_API_TypeDef sAhrsAlgApi = {
     .init  = MotionFX_manager_init,
@@ -118,7 +120,6 @@ void ahrs_proc_task(void)
     MFX_input_t mfx_input_buf;
 
     static uint64_t cal_tick = 0, report_time_point_recode = 0;
-    static uint64_t current_time = 0;
     float           during_time  = 0.00;
 
     if (sAhrsStartFlag == 0) return;
@@ -133,7 +134,7 @@ void ahrs_proc_task(void)
         mfx_input_buf.gyro[1] = sAhrsInput[sOutPtr].G[1];
         mfx_input_buf.gyro[2] = sAhrsInput[sOutPtr].G[2];
 
-        during_time = (float)(sAhrsInput[sOutPtr].tick - cal_tick) / (float)(GTIMER_LPTIM_FREQ);
+        during_time = (float)(sAhrsInput[sOutPtr].tick - cal_tick) / (float)(GTIMER_LPTIM_FREQ); //TICKS_TO_S
         cal_tick    = sAhrsInput[sOutPtr].tick;
 
         sAhrsAlgApi.run(&mfx_input_buf, &sAhrsOutput, during_time);
@@ -143,33 +144,46 @@ void ahrs_proc_task(void)
             if (sAhrsInput[sOutPtr].tick > AHRS_DATA_REPORT_MIN_TIME + report_time_point_recode) {
                 report_time_point_recode = sAhrsInput[sOutPtr].tick;
 
-                // sSktRefFrame.HeadSize = 15;
-                // sSktRefFrame.HeadType = 0x81;
-                // sSktRefFrame.DataType = 0x01;
-                // sSktRefFrame.TimeStampms = rtc_get_stamp_ms();
-                // sSktRefFrame.ActionFlag = 0;
-                // sSktRefFrame.Power = 100;
-                // sSktRefFrame.DataSize = 44;
-                // sSktRefFrame.Q[0] =  sInPtr> sOutPtr ?sInPtr- sOutPtr: IMU_INPUT_BUFF_LENGTH - sOutPtr + sInPtr; //sAhrsOutput.quaternion[3]; //
-                // sSktRefFrame.Q[1] = sAhrsOutput.quaternion[0];
-                // sSktRefFrame.Q[2] = sAhrsOutput.quaternion[1];
-                // sSktRefFrame.Q[3] = sAhrsOutput.quaternion[2];
-                // sSktRefFrame.Displacement = 0;
-                // sSktRefFrame.G[0] = sAhrsInput[sOutPtr].G[0];
-                // sSktRefFrame.G[1] = sAhrsInput[sOutPtr].G[1];
-                // sSktRefFrame.G[2] = sAhrsInput[sOutPtr].G[2];
-                // sSktRefFrame.A[0] = sAhrsInput[sOutPtr].A[0];
-                // sSktRefFrame.A[1] = sAhrsInput[sOutPtr].A[1];
-                // sSktRefFrame.A[2] = sAhrsInput[sOutPtr].A[2];
-                // send_callback((uint8_t*)&sSktRefFrame, sizeof(sSktRefFrame));
+                sSktMasterFrame.HeadSize      = 18;
+                sSktMasterFrame.HeadType      = 0x81;
+                sSktMasterFrame.DataType      = 0;
+                sSktMasterFrame.TimeStampms   = TICKS_TO_MS(sAhrsInput[sOutPtr].tick);
+                sSktMasterFrame.MotionMode    = 0;
+                sSktMasterFrame.MotionProcess = 0;
+                sSktMasterFrame.MotionStatus  = 0;
+
+                sSktMasterFrame.DebugStatus = 1;
+                sSktMasterFrame.DataSize    = 64;
+                sSktMasterFrame.Q[0]        = sAhrsOutput.quaternion[0];
+                sSktMasterFrame.Q[1]        = sAhrsOutput.quaternion[1];
+                sSktMasterFrame.Q[2]        = sAhrsOutput.quaternion[2];
+                sSktMasterFrame.Q[3]        = sAhrsOutput.quaternion[3];
+                sSktMasterFrame.AdjustVV    = 0;
+                sSktMasterFrame.AdjustFE    = -45.0;
+                sSktMasterFrame.NavigateVV  = 0;
+                sSktMasterFrame.NavigateFE  = -45.0;
+
+                sSktMasterFrame.G[0] = sAhrsInput[sOutPtr].G[0];
+                sSktMasterFrame.G[1] = sAhrsInput[sOutPtr].G[1];
+                sSktMasterFrame.G[2] = sAhrsInput[sOutPtr].G[2];
+                sSktMasterFrame.A[0] = sAhrsInput[sOutPtr].A[0];
+                sSktMasterFrame.A[1] = sAhrsInput[sOutPtr].A[1];
+                sSktMasterFrame.A[2] = sAhrsInput[sOutPtr].A[2];
+
+                send_callback((uint8_t *)&sSktMasterFrame, sizeof(sSktMasterFrame));
 
 #ifdef DEBUG
 
-                nprint("%lf, %lf, %lf, %lf\r\n",
-                       sAhrsOutput.quaternion[0], // 四元数
-                       sAhrsOutput.quaternion[1],
-                       sAhrsOutput.quaternion[2],
-                       sAhrsOutput.quaternion[3]);
+                // nprint("%lf, %lf, %lf, %lf\r\n",
+                //        sAhrsOutput.quaternion[0], // 四元数
+                //        sAhrsOutput.quaternion[1],
+                //        sAhrsOutput.quaternion[2],
+                //        sAhrsOutput.quaternion[3]);
+
+                nprint("%lf, %lf, %lf\r\n",
+                       sAhrsOutput.rotation[0], // 欧拉角
+                       sAhrsOutput.rotation[1],
+                       sAhrsOutput.rotation[2]);
 
                 //kprint("Q0=%f,Q1=%f,Q2=%f,Q3=%f\r\n", sAhrsOutput.quaternion[0], sAhrsOutput.quaternion[1], sAhrsOutput.quaternion[2], sAhrsOutput.quaternion[3]);
                 //kprint("G0=%f,G1=%f,G2=%f\r\n", sAhrsOutput.gravity[0], sAhrsOutput.gravity[1], sAhrsOutput.gravity[2]);

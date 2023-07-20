@@ -1,7 +1,7 @@
 /*
  * @Author       : Zhaoyu.Wu
  * @Date         : 2023-07-18 14:57
- * @LastEditTime : 2023-07-19 18:07
+ * @LastEditTime : 2023-07-20 09:44
  * @LastEditors  : Zhaoyu.Wu
  * @Description  : Private processing function of equipment
  * @FilePath     : d:/eMed/product/osteotomy_simple_1/applications/cmd_handle_proc.c
@@ -139,7 +139,7 @@ static uint8_t cmd_handle_get_version(uint8_t cmd, uint8_t seq, uint8_t *buff, u
     memset(str_buff, 0, sizeof(str_buff));
     memset(alg_version, 0, sizeof(alg_version));
 
-    // stk_get_version(alg_version); //TODO: get device version
+    stk_get_version(alg_version); //TODO: skt here. Get device version
     get_version(str_buff, alg_version);
 
     kprint("%s\r\n", str_buff);
@@ -312,7 +312,7 @@ static uint8_t cmd_handle_update_ble_mac(uint8_t cmd, uint8_t seq, uint8_t *buff
 
 static uint8_t cmd_handle_get_error(uint8_t cmd, uint8_t seq, uint8_t *buff, uint8_t len)
 {
-    // sMcuCheck.Check = (uint32_t)skt_is_check(); // TODO: device check
+    sMcuCheck.Check = (uint32_t)skt_is_check(); // TODO: skt here. Device check
     REPLAY_DATA((uint8_t *)&sMcuCheck, sizeof(sMcuCheck));
 
     return STD_SUCCESS;
@@ -398,7 +398,7 @@ static uint8_t cmd_handle_set_alg_setting(uint8_t cmd, uint8_t seq, uint8_t *buf
             break;
         }
 
-        ret = 1; //skt_check_keywork((uint32_t)&gAlgoPara.Value[0]); //TODO: skt here
+        ret = skt_check_keywork((uint32_t)&gAlgoPara.Value[0]); //TODO: skt here
         if (ret != STD_SUCCESS) {
             break;
         }
@@ -449,7 +449,7 @@ static uint8_t cmd_handle_set_skt_config(uint8_t cmd, uint8_t seq, uint8_t *buff
         }
 
         memcpy(&config, buff, len);
-        ret = STD_SUCCESS; //skt_set_config(config); TODO: skt here
+        ret = skt_set_config(config); //TODO: skt here
         if (ret != STD_SUCCESS) {
             break;
         }
