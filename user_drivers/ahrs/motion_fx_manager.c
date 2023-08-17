@@ -81,12 +81,12 @@ uint8_t MotionFX_manager_init(void)
     kprint("gbias_gyro_th_sc = %f\r\n", iKnobs.gbias_gyro_th_sc);
     kprint("gbias_mag_th_sc = %f\r\n", iKnobs.gbias_mag_th_sc);
 
-    // iKnobs.acc_orientation[0]  = 'e';
-    // iKnobs.acc_orientation[1]  = 'n';
-    // iKnobs.acc_orientation[2]  = 'u';
-    // iKnobs.gyro_orientation[0] = 'e';
-    // iKnobs.gyro_orientation[1] = 'n';
-    // iKnobs.gyro_orientation[2] = 'u';
+    iKnobs.acc_orientation[0]  = 'e';
+    iKnobs.acc_orientation[1]  = 'n';
+    iKnobs.acc_orientation[2]  = 'u';
+    iKnobs.gyro_orientation[0] = 'e';
+    iKnobs.gyro_orientation[1] = 'n';
+    iKnobs.gyro_orientation[2] = 'u';
 
     // iKnobs.mag_orientation[0] = 'e';
     // iKnobs.mag_orientation[1] = 'n';

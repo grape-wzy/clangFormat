@@ -1,7 +1,7 @@
 /*
  * @Author       : Zhaoyu.Wu
  * @Date         : 2023-07-18 14:57
- * @LastEditTime : 2023-07-20 09:44
+ * @LastEditTime : 2023-08-11 15:56
  * @LastEditors  : Zhaoyu.Wu
  * @Description  : Private processing function of equipment
  * @FilePath     : d:/eMed/product/osteotomy_simple_1/applications/cmd_handle_proc.c
@@ -45,7 +45,7 @@ static uint8_t cmd_handle_get_device_status(uint8_t cmd, uint8_t seq, uint8_t *b
 }
 
 // 有效设备校验码
-static __MCU_MARK_TypeDef mcu_mark_data = { 0, 0, 0 };
+static __MCU_MARK_TypeDef mcu_mark_data = { {0, 0}, 0 };
 
 static uint8_t cmd_handle_set_device_mark(uint8_t cmd, uint8_t seq, uint8_t *buff, uint8_t len)
 {

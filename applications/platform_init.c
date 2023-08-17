@@ -41,8 +41,11 @@ static __GTIMER_CALLBACK_TypeDef gTimer_cbs = {
     .sleep_cb = pwr_stop_mcu_for_delay,
 };
 
+uint8_t skt_update_data(uint8_t *buffer, uint8_t buffersize)
+{
+}
 static __SKT_CALLBACK_TypeDef skt_cbs = {
-    .send     = ble_update_data,
+    .send     = ble_update_data, //skt_update_data, //ble_update_data,
     .led_ctrl = led_ctl_for_sensor,
 };
 
@@ -111,8 +114,9 @@ void platform_init(void)
     led_ctrl(LED_MODE_G_CTRL, 0);
 	led_ctrl(LED_MODE_Y_BLINK, 0);
 
-	kprint("ok\r\n");
+    // skt_start();
 
+    kprint("ok\r\n");
 }
 
 /*******************************************************************************

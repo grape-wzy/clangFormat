@@ -30,4 +30,3 @@ Please note that:
 * We recommend to engage first a communication through an issue, in order to present your proposal and just to confirm that it corresponds to a STMicroelectronics domain or scope.
 * Then fork the project to your GitHub account to further develop your contribution. Please use the latest commit version.
 * Please submit one Pull Request for one new feature or proposal. This will facilitate the analysis and the final merge if accepted.
-

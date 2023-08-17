@@ -628,6 +628,9 @@
                 "path": "../../components/ST/STM32_MotionFX_Library/Lib/MotionFX_CM4F_wc32_ot_hard.a"
               },
               {
+                "path": "../../components/ST/STM32_MotionGC_Library/Lib/MotionGC_CM4F_wc32_ot_hard.a"
+              },
+              {
                 "path": "../../user_drivers/ahrs/ahrs_if.c"
               },
               {
@@ -843,16 +846,16 @@
         },
         "options": "null"
       },
-      "uploader": "STLink",
+      "uploader": "JLink",
       "uploadConfig": {
         "bin": "",
-        "proType": "SWD",
-        "resetMode": "HWrst",
-        "runAfterProgram": true,
-        "speed": 4000,
-        "address": "0x08000000",
-        "elFile": "None",
-        "optionBytes": ".eide/debug.st.option.bytes.ini",
+        "baseAddr": "",
+        "cpuInfo": {
+          "vendor": "ST",
+          "cpuName": "STM32WB55CG"
+        },
+        "proType": 1,
+        "speed": 8000,
         "otherCmds": ""
       },
       "uploadConfigMap": {
@@ -877,6 +880,19 @@
           "elFile": "None",
           "optionBytes": ".eide/debug.st.option.bytes.ini",
           "otherCmds": ""
+        },
+        "OpenOCD": {
+          "bin": "",
+          "target": "stm32wbx",
+          "interface": "cmsis-dap",
+          "baseAddr": "0x08000000"
+        },
+        "pyOCD": {
+          "bin": "",
+          "targetName": "cortex_m",
+          "baseAddr": "0x08000000",
+          "speed": "4M",
+          "config": ".eide/debug.pyocd.yaml"
         }
       },
       "custom_dep": {
@@ -924,7 +940,8 @@
           "../../components/imu/lsm6ds3_STdC/driver",
           "../../components/ST/STM32_MotionFX_Library/Inc",
           "../../user_drivers/utest",
-          "../../user_drivers/skt"
+          "../../user_drivers/skt",
+          "../../components/ST/STM32_MotionGC_Library/Inc"
         ],
         "libList": [
           "../../components/ST/STM32_MotionFX_Library/Lib"

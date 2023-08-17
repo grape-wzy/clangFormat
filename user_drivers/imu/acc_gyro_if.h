@@ -35,7 +35,7 @@ typedef struct {
 typedef uint8_t (*ACC_GYRO_IRQ_TypeDef)(uint8_t);
 
 uint8_t acc_gyro_init(void *config);
-uint8_t acc_gyro_deinit(void *);
+uint8_t acc_gyro_deinit(void *config);
 
 uint8_t acc_gyro_disable(void);
 uint8_t acc_gyro_enable(void);

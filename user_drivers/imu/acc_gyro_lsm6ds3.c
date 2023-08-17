@@ -518,7 +518,7 @@ uint8_t acc_gyro_init(void *config)
     return acc_gyro_hal_init(cfg);
 }
 
-uint8_t acc_gyro_deinit(void *)
+uint8_t acc_gyro_deinit(void *config)
 {
     return acc_gyro_hal_deinit();
 }

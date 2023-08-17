@@ -34,7 +34,7 @@
 #define PWR_ENABLE_STANBY		0
 #endif
 #else //调试时候，根据情况打开休眠
-#if 1
+#if 0
 #define PWR_ENABLE_STOP			1
 #define PWR_ENABLE_STANBY		0
 #else

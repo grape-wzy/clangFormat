@@ -41,7 +41,7 @@ extern "C"
 #pragma region kprint
 
 #define KLOG_USARTx						USART1
-#define KLOG_USARTx_BAUD_RATE			115200
+#define KLOG_USARTx_BAUD_RATE           460800
 
 #define KLOG_USARTx_SET_CLK_SOURCE()	LL_RCC_SetUSARTClockSource(LL_RCC_USART1_CLKSOURCE_PCLK2)
 

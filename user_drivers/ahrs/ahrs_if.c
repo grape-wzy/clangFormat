@@ -1,7 +1,7 @@
 /*
  * @Author       : Zhaoyu.Wu
  * @Date         : 2023-06-26 18:16
- * @LastEditTime : 2023-07-20 13:51
+ * @LastEditTime : 2023-08-11 15:54
  * @LastEditors  : Zhaoyu.Wu
  * @Description  :
  * @FilePath     : d:/eMed/product/osteotomy_simple_1/user_drivers/ahrs/ahrs_if.c
@@ -22,14 +22,24 @@ to the ground plane
 #include "standard_lib.h"
 #include "motion_fx_manager.h"
 #include "motion_fx.h"
+#include "motion_gc.h"
 #include "platform.h"
 
-#define AHRS_GYRO_SCALE           (2)             // GYPO_SCALE_500dps
-#define AHRS_ACC_SCALE            (0)             // ACC_SCALE_2g
-#define AHRS_ACC_GYRO_DATA_RATE   (400)           // 500Hz
-#define AHRS_ACC_GYRO_POWER_MODE  (1)             // high_performance, 0 disable, 1 enable
+#define AHRS_GYRO_SCALE           (2)   // GYPO_SCALE_500dps
+#define AHRS_ACC_SCALE            (0)   // ACC_SCALE_2g
+#define AHRS_ACC_GYRO_DATA_RATE   (104) // 500Hz
+#define AHRS_ACC_GYRO_POWER_MODE  (1)   // high_performance, 0 disable, 1 enable
 
-#define AHRS_DATA_REPORT_MIN_TIME (MS_TO_TICK(1000 / 30))
+/* TODO: 当数据更新频率大于208的时候，陀螺仪静态校准几乎不可用了，打开动态校准后才能执行校准功能，但是校准几个数据后就误差数据就不再被更新了，
+ * 当数据频率小于等于208的时候，可开启静态校准，且整个过程中，只要是处于静止状态时，校准则一直在继续，
+ * 似乎与是否配置start_automatic_gbias_calculation无关，
+ * 但数据频率低的时候，当快速旋转时，会造成角度的丢失；
+ * 下一步测试高频率下，使用motionGC来执行误差校准功能是否可行(测试结果：MotionGC在高频率下和MotionFX 一样，无法执行校准)
+ */
+
+#define AHRS_DATA_REPORT_MIN_TIME (MS_TO_TICK(1000 / 40))
+
+#define AHRS_BIAS_REPORT_MIN_TIME (MS_TO_TICK(200))
 
 typedef struct {
     float    G[3];
@@ -51,7 +61,7 @@ typedef uint8_t (*AHRS_SEND_CALLBACK_TYPE)(uint8_t *, uint8_t);
 
 static uint8_t      sTSAhrsRunID = 0, sAhrsStartFlag = 0;
 static uint32_t     sInPtr = 0, sOutPtr = 0;
-static MFX_output_t sAhrsOutput;
+static MFX_output_t sAhrsOutput; /* the sequence of quaternion is qX qY qZ and qW */
 
 static __AHRS_INPUT_TypeDef sAhrsInput[IMU_INPUT_BUFF_LENGTH];
 
@@ -67,12 +77,22 @@ static __AHRS_ALG_API_TypeDef sAhrsAlgApi = {
 
 static AHRS_SEND_CALLBACK_TYPE send_callback;
 
-void ahrs_register_cb(void *cb)
+static void motion_gc_init(void)
 {
-    send_callback = cb;
+    float       gc_freq = (float)AHRS_ACC_GYRO_DATA_RATE;
+    MGC_knobs_t gc_knobs;
+
+    MotionGC_Initialize(MGC_MCU_STM32, &gc_freq);
+
+    MotionGC_GetKnobs(&gc_knobs);
+
+    gc_knobs.GyroThr = 0.1;
+    gc_knobs.AccThr  = 0.005;
+
+    MotionGC_SetKnobs(&gc_knobs);
 }
 
-void ahrs_read_task(void)
+static void ahrs_read_task(void)
 {
     IMU_RESULT_TypeDef ahrs_result_buf;
     uint32_t           inp;
@@ -115,12 +135,18 @@ void ahrs_read_task(void)
 }
 
 /* process the imu data and report it */
-void ahrs_proc_task(void)
+static void ahrs_proc_task(void)
 {
-    MFX_input_t mfx_input_buf;
+    MFX_input_t  mfx_input_buf;
+    MGC_input_t  mgc_input_buf;
+    MGC_output_t mgc_output_buf;
 
-    static uint64_t cal_tick = 0, report_time_point_recode = 0;
-    float           during_time  = 0.00;
+    static uint64_t cal_tick = 0, report_time_point_recode = 0, report_time_point_recode1 = 0;
+    uint32_t        current_tick = 0;
+
+    float during_time = 0.00;
+    float gbias[3];
+    int   bias_update = 0;
 
     if (sAhrsStartFlag == 0) return;
 
@@ -134,10 +160,42 @@ void ahrs_proc_task(void)
         mfx_input_buf.gyro[1] = sAhrsInput[sOutPtr].G[1];
         mfx_input_buf.gyro[2] = sAhrsInput[sOutPtr].G[2];
 
+        mgc_input_buf.Acc[0] = sAhrsInput[sOutPtr].A[0];
+        mgc_input_buf.Acc[1] = sAhrsInput[sOutPtr].A[1];
+        mgc_input_buf.Acc[2] = sAhrsInput[sOutPtr].A[2];
+
+        mgc_input_buf.Gyro[0] = sAhrsInput[sOutPtr].G[0];
+        mgc_input_buf.Gyro[1] = sAhrsInput[sOutPtr].G[1];
+        mgc_input_buf.Gyro[2] = sAhrsInput[sOutPtr].G[2];
+
         during_time = (float)(sAhrsInput[sOutPtr].tick - cal_tick) / (float)(GTIMER_LPTIM_FREQ); //TICKS_TO_S
         cal_tick    = sAhrsInput[sOutPtr].tick;
 
+        // if (learning != 0) {
+        //     learning++;
+        //     if (learning == 2) {
+        //         ahrs_calib(1);
+        //     } else if (learning == AHRS_ACC_GYRO_DATA_RATE * 15) {
+        //         ahrs_calib(0);
+        //         learning = 0;
+        //     }
+        // }
+
+        // MotionGC_Update(&mgc_input_buf, &mgc_output_buf, &bias_update);
         sAhrsAlgApi.run(&mfx_input_buf, &sAhrsOutput, during_time);
+
+        // if (sAhrsInput[sOutPtr].tick > AHRS_BIAS_REPORT_MIN_TIME + report_time_point_recode1) {
+        //     gbias[0] = 0.0;
+        //     gbias[1] = 0.0;
+        //     gbias[2] = 0.0;
+
+        //     report_time_point_recode1 = sAhrsInput[sOutPtr].tick;
+
+        //     MotionFX_getGbias(motion_fx_state_buff, gbias);
+        //     nprint("gyro: %f, %f, %f | bias: %f, %f, %f\r\n",
+        //            mfx_input_buf.gyro[0], mfx_input_buf.gyro[1], mfx_input_buf.gyro[2],
+        //            gbias[0], gbias[1], gbias[2]);
+        // }
 
         // if (send_callback != NULL)
         {
@@ -154,10 +212,10 @@ void ahrs_proc_task(void)
 
                 sSktMasterFrame.DebugStatus = 1;
                 sSktMasterFrame.DataSize    = 64;
-                sSktMasterFrame.Q[0]        = sAhrsOutput.quaternion[0];
-                sSktMasterFrame.Q[1]        = sAhrsOutput.quaternion[1];
-                sSktMasterFrame.Q[2]        = sAhrsOutput.quaternion[2];
-                sSktMasterFrame.Q[3]        = sAhrsOutput.quaternion[3];
+                sSktMasterFrame.Q[0]        = sAhrsOutput.quaternion[3];
+                sSktMasterFrame.Q[1]        = sAhrsOutput.quaternion[0];
+                sSktMasterFrame.Q[2]        = sAhrsOutput.quaternion[1];
+                sSktMasterFrame.Q[3]        = sAhrsOutput.quaternion[2];
                 sSktMasterFrame.AdjustVV    = 0;
                 sSktMasterFrame.AdjustFE    = -45.0;
                 sSktMasterFrame.NavigateVV  = 0;
@@ -173,24 +231,53 @@ void ahrs_proc_task(void)
                 send_callback((uint8_t *)&sSktMasterFrame, sizeof(sSktMasterFrame));
 
 #ifdef DEBUG
+                do {
+                    // break;
+                    // if ((sAhrsOutput.quaternion[0] + 1.5 > 3.0) || (sAhrsOutput.quaternion[0] + 1.5 < 0.1) ||
+                    //     (sAhrsOutput.quaternion[1] + 1.5 > 3.0) || (sAhrsOutput.quaternion[1] + 1.5 < 0.1) ||
+                    //     (sAhrsOutput.quaternion[2] + 1.5 > 3.0) || (sAhrsOutput.quaternion[2] + 1.5 < 0.1) ||
+                    //     (sAhrsOutput.quaternion[3] + 1.5 > 3.0) || (sAhrsOutput.quaternion[3] + 1.5 < 0.1))
 
-                // nprint("%lf, %lf, %lf, %lf\r\n",
-                //        sAhrsOutput.quaternion[0], // 四元数
-                //        sAhrsOutput.quaternion[1],
-                //        sAhrsOutput.quaternion[2],
-                //        sAhrsOutput.quaternion[3]);
+                    //     break;
 
-                nprint("%lf, %lf, %lf\r\n",
-                       sAhrsOutput.rotation[0], // 欧拉角
-                       sAhrsOutput.rotation[1],
-                       sAhrsOutput.rotation[2]);
+                    current_tick = TICKS_TO_MS((uint32_t)Clock_Tick());
+                    // nprint("%lu,", current_tick);
 
-                //kprint("Q0=%f,Q1=%f,Q2=%f,Q3=%f\r\n", sAhrsOutput.quaternion[0], sAhrsOutput.quaternion[1], sAhrsOutput.quaternion[2], sAhrsOutput.quaternion[3]);
-                //kprint("G0=%f,G1=%f,G2=%f\r\n", sAhrsOutput.gravity[0], sAhrsOutput.gravity[1], sAhrsOutput.gravity[2]);
-                //kprint("A0=%f,A1=%f,A2=%f\r\n", sAhrsOutput.linear_acceleration[0], sAhrsOutput.linear_acceleration[1], sAhrsOutput.linear_acceleration[2]);
-                //kprint("id=%u,G0=%f,G1=%f,G2=%f\r\n", (unsigned int)sOutPtr, (float)(sAhrsInput[sOutPtr].G[0] / 25), (float)(sAhrsInput[sOutPtr].G[1] / 25), (float)(sAhrsInput[sOutPtr].G[2] / 25));
-                //kprint("id=%u,A0=%f,A1=%f,A2=%f\r\n", (unsigned int)sOutPtr, (float)(sAhrsInput[sOutPtr].A[0] / 9806.65), (float)(sAhrsInput[sOutPtr].A[1] / 9806.65), (float)(sAhrsInput[sOutPtr].A[2] / 9806.65));
+                    // nprint("%lf,%lf,%lf,%lf,",
+                    //        sAhrsOutput.quaternion[0], // 四元数
+                    //        sAhrsOutput.quaternion[1],
+                    //        sAhrsOutput.quaternion[2],
+                    //        sAhrsOutput.quaternion[3]);
 
+                    nprint("%lu,%lf,%lf,%lf\r\n", current_tick,
+                           sAhrsOutput.rotation[0],  // yaw-z
+                           sAhrsOutput.rotation[1],  //pitch-x
+                           sAhrsOutput.rotation[2]); // roll-y
+                    // report_time_point_recode1++;
+
+                    // nprint("%lf/%lf/%lf, ",
+                    //        mfx_input_buf.acc[0],                                 // yaw-z
+                    //        mfx_input_buf.acc[1],                                 //pitch-x
+                    //        mfx_input_buf.acc[2]);                                // roll-y
+                    // nprint("%lf, %lf, %lf, ",
+                    //        mfx_input_buf.gyro[0],                                // yaw-z
+                    //        mfx_input_buf.gyro[1],                                //pitch-x
+                    //        mfx_input_buf.gyro[2]);                               // roll-y
+
+                    // nprint("%lf, %lf, %lf, %d\r\n",
+                    //        mgc_output_buf.GyroBiasX,                             // yaw-z
+                    //        mgc_output_buf.GyroBiasY,                             //pitch-x
+                    //        mgc_output_buf.GyroBiasZ, report_time_point_recode1); // roll-y
+
+                    // nprint("%lf, %lf, %lf, %lf, %lf, %lf\r\n",
+                    //        sAhrsOutput.linear_acceleration[0],
+                    //        sAhrsOutput.linear_acceleration[1],
+                    //        sAhrsOutput.linear_acceleration[2],
+                    //        sAhrsOutput.gravity[0],
+                    //        sAhrsOutput.gravity[1],
+                    //        sAhrsOutput.gravity[2]); // 欧拉角
+
+                } while (0);
 #endif
             }
         }
@@ -218,6 +305,7 @@ uint8_t ahrs_init(void)
 
     imu_init(&acc_gyro_config);
     sAhrsAlgApi.init();
+    motion_gc_init();
 
     ts_create(0, &(sTSAhrsRunID), TS_Repeated, ahrs_run_ts_callback);
     UTIL_SEQ_RegTask(1 << CFG_TASK_AHRS_READ_ID, UTIL_SEQ_RFU, ahrs_read_task);
@@ -232,7 +320,7 @@ uint8_t ahrs_start(void)
     imu_enable();
     kprint("start\r\n");
     sAhrsStartFlag = 1;
-    ts_start_us(sTSAhrsRunID, (1000000 / AHRS_ACC_GYRO_DATA_RATE)); // 20分钟
+    ts_start_ms(sTSAhrsRunID, 1000 / 100);
     return STD_SUCCESS;
 }
 
@@ -249,4 +337,9 @@ void ahrs_calib(int32_t en)
 {
     sAhrsAlgApi.calib(en);
     kprint("calib %d\r\n", (int)en);
+}
+
+void ahrs_register_cb(void *cb)
+{
+    send_callback = cb;
 }
