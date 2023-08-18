@@ -1,12 +1,3 @@
-/*
- * @Author       : Zhaoyu.Wu
- * @Date         : 2023-06-26 18:16
- * @LastEditTime : 2023-08-11 15:54
- * @LastEditors  : Zhaoyu.Wu
- * @Description  :
- * @FilePath     : d:/eMed/product/osteotomy_simple_1/user_drivers/ahrs/ahrs_if.c
- * If you have any questions, email to zhaoyu.wu@diehl.com.
- */
 /*******************************************************************************
 * file    ahrs_if.c
 * author  mackgim
@@ -76,21 +67,6 @@ static __AHRS_ALG_API_TypeDef sAhrsAlgApi = {
 };
 
 static AHRS_SEND_CALLBACK_TYPE send_callback;
-
-static void motion_gc_init(void)
-{
-    float       gc_freq = (float)AHRS_ACC_GYRO_DATA_RATE;
-    MGC_knobs_t gc_knobs;
-
-    MotionGC_Initialize(MGC_MCU_STM32, &gc_freq);
-
-    MotionGC_GetKnobs(&gc_knobs);
-
-    gc_knobs.GyroThr = 0.1;
-    gc_knobs.AccThr  = 0.005;
-
-    MotionGC_SetKnobs(&gc_knobs);
-}
 
 static void ahrs_read_task(void)
 {
@@ -181,7 +157,6 @@ static void ahrs_proc_task(void)
         //     }
         // }
 
-        // MotionGC_Update(&mgc_input_buf, &mgc_output_buf, &bias_update);
         sAhrsAlgApi.run(&mfx_input_buf, &sAhrsOutput, during_time);
 
         // if (sAhrsInput[sOutPtr].tick > AHRS_BIAS_REPORT_MIN_TIME + report_time_point_recode1) {
@@ -305,7 +280,6 @@ uint8_t ahrs_init(void)
 
     imu_init(&acc_gyro_config);
     sAhrsAlgApi.init();
-    motion_gc_init();
 
     ts_create(0, &(sTSAhrsRunID), TS_Repeated, ahrs_run_ts_callback);
     UTIL_SEQ_RegTask(1 << CFG_TASK_AHRS_READ_ID, UTIL_SEQ_RFU, ahrs_read_task);

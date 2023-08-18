@@ -712,10 +712,10 @@
             "name": "imu",
             "files": [
               {
-                "path": "../../components/imu/lsm6ds3_STdC/driver/lsm6ds3_reg.c"
+                "path": "../../components/imu/icm4x6xx/driver/icm4x6xx.c"
               },
               {
-                "path": "../../user_drivers/imu/acc_gyro_lsm6ds3.c"
+                "path": "../../user_drivers/imu/acc_gyro_icm42688.c"
               },
               {
                 "path": "../../user_drivers/imu/imu_if.c"
@@ -832,7 +832,8 @@
         "<virtual_root>/bsp/stm32wbxx_it.c",
         "<virtual_root>/bsp/bsp_init.c",
         "<virtual_root>/bsp",
-        "<virtual_root>/drivers"
+        "<virtual_root>/drivers",
+        "<virtual_root>/user_drivers/ahrs/MotionGC_CM4F_wc32_ot_hard.a"
       ],
       "toolchain": "GCC",
       "compileConfig": {
@@ -929,7 +930,6 @@
           "../../user_drivers/timer",
           "../../user_drivers/utilities",
           "../../user_drivers/log",
-          "../../components/imu/lsm6ds3tr-c_STdC/driver",
           "../../bsp",
           "../../user_drivers/imu",
           "../../bsp/CubeMX_config/Core/Src",
@@ -937,11 +937,10 @@
           "../../hal_drivers/drivers/include",
           "../../components/drivers",
           "../../include",
-          "../../components/imu/lsm6ds3_STdC/driver",
           "../../components/ST/STM32_MotionFX_Library/Inc",
           "../../user_drivers/utest",
           "../../user_drivers/skt",
-          "../../components/ST/STM32_MotionGC_Library/Inc"
+          "../../components/imu/icm4x6xx/driver"
         ],
         "libList": [
           "../../components/ST/STM32_MotionFX_Library/Lib"
