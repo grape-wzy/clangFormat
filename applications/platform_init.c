@@ -37,7 +37,7 @@ static __BLE_CALLBACK_TypeDef ble_proc_cbs = {
 
 // 注册4秒中断回调,中断为gtimer的周期中断
 static __GTIMER_CALLBACK_TypeDef gTimer_cbs = {
-    .irq_cb   = pwr_check_mcu_alive,
+    .irq_cb   = NULL, //pwr_check_mcu_alive,
     .sleep_cb = pwr_stop_mcu_for_delay,
 };
 
@@ -114,7 +114,7 @@ void platform_init(void)
     led_ctrl(LED_MODE_G_CTRL, 0);
 	led_ctrl(LED_MODE_Y_BLINK, 0);
 
-    // skt_start();
+    skt_start();
 
     kprint("ok\r\n");
 }

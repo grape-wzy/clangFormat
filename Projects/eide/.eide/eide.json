@@ -628,9 +628,6 @@
                 "path": "../../components/ST/STM32_MotionFX_Library/Lib/MotionFX_CM4F_wc32_ot_hard.a"
               },
               {
-                "path": "../../components/ST/STM32_MotionGC_Library/Lib/MotionGC_CM4F_wc32_ot_hard.a"
-              },
-              {
                 "path": "../../user_drivers/ahrs/ahrs_if.c"
               },
               {
@@ -864,8 +861,8 @@
           "bin": "",
           "baseAddr": "",
           "cpuInfo": {
-            "vendor": "null",
-            "cpuName": "null"
+            "vendor": "ST",
+            "cpuName": "STM32WB55CG"
           },
           "proType": 1,
           "speed": 8000,
@@ -885,7 +882,7 @@
         "OpenOCD": {
           "bin": "",
           "target": "stm32wbx",
-          "interface": "cmsis-dap",
+          "interface": "stlink-v2-1",
           "baseAddr": "0x08000000"
         },
         "pyOCD": {

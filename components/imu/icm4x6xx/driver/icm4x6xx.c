@@ -20,7 +20,7 @@
  * OF THE SOFTWARE.
  * ________________________________________________________________________________________________________
  */
- 
+
 #include "icm4x6xx.h"
 #include <stdlib.h>
 #include <string.h>
@@ -462,7 +462,7 @@ typedef enum
 #define FIFO_OVERFLOW_ERROR             -9
 #define FIFO_UNEXPECT_WM_ERROR          -10
 #define FIFO_DATA_READ_ERROR            -11
-#define FIFO_DATA_CONVERT_ERROR         -12  
+#define FIFO_DATA_CONVERT_ERROR         -12
 #define FIFO_DATA_FULL_ERROR            -13
 #if SUPPORT_SELFTEST
 #define SELFTEST_INIT_ERROR             -14
@@ -656,7 +656,7 @@ typedef struct inv_icm4x6xx {
 
     void (*delay_ms)(uint16_t);
     void (*delay_us)(uint16_t);
-    
+
     chip_type_t product;
     float    chip_temper;
 
@@ -678,8 +678,8 @@ typedef struct inv_icm4x6xx {
     bool     init_cfg;
     /* For sensor oriention convert, sync to Andriod coordinate */
     struct sensorConvert cvt;
-    
-#if SUPPORT_SELFTEST  
+
+#if SUPPORT_SELFTEST
     int      avg[3];
     int      acc_avg[3];
     int      acc_avg_st[3];
@@ -716,7 +716,7 @@ void inv_icm4x6xx_set_serif(int (*read)(void *, uint8_t, uint8_t *, uint32_t),
 }
 
 static int inv_read(uint8_t addr, uint32_t len, uint8_t *buf)
-{   
+{
     return icm_dev.read_reg(0, addr, buf, len);
 }
 
@@ -769,18 +769,14 @@ static void inv_icm4x6xx_get_whoami()
             INV_LOG(SENSOR_LOG_LEVEL, "ICM40607 detected");
         }
         break;
-	case ICM40607I_WHO_AM_I;
-	    {
+        case ICM40607I_WHO_AM_I: {
             icm_dev.product = ICM40607I;
             INV_LOG(SENSOR_LOG_LEVEL, "ICM40607I detected");
-        }
-        break;
-	case ICM40607k_WHO_AM_I;
-	    {
+        } break;
+        case ICM40607K_WHO_AM_I: {
             icm_dev.product = ICM40607k;
             INV_LOG(SENSOR_LOG_LEVEL, "ICM40607k detected");
-        }
-        break;
+        } break;
     case ICM42605_WHO_AM_I:
         {
             icm_dev.product = ICM42605;
@@ -812,27 +808,27 @@ static int inv_icm4x6xx_reset_check()
 {
     int ret = 0;
     uint8_t data = 0;
-    
+
     INV_LOG(SENSOR_LOG_LEVEL, "%s", __func__);
-    
+
     ret += inv_read(REG_CHIP_CONFIG, 1, &data);
     data |= (uint8_t)BIT_SOFT_RESET_CONFIG;
     ret += inv_write(REG_CHIP_CONFIG, data);
-    
+
     inv_delay_ms(100);
     ret += inv_read(REG_INT_STATUS, 1, &data);
     if (data & BIT_RESET_DONE)
         INV_LOG(SENSOR_LOG_LEVEL, "ResetCheck Done 0x%x", data);
     else
         INV_LOG(SENSOR_LOG_LEVEL, "ResetCheck Fail 0x%x", data);
-    
+
     return ret;
 }
 
 static int inv_icm4x6xx_get_convert(int direction, struct sensorConvert *cvt)
 {
     struct sensorConvert *src;
-    
+
     if (NULL == cvt)
         return -1;
     else if ((direction >= sizeof(map) / sizeof(map[0])) || (direction < 0))
@@ -841,7 +837,7 @@ static int inv_icm4x6xx_get_convert(int direction, struct sensorConvert *cvt)
     //*cvt = map[direction];
     src = &map[direction];
     memcpy(cvt, src, sizeof(struct sensorConvert));
-    
+
     return 0;
 }
 
@@ -852,7 +848,7 @@ static int inv_icm4x6xx_check_fifo_format()
     uint8_t fifo_header = 0;
     uint8_t value_20bit = FIFO_HEADER_A_BIT | FIFO_HEADER_G_BIT | FIFO_HEADER_20_BIT;
     uint8_t value_16bit = FIFO_HEADER_A_BIT | FIFO_HEADER_G_BIT;
-    
+
     INV_LOG(SENSOR_LOG_LEVEL, "fifo header 0x%x", fifo_header);
 
     ret += inv_read(REG_FIFO_DATA, 1, &fifo_header);
@@ -872,7 +868,7 @@ static int inv_icm4x6xx_check_fifo_format()
     }
 
     return ret;
-    
+
 }
 #endif
 
@@ -880,26 +876,26 @@ static int inv_icm4x6xx_init_config()
 {
     int ret = 0;
     uint8_t data;
-    
+
     INV_LOG(SENSOR_LOG_LEVEL, "%s", __func__);
 
     icm_dev.fifo_mode_en = FIFO_WM_MODE_EN;
-    
+
     ret += inv_icm4x6xx_reset_check();
-    
+
     /* en byte mode & little endian mode & disable spi or i2c interface */
     if (SPI_MODE_EN) {
         INV_LOG(SENSOR_LOG_LEVEL, "SPI BUS");
         data = (uint8_t)(I2C_SLEW_RATE_20_60NS | SPI_SLEW_RATE_2NS);
         ret += inv_write(REG_DRIVE_CONFIG, data);
-        
+
         ret += inv_write(REG_BANK_SEL, 1);
         data = inv_read(REG_INTF_CONFIG6, 1, &data);
         data |= (uint8_t)(BIT_I3C_SDR_EN | BIT_I3C_DDR_EN);
         ret += inv_write(REG_INTF_CONFIG6, data);
         //ret += inv_write(REG_INTF_CONFIG4, BIT_SPI_AP_4WIRE_EN);
         ret += inv_write(REG_BANK_SEL, 0);
-        
+
         data = (uint8_t)(BIT_UI_SIFS_CFG_I2C_DIS | BIT_FIFO_HOLD_LAST_DATA_EN);
     } else {
         INV_LOG(SENSOR_LOG_LEVEL, "I2C BUS");
@@ -912,7 +908,7 @@ static int inv_icm4x6xx_init_config()
         data = (uint8_t)(BIT_UI_SIFS_CFG_SPI_DIS | BIT_FIFO_HOLD_LAST_DATA_EN);
     }
     ret += inv_write(REG_INTF_CONFIG0, data);
-    
+
     /* INT setting.  pulse mode active high by default */
     icm_dev.int_cfg = (uint8_t)BIT_INT1_PUSH_PULL;
     #if INT_LATCH_EN
@@ -937,7 +933,7 @@ static int inv_icm4x6xx_init_config()
     ret += inv_write(REG_GYRO_CONFIG1, data);
     data = (uint8_t)(BIT_ACCEL_AVG_FILT_8K_HZ | (THIRD_ORDER << BIT_ACCEL_FILT_ORD_SHIFT));
     ret += inv_write(REG_ACCEL_CONFIG1, data);
-    
+
     if (true == icm_dev.fifo_mode_en) {
         //Fifo mode
         /* en fifo cfg(always 16bytes mode) */
@@ -962,7 +958,7 @@ static int inv_icm4x6xx_init_config()
         icm_dev.dri_package_size = DRI_14BYTES_PACKET_SIZE;
         INV_LOG(SENSOR_LOG_LEVEL, "DRI MODE INT_SRC0 0x%x", icm_dev.int_src0);
     }
-    
+
     /* async reset */
     ret += inv_write(REG_INT_CONFIG1, (uint8_t)BIT_INT_ASY_RST_DIS); //The field int_asy_rst_disable must be 0 for icm4x6xx
 
@@ -973,22 +969,22 @@ static int inv_icm4x6xx_init_config()
     /* fix gyro stall issue */
     ret += inv_write(REG_BANK_SEL, 3);
     uint8_t reg_2e, reg_32, reg_37, reg_3c;
-    ret += inv_read(0x2e, 1, &reg_2e); 
-    ret += inv_read(0x32, 1, &reg_32); 
-    ret += inv_read(0x37, 1, &reg_37); 
-    ret += inv_read(0x3c, 1, &reg_3c); 
+    ret += inv_read(0x2e, 1, &reg_2e);
+    ret += inv_read(0x32, 1, &reg_32);
+    ret += inv_read(0x37, 1, &reg_37);
+    ret += inv_read(0x3c, 1, &reg_3c);
 
-    data = 0xfd & reg_2e; 
+    data = 0xfd & reg_2e;
     ret += inv_write(0x2e, data);
-    data = 0x9f & reg_32; 
+    data = 0x9f & reg_32;
     ret += inv_write(0x32, data);
-    data = 0x9f & reg_37; 
+    data = 0x9f & reg_37;
     ret += inv_write(0x37, data);
-    data = 0x9f & reg_3c; 
+    data = 0x9f & reg_3c;
     ret += inv_write(0x3c, data);
     ret += inv_write(REG_BANK_SEL, 0);
     #endif
-    
+
     return ret;
 }
 
@@ -1009,9 +1005,9 @@ int inv_icm4x6xx_initialize()
     #endif
     icm_dev.fifo_package_size = 0;
     icm_dev.dri_package_size = 0;
-    
+
     inv_icm4x6xx_get_whoami();
-    
+
     if (icm_dev.product == UNVALID_TYPE)
         return SENSOR_WHOAMI_INVALID_ERROR;
 
@@ -1022,9 +1018,9 @@ int inv_icm4x6xx_initialize()
     INV_LOG(SENSOR_LOG_LEVEL, "sensor axis[0]:%d, axis[1]:%d, axis[2]:%d, sign[0]:%d, sign[1]:%d, sign[2]:%d",
           icm_dev.cvt.axis[AXIS_X], icm_dev.cvt.axis[AXIS_Y], icm_dev.cvt.axis[AXIS_Z],
           icm_dev.cvt.sign[AXIS_X], icm_dev.cvt.sign[AXIS_Y], icm_dev.cvt.sign[AXIS_Z]);
-    
+
     ret += inv_icm4x6xx_init_config();
-    
+
     if (ret == 0) {
         icm_dev.init_cfg = true;
         INV_LOG(SENSOR_LOG_LEVEL, "Initialize Success");
@@ -1040,7 +1036,7 @@ static int inv_icm4x6xx_set_odr(int index)
 {
     int ret = 0;
     uint8_t regValue = 0;
-    
+
     regValue = ICM4X6XX_ODR_MAPPING[index];
     INV_LOG(SENSOR_LOG_LEVEL, "Odr Reg value 0x%x", regValue);
     icm_dev.gyro_cfg0 &= (uint8_t)~BIT_GYRO_ODR_MASK;
@@ -1077,14 +1073,14 @@ static uint16_t inv_icm4x6xx_cal_wm(uint16_t watermark)
     uint8_t min_watermark = 1;
     uint8_t max_watermark ;
     uint16_t real_watermark = 0;
-    
+
     //for yokohama the max fifo size is 2000byte, max fifo pakage is 20bit, so the max fifo pakage is 100
     max_watermark = 70 < (MAX_RECV_PACKET/2) ? 70 : (MAX_RECV_PACKET/2); /*60*/
 
     real_watermark = watermark;
     real_watermark = real_watermark < min_watermark ? min_watermark : real_watermark;
     real_watermark = real_watermark > max_watermark ? max_watermark : real_watermark;
-    
+
     return real_watermark * icm_dev.fifo_package_size;/* byte mode*/
 }
 
@@ -1095,12 +1091,12 @@ static int inv_icm4x6xx_read_fifo()
     uint8_t count[2];
     ret += inv_read(REG_FIFO_COUNT_H, 2, count);
     icm_dev.fifoDataToRead = (count[1] <<8 | count[0]);
-    
+
     INV_LOG(SENSOR_LOG_LEVEL, "Fifo count is %d", icm_dev.fifoDataToRead);
 
     if (icm_dev.fifoDataToRead <= 0 || icm_dev.fifoDataToRead > ICM4X6XX_MAX_FIFO_SIZE)
         return FIFO_COUNT_INVALID_ERROR;
-    
+
     //icm_dev.fifoDataToRead += 1; // read one more byte to eliminate double interrupt
 
     ret += inv_read(REG_FIFO_DATA, icm_dev.fifoDataToRead, icm_dev.dataBuf);
@@ -1125,9 +1121,9 @@ static int inv_icm4x6xx_config_fifo(bool enable)
         if (watermarkReg == 0)
             watermarkReg = 1;
 #endif
-    
+
         INV_LOG(SENSOR_LOG_LEVEL, "%s watermarkReg %d", __func__, watermarkReg);
-    
+
         buffer[0] = watermarkReg & 0x00FF;
         buffer[1] = (watermarkReg & 0xFF00) >> 8;
         /* set bypass mode to reset fifo */
@@ -1145,8 +1141,7 @@ static int inv_icm4x6xx_config_fifo(bool enable)
             INV_LOG(SENSOR_LOG_LEVEL, "Fifo to Bypass Mode");
             ret += inv_write(REG_FIFO_CONFIG, BIT_FIFO_MODE_CTRL_BYPASS);
         }
-        
-        
+
     } else {
         if ((false == icm_dev.sensors[ACC].configed) &&
             (false == icm_dev.sensors[GYR].configed)) {
@@ -1165,7 +1160,7 @@ static int inv_icm4x6xx_config_drdy(bool enable)
 
     if (enable &&
         (true == icm_dev.sensors[ACC].configed ||
-        true == icm_dev.sensors[GYR].configed)) {
+         true == icm_dev.sensors[GYR].configed)) {
         if (!(icm_dev.int_src0 & BIT_INT1_DRDY_EN)) {
             icm_dev.int_src0 |= (uint8_t)BIT_INT1_DRDY_EN;
             ret += inv_write(REG_INT_SOURCE0, icm_dev.int_src0);
@@ -1183,9 +1178,9 @@ static int inv_icm4x6xx_config_drdy(bool enable)
 int inv_icm4x6xx_acc_enable()
 {
     int ret = 0;
-    
+
     INV_LOG(SENSOR_LOG_LEVEL, "%s", __func__);
-    
+
     icm_dev.sensors[ACC].powered = true;
     icm_dev.pwr_sta &= ~(uint8_t)BIT_ACCEL_MODE_MASK;
     icm_dev.pwr_sta |= BIT_ACCEL_MODE_LN;
@@ -1193,11 +1188,11 @@ int inv_icm4x6xx_acc_enable()
     //200us here to sync fly changes
     inv_delay_us(200);
     INV_LOG(SENSOR_LOG_LEVEL, "ACC PWR 0x%x", icm_dev.pwr_sta);
-    
-    #if SENSOR_REG_DUMP
+
+#if SENSOR_REG_DUMP
     inv_icm4x6xx_dumpRegs();
     #endif
-    
+
     return ret;
 }
 
@@ -1210,33 +1205,33 @@ int inv_icm4x6xx_acc_disable()
     bool watermarkChanged = false;
 
     INV_LOG(SENSOR_LOG_LEVEL, "%s", __func__);
-    
+
     icm_dev.sensors[ACC].preRealRate = 0;
     icm_dev.sensors[ACC].hwRate = 0;
     icm_dev.sensors[ACC].needDiscardSample = false;
     icm_dev.sensors[ACC].samplesToDiscard = 0;
     icm_dev.sensors[ACC].wm = 0;
-        
-    if ((false == icm_dev.sensors[GYR].powered) 
-        #if SUPPORT_PEDOMETER
+
+    if ((false == icm_dev.sensors[GYR].powered)
+#if SUPPORT_PEDOMETER
         && (false == icm_dev.sensors[PEDO].powered)
-        #endif
-        #if SUPPORT_WOM
+#endif
+#if SUPPORT_WOM
         && (false == icm_dev.sensors[WOM].powered)
-        #endif 
-        ) {
+#endif
+    ) {
         icm_dev.pwr_sta &= (uint8_t)~(BIT_ACCEL_MODE_MASK | BIT_GYRO_MODE_MASK);
         ret += inv_write(REG_PWR_MGMT0, icm_dev.pwr_sta);
         inv_delay_us(200); //spec: 200us
 
         INV_LOG(SENSOR_LOG_LEVEL, "acc off pwr: 0x%x", icm_dev.pwr_sta);
-    } else if (true == icm_dev.sensors[GYR].powered) {  //  update gyro old odr
+    } else if (true == icm_dev.sensors[GYR].powered) { //  update gyro old odr
         if (icm_dev.sensors[GYR].hwRate != icm_dev.sensors[GYR].preRealRate) {
             icm_dev.sensors[GYR].hwRate = icm_dev.sensors[GYR].preRealRate;
             odr_index = inv_icm4x6xx_cal_odr(&icm_dev.sensors[GYR].hwRate, &sampleRate);
             ret += inv_icm4x6xx_set_odr(odr_index);
-            INV_LOG(SENSOR_LOG_LEVEL, "gyro revert rate to preRealRate: %f Hz", 
-                  (icm_dev.sensors[GYR].hwRate/1024.0f));
+            INV_LOG(SENSOR_LOG_LEVEL, "gyro revert rate to preRealRate: %f Hz",
+                    (icm_dev.sensors[GYR].hwRate / 1024.0f));
             accelOdrChanged = true;
         }
         if (icm_dev.fifo_mode_en && (icm_dev.watermark != icm_dev.sensors[GYR].wm)) {
@@ -1244,15 +1239,15 @@ int inv_icm4x6xx_acc_disable()
             watermarkChanged = true;
             INV_LOG(SENSOR_LOG_LEVEL, "watermark revert to: %d", icm_dev.watermark/icm_dev.fifo_package_size);
         }
-            
-        if (true 
-            #if SUPPORT_PEDOMETER
+
+        if (true
+#if SUPPORT_PEDOMETER
             && (false == icm_dev.sensors[PEDO].powered)
-            #endif
-            #if SUPPORT_WOM
+#endif
+#if SUPPORT_WOM
             && (false == icm_dev.sensors[WOM].powered)
-            #endif 
-            ) {
+#endif
+        ) {
             icm_dev.pwr_sta &= (uint8_t)~(BIT_ACCEL_MODE_MASK);
             ret += inv_write(REG_PWR_MGMT0, icm_dev.pwr_sta);
             inv_delay_us(200); //spec: 200us
@@ -1272,13 +1267,13 @@ int inv_icm4x6xx_acc_disable()
     } else {
         inv_icm4x6xx_config_drdy(accelOdrChanged);
     }
-    
-    #if 0
+
+#if 0
     if (accelOdrChanged | watermarkChanged) {
         //do nothing
     }
-    #endif
-    
+#endif
+
     return ret;
 }
 
@@ -1287,7 +1282,7 @@ int inv_icm4x6xx_gyro_enable()
     int ret = 0;
 
     INV_LOG(SENSOR_LOG_LEVEL, "%s", __func__);
-    
+
     icm_dev.sensors[GYR].powered = true;
     icm_dev.pwr_sta &= (uint8_t)~BIT_GYRO_MODE_MASK;
     icm_dev.pwr_sta |= BIT_GYRO_MODE_LN;
@@ -1295,11 +1290,11 @@ int inv_icm4x6xx_gyro_enable()
     //200us here to sync fly changes
     inv_delay_us(200);
     INV_LOG(SENSOR_LOG_LEVEL, "GYR PWR 0x%x", icm_dev.pwr_sta);
-    
-    #if SENSOR_REG_DUMP
+
+#if SENSOR_REG_DUMP
     inv_icm4x6xx_dumpRegs();
     #endif
-    
+
     return ret;
 }
 
@@ -1312,7 +1307,7 @@ int inv_icm4x6xx_gyro_disable()
     bool watermarkChanged = false;
 
     INV_LOG(SENSOR_LOG_LEVEL, "%s", __func__);
-    
+
     icm_dev.sensors[GYR].preRealRate = 0;
     icm_dev.sensors[GYR].hwRate = 0;
     icm_dev.sensors[GYR].needDiscardSample = false;
@@ -1339,12 +1334,12 @@ int inv_icm4x6xx_gyro_disable()
         INV_LOG(SENSOR_LOG_LEVEL, "acc on and gyro off pwr: 0x%x", icm_dev.pwr_sta);
     } else {
         /* Gyro OFF. In case apex on not ~(BIT_GYRO_MODE_MASK | BIT_ACCEL_MODE_MASK)*/
-        icm_dev.pwr_sta &= (uint8_t)~BIT_GYRO_MODE_MASK; 
+        icm_dev.pwr_sta &= (uint8_t)~BIT_GYRO_MODE_MASK;
         ret += inv_write(REG_PWR_MGMT0, icm_dev.pwr_sta);
         inv_delay_ms(150);
         INV_LOG(SENSOR_LOG_LEVEL, "gyro off pwr: 0x%x", icm_dev.pwr_sta);
     }
-    
+
     icm_dev.sensors[GYR].powered = false;
     icm_dev.sensors[GYR].configed = false;
 
@@ -1358,7 +1353,7 @@ int inv_icm4x6xx_gyro_disable()
         //do nothing
     }
     #endif
-    
+
     return ret;
 }
 
@@ -1373,19 +1368,19 @@ int inv_icm4x6xx_acc_set_rate(float odr_hz, uint16_t watermark)
 
     INV_LOG(SENSOR_LOG_LEVEL, "%s odr_hz %f wm %d", __func__, odr_hz, watermark);
     icm_dev.sensors[ACC].rate = SENSOR_HZ(odr_hz);
-    
-    #if (SUPPORT_PEDOMETER | SUPPORT_WOM)
+
+#if (SUPPORT_PEDOMETER | SUPPORT_WOM)
     if ((true == icm_dev.apex_enable) &&
         (icm_dev.sensors[ACC].rate < SENSOR_HZ(50))) {
         INV_LOG(SENSOR_LOG_LEVEL, "APEX Enabled, Acc min odr to 50Hz!!");
-        icm_dev.sensors[ACC].rate = SENSOR_HZ(50);  
+        icm_dev.sensors[ACC].rate = SENSOR_HZ(50);
     }
     #endif
     if (icm_dev.sensors[ACC].preRealRate == 0) {
         icm_dev.sensors[ACC].needDiscardSample = true;
         icm_dev.sensors[ACC].samplesToDiscard = NUM_TODISCARD;
     }
-    
+
     odr_index = inv_icm4x6xx_cal_odr(&icm_dev.sensors[ACC].rate, &sampleRate);
     icm_dev.sensors[ACC].preRealRate = sampleRate;
 
@@ -1431,7 +1426,7 @@ int inv_icm4x6xx_acc_set_rate(float odr_hz, uint16_t watermark)
     }
 
     #if 0
-    if(accelOdrChanged || watermarkChanged){    
+    if(accelOdrChanged || watermarkChanged){
         //* Clear the interrupt */
         //do nothing right now
     }
@@ -1448,7 +1443,7 @@ int inv_icm4x6xx_gyro_set_rate(float odr_hz, uint16_t watermark)
     uint32_t maxRate = 0;
     bool gyroOdrChanged = false;
     bool watermarkChanged = false;
-    
+
     INV_LOG(SENSOR_LOG_LEVEL, "%s odr_hz %f wm %d", __func__, odr_hz, watermark);
     icm_dev.sensors[GYR].rate = SENSOR_HZ(odr_hz);
 
@@ -1509,12 +1504,12 @@ int inv_icm4x6xx_gyro_set_rate(float odr_hz, uint16_t watermark)
     #if 0
     if(gyroOdrChanged || watermarkChanged)
     {
-    
+
         //* Clear the interrupt */
         //do nothing right now
     }
     #endif
-    
+
     return ret;
 }
 
@@ -1523,7 +1518,7 @@ static void inv_icm4x6xx_parse_rawdata(struct accGyroData *data, uint8_t *buf, S
     int16_t raw_data[AXES_NUM] = {0};
     int16_t remap_data[AXES_NUM] = {0};
     int8_t  temper_raw =0;
-       
+
     if (sensorType == TEMP) {
         if (true == icm_dev.fifo_mode_en) {
             temper_raw = (int8_t) buf[0];
@@ -1538,12 +1533,12 @@ static void inv_icm4x6xx_parse_rawdata(struct accGyroData *data, uint8_t *buf, S
         //INV_LOG(SENSOR_LOG_LEVEL, "chip temper %f", icm_dev.chip_temper);
         return;
     }
-        
+
     /* Use little endian mode */
     raw_data[AXIS_X] = (buf[0] | buf[1] << 8);
     raw_data[AXIS_Y] = (buf[2] | buf[3] << 8);
     raw_data[AXIS_Z] = (buf[4] | buf[5] << 8);
-    
+
     remap_data[icm_dev.cvt.axis[AXIS_X]] = icm_dev.cvt.sign[AXIS_X] * raw_data[AXIS_X];
     remap_data[icm_dev.cvt.axis[AXIS_Y]] = icm_dev.cvt.sign[AXIS_Y] * raw_data[AXIS_Y];
     remap_data[icm_dev.cvt.axis[AXIS_Z]] = icm_dev.cvt.sign[AXIS_Z] * raw_data[AXIS_Z];
@@ -1560,7 +1555,7 @@ static void inv_icm4x6xx_parse_rawdata(struct accGyroData *data, uint8_t *buf, S
         data->z = (float)remap_data[AXIS_Z] * KSCALE_GYRO_2000_RANGE;
         data->sensType = sensorType;
         //INV_LOG(SENSOR_LOG_LEVEL, "G: %f %f %f", (double)temp_data[AXIS_X], (double)temp_data[AXIS_Y], (double)temp_data[AXIS_Z]);
-    }   
+    }
 }
 
 static int inv_icm4x6xx_convert_rawdata(struct accGyroDataPacket *packet)
@@ -1568,11 +1563,9 @@ static int inv_icm4x6xx_convert_rawdata(struct accGyroDataPacket *packet)
     int ret = 0;
     uint32_t i = 0;
     uint8_t accEventSize = 0;
-    uint8_t gyroEventSize = 0;
-    uint8_t accEventSize_Discard = 0;
-    uint8_t gyroEventSize_Discard = 0;
+    uint8_t  gyroEventSize = 0;
     uint64_t tick_ts = 0;
-    
+
     struct accGyroData *data = packet->outBuf;
 
     if (true == icm_dev.fifo_mode_en) { //fifo mode
@@ -1583,7 +1576,6 @@ static int inv_icm4x6xx_convert_rawdata(struct accGyroDataPacket *packet)
                     (true == icm_dev.sensors[ACC].configed)) {
                     if (icm_dev.sensors[ACC].samplesToDiscard) {
                         icm_dev.sensors[ACC].samplesToDiscard--;
-                        accEventSize_Discard++;
                     } else {
                         inv_icm4x6xx_parse_rawdata(&data[accEventSize + gyroEventSize],
                             &(icm_dev.dataBuf[i + FIFO_ACCEL_DATA_SHIFT]), ACC);
@@ -1595,7 +1587,6 @@ static int inv_icm4x6xx_convert_rawdata(struct accGyroDataPacket *packet)
                     (true == icm_dev.sensors[GYR].configed)) {
                     if (icm_dev.sensors[GYR].samplesToDiscard) {
                         icm_dev.sensors[GYR].samplesToDiscard--;
-                        gyroEventSize_Discard++;
                     } else {
                         inv_icm4x6xx_parse_rawdata(&data[accEventSize + gyroEventSize],
                             &(icm_dev.dataBuf[i + FIFO_GYRO_DATA_SHIFT]), GYR);
@@ -1617,7 +1608,6 @@ static int inv_icm4x6xx_convert_rawdata(struct accGyroDataPacket *packet)
             (true == icm_dev.sensors[ACC].powered)) {
             if (icm_dev.sensors[ACC].samplesToDiscard) {
                 icm_dev.sensors[ACC].samplesToDiscard--;
-                accEventSize_Discard++;
             } else {
                 inv_icm4x6xx_parse_rawdata(&data[accEventSize + gyroEventSize],
                     &(icm_dev.dataBuf[DRI_ACCEL_DATA_SHIFT]), ACC);
@@ -1629,7 +1619,6 @@ static int inv_icm4x6xx_convert_rawdata(struct accGyroDataPacket *packet)
             (true == icm_dev.sensors[GYR].powered)) {
             if (icm_dev.sensors[GYR].samplesToDiscard) {
                 icm_dev.sensors[GYR].samplesToDiscard--;
-                gyroEventSize_Discard++;
             } else {
                 inv_icm4x6xx_parse_rawdata(&data[accEventSize + gyroEventSize],
                     &(icm_dev.dataBuf[DRI_GYRO_DATA_SHIFT]), GYR);
@@ -1646,16 +1635,16 @@ static int inv_icm4x6xx_convert_rawdata(struct accGyroDataPacket *packet)
     packet->gyroOutSize = gyroEventSize;
     packet->temperature = icm_dev.chip_temper;
     packet->timeStamp = 0;
-    
+
     return ret;
 }
 
 int inv_icm4x6xx_read_rawdata()
 {
     int ret = 0;
-    
+
     ret += inv_read(REG_TEMP_DATA1, icm_dev.dri_package_size, icm_dev.dataBuf);
-    
+
     return ret;
 }
 
@@ -1667,12 +1656,13 @@ int inv_icm4x6xx_get_rawdata(struct accGyroDataPacket *dataPacket)
     }
     uint8_t int_status;
     int ret = 0;
-    
+
     ret += inv_read(REG_INT_STATUS, 1, &int_status);
     INV_LOG(SENSOR_LOG_LEVEL, "INT STATUS 0x%x", int_status);
     if (ret != 0)
         return INT_STATUS_READ_ERROR;
-    
+
+    /* direct mode */
     if ((int_status & BIT_INT_DRDY) && (false == icm_dev.fifo_mode_en)) {
         INV_LOG(SENSOR_LOG_LEVEL, "DRDY INT Detected");
         if ((false == icm_dev.sensors[ACC].configed) &&
@@ -1691,7 +1681,10 @@ int inv_icm4x6xx_get_rawdata(struct accGyroDataPacket *dataPacket)
             INV_LOG(INV_LOG_LEVEL_ERROR, "Convert Raw Data Error %d", ret);
             return DRDY_DATA_CONVERT_ERROR;
         }
+        return ret;
     }
+
+    /* fifo mode */
     if (int_status & BIT_INT_FIFO_FULL) {
         INV_LOG(INV_LOG_LEVEL_ERROR, "FIFO Overflow!!!");
         // reset fifo
@@ -1721,9 +1714,9 @@ int inv_icm4x6xx_get_rawdata(struct accGyroDataPacket *dataPacket)
             return FIFO_DATA_CONVERT_ERROR;
         }
     } else {
-        //Dothing now
+        return FIFO_DATA_READ_ERROR;
     }
-    
+
     return ret;
 }
 
@@ -1732,7 +1725,7 @@ static int inv_icm4x6xx_selftest_init()
 {
     int ret = 0;
     uint8_t data = 0;
-    
+
     INV_LOG(SENSOR_LOG_LEVEL, "%s", __func__);
 
     if (false == icm_dev.init_cfg) {
@@ -1740,21 +1733,21 @@ static int inv_icm4x6xx_selftest_init()
 
         if (icm_dev.product == UNVALID_TYPE)
             return SENSOR_WHOAMI_INVALID_ERROR;
-        
+
         ret += inv_icm4x6xx_reset_check();
-        
+
         /* en byte mode & little endian mode & disable spi or i2c interface */
         if (SPI_MODE_EN) {
             INV_LOG(SENSOR_LOG_LEVEL, "SPI BUS");
             data = (uint8_t)(I2C_SLEW_RATE_20_60NS | SPI_SLEW_RATE_2NS);
             ret += inv_write(REG_DRIVE_CONFIG, data);
-            
+
             ret += inv_write(REG_BANK_SEL, 1);
             data = inv_read(REG_INTF_CONFIG6, 1, &data);
             data |= (uint8_t)(BIT_I3C_SDR_EN | BIT_I3C_DDR_EN);
             ret += inv_write(REG_INTF_CONFIG6, data);
             ret += inv_write(REG_BANK_SEL, 0);
-            
+
             data = (uint8_t)(BIT_UI_SIFS_CFG_I2C_DIS | BIT_FIFO_HOLD_LAST_DATA_EN);
         } else {
             INV_LOG(SENSOR_LOG_LEVEL, "I2C BUS");
@@ -1768,9 +1761,9 @@ static int inv_icm4x6xx_selftest_init()
         }
         ret += inv_write(REG_INTF_CONFIG0, data);
     }
-    
+
     /* gyr odr & fs  250 dps 1khz */
-    /* why not (uint8_t)(ODR_1KHZ | GYRO_RANGE_250DPS) 
+    /* why not (uint8_t)(ODR_1KHZ | GYRO_RANGE_250DPS)
        to fix compile error on some mcu */
     icm_dev.gyro_cfg0 = (uint8_t)(ODR_1KHZ) | (uint8_t)(GYRO_RANGE_250DPS);
     ret += inv_write(REG_GYRO_CONFIG0, icm_dev.gyro_cfg0);
@@ -1795,7 +1788,7 @@ static int inv_icm4x6xx_selftest_init()
     memset(icm_dev.acc_avg_st, 0, sizeof(icm_dev.acc_avg_st));
     memset(icm_dev.gyro_avg, 0, sizeof(icm_dev.gyro_avg));
     memset(icm_dev.gyro_avg_st, 0, sizeof(icm_dev.gyro_avg_st));
-    
+
     return ret;
 }
 
@@ -1811,22 +1804,22 @@ static int inv_icm4x6xx_selftest_read_rawdata()
         INV_LOG(INV_LOG_LEVEL_ERROR, "icm4x6xx selftest_readRawdata Error!!");
         return ret;
     }
-    
+
     /* Use little endian mode */
     raw_data[AXIS_X] = (icm_dev.dataBuf[0] | icm_dev.dataBuf[1] << 8);
     raw_data[AXIS_Y] = (icm_dev.dataBuf[2] | icm_dev.dataBuf[3] << 8);
     raw_data[AXIS_Z] = (icm_dev.dataBuf[4] | icm_dev.dataBuf[5] << 8);
 
-    //INV_LOG(SENSOR_LOG_LEVEL, "icm4x6xx selftest rawdata %d %d %d", 
+    //INV_LOG(SENSOR_LOG_LEVEL, "icm4x6xx selftest rawdata %d %d %d",
     //  raw_data[AXIS_X], raw_data[AXIS_Y], raw_data[AXIS_Z]);
 
     for (int j = 0; j < 3; j++)
         sum[j] += raw_data[j];
-    
+
     if (i < SELFTEST_SAMPLES_NUMBER - 1) {
         i++;
         //read raw data reg until all get required sample number
-        ret += inv_read(icm_dev.st_rawdata_reg, ACCEL_DATA_SIZE, icm_dev.dataBuf);  //delay 1ms for wait new sample 
+        ret += inv_read(icm_dev.st_rawdata_reg, ACCEL_DATA_SIZE, icm_dev.dataBuf); //delay 1ms for wait new sample
         inv_delay_ms(1);
         return inv_icm4x6xx_selftest_read_rawdata();
     } else {
@@ -1836,7 +1829,7 @@ static int inv_icm4x6xx_selftest_read_rawdata()
             icm_dev.avg[j] = sum[j];
             sum[j]= 0;
         }
-        // all sample gotten , switch to next state 
+        // all sample gotten , switch to next state
         i = 0;
         return ret;
     }
@@ -1853,7 +1846,7 @@ static bool inv_icm4x6xx_selftest_acc_result()
     for (int i = 0; i < 3; i++) {
         st_otp[i] = (uint32_t)((2620/ pow(2, 3 - 3)) * (powf(1.01, (icm_dev.acc_st_code[i] - 1))));
     }
- 
+
     INV_LOG(SENSOR_LOG_LEVEL, "accel st_otp %d %d %d",
         st_otp[0], st_otp[1], st_otp[2]);
 
@@ -1881,7 +1874,7 @@ static bool inv_icm4x6xx_selftest_acc_result()
     }
 
     INV_LOG(SENSOR_LOG_LEVEL, "Acc SelfTest Result: %d", test_result);
-    
+
     return test_result;
 }
 
@@ -1895,9 +1888,9 @@ static bool inv_icm4x6xx_selftest_gyro_result()
     for (int i = 0; i < 3; i++) {
         st_otp[i] = (uint32_t)((2620/ pow(2, 3 - 3)) * powf(1.01, (icm_dev.gyro_st_code[i] - 1)));
     }
- 
-    INV_LOG(SENSOR_LOG_LEVEL, "gyro st_otp %d %d %d", 
-        st_otp[0], st_otp[1], st_otp[2]);
+
+    INV_LOG(SENSOR_LOG_LEVEL, "gyro st_otp %d %d %d",
+            st_otp[0], st_otp[1], st_otp[2]);
 
     /* Check selftest result according AN-000149 */
     for (int i = 0; i < 3; i++) {
@@ -1905,7 +1898,7 @@ static bool inv_icm4x6xx_selftest_gyro_result()
         INV_LOG(SENSOR_LOG_LEVEL, "gyro st_response %d st_otp %d", st_response, st_otp[i]);
         if (st_otp[i] != 0) {
             float ratio = ((float)st_response) / ((float)st_otp[i]);
-            if ((ratio > 1.5f) || (ratio < 0.5f))	{
+            if ((ratio > 1.5f) || (ratio < 0.5f)) {
                 INV_LOG(INV_LOG_LEVEL_ERROR, "gyro st test fail, ratio %d", ratio);
                 test_result = false;
                 break;
@@ -1917,21 +1910,21 @@ static bool inv_icm4x6xx_selftest_gyro_result()
                 INV_LOG(SENSOR_LOG_LEVEL, "gyro st test fail, st_response %d", st_response);
                 test_result = false;
                 break;
-             }
+            }
         }
     }
 
     INV_LOG(SENSOR_LOG_LEVEL, "Gyro SelfTest Result: %d", test_result);
-    
+
     return test_result;
 }
 
 static int inv_icm4x6xx_selftest_recover()
 {
-    int odr_index = 0;
+    int      odr_index  = 0;
     uint32_t sampleRate = 0;
-    uint32_t maxRate = 0;
-    int ret = 0;
+    uint32_t maxRate    = 0;
+    int      ret        = 0;
 
     INV_LOG(SENSOR_LOG_LEVEL, "%s", __func__);
 
@@ -1939,49 +1932,49 @@ static int inv_icm4x6xx_selftest_recover()
         INV_LOG(SENSOR_LOG_LEVEL, "Selftest: Re-init configuration");
         ret += inv_icm4x6xx_init_config();
     }
-    
-    if (false == icm_dev.sensors[ACC].powered && 
+
+    if (false == icm_dev.sensors[ACC].powered &&
         false == icm_dev.sensors[GYR].powered
-        #if SUPPORT_PEDOMETER
+#if SUPPORT_PEDOMETER
         && (false == icm_dev.sensors[PEDO].powered)
-        #endif
-        #if SUPPORT_WOM
+#endif
+#if SUPPORT_WOM
         && (false == icm_dev.sensors[WOM].powered)
-        #endif
-        ) {
+#endif
+    ) {
         INV_LOG(SENSOR_LOG_LEVEL, "Selftest: no sensor need recover");
         return ret;
     }
 
     if (true == icm_dev.sensors[ACC].configed ||
         true == icm_dev.sensors[GYR].configed) {
-        //2st recover odr 
+        //2st recover odr
         INV_LOG(SENSOR_LOG_LEVEL, "AcchwRate %f Hz GyrhwRate %f Hz",
         icm_dev.sensors[ACC].hwRate/1024.0f, icm_dev.sensors[GYR].hwRate/1024.0f);
-    
+
         if (true == icm_dev.sensors[ACC].configed &&
             true == icm_dev.sensors[GYR].configed) {
             INV_LOG(SENSOR_LOG_LEVEL, "recover sensor A&G application");
             maxRate = max( icm_dev.sensors[ACC].hwRate, icm_dev.sensors[GYR].hwRate);
             icm_dev.sensors[ACC].hwRate = maxRate;
-            icm_dev.sensors[GYR].hwRate = maxRate;  
+            icm_dev.sensors[GYR].hwRate = maxRate;
         } else if (true == icm_dev.sensors[ACC].configed) {
             INV_LOG(SENSOR_LOG_LEVEL, "recover sensor Acc application");
             maxRate = icm_dev.sensors[ACC].hwRate;
         } else if (true == icm_dev.sensors[GYR].configed) {
             INV_LOG(SENSOR_LOG_LEVEL, "recover sensor Gyro application\n");
             maxRate = icm_dev.sensors[GYR].hwRate;
-        } 
+        }
 
         odr_index = inv_icm4x6xx_cal_odr(&maxRate, &sampleRate);
         ret += inv_icm4x6xx_set_odr(odr_index);
         if (true == icm_dev.fifo_mode_en)
-            ret += inv_icm4x6xx_config_fifo(true); 
+            ret += inv_icm4x6xx_config_fifo(true);
         else
             ret += inv_icm4x6xx_config_drdy(true);
     }
 
-    //1st reopen sensor 
+    //1st reopen sensor
     if (true == icm_dev.sensors[ACC].powered) {
         icm_dev.pwr_sta &= (uint8_t)~BIT_ACCEL_MODE_MASK;
         icm_dev.pwr_sta |= BIT_ACCEL_MODE_LN;
@@ -1990,7 +1983,7 @@ static int inv_icm4x6xx_selftest_recover()
         inv_delay_us(200);
     }
 
-    if (true == icm_dev.sensors[GYR].powered) {    
+    if (true == icm_dev.sensors[GYR].powered) {
         icm_dev.pwr_sta &= (uint8_t)~BIT_GYRO_MODE_MASK;
         icm_dev.pwr_sta |= BIT_GYRO_MODE_LN;
         ret += inv_write(REG_PWR_MGMT0, icm_dev.pwr_sta);
@@ -1998,7 +1991,7 @@ static int inv_icm4x6xx_selftest_recover()
         inv_delay_us(200);
     }
 
-    #if SUPPORT_PEDOMETER
+#if SUPPORT_PEDOMETER
     if (true == icm_dev.sensors[PEDO].powered) {
         INV_LOG(SENSOR_LOG_LEVEL, "Re-enable Pedo");
         ret += inv_icm4x6xx_pedometer_enable();
@@ -2010,7 +2003,7 @@ static int inv_icm4x6xx_selftest_recover()
         ret += inv_icm4x6xx_wom_enable();
     }
     #endif
-    
+
     return ret;
 }
 
@@ -2023,11 +2016,11 @@ int inv_icm4x6xx_acc_selftest(bool *result)
     int ret = 0;
 
     INV_LOG(SENSOR_LOG_LEVEL, "%s", __func__);
-    
+
     ret += inv_icm4x6xx_selftest_init();
     if (ret != 0)
         return SELFTEST_INIT_ERROR;
-    
+
     icm_dev.pwr_sta &= (uint8_t)~BIT_ACCEL_MODE_MASK;
     icm_dev.pwr_sta |= (uint8_t)BIT_ACCEL_MODE_LN;
     //set 100 ms for accel start-up time in selftest mode
@@ -2053,7 +2046,7 @@ int inv_icm4x6xx_acc_selftest(bool *result)
         icm_dev.acc_avg[0], icm_dev.acc_avg[1], icm_dev.acc_avg[2]);
 
     INV_LOG(SENSOR_LOG_LEVEL, "Selftest Read acc In SelfTest Mode");
-    //enable selftest mode 
+    //enable selftest mode
     icm_dev.accel_config = (uint8_t)(BIT_ACCEL_ST_POWER_EN | BIT_ACCEL_ST_EN_MASK);
     ret += inv_write(REG_SELF_TEST_CONFIG, icm_dev.accel_config);  //delay 200ms
     inv_delay_ms(200);
@@ -2065,7 +2058,7 @@ int inv_icm4x6xx_acc_selftest(bool *result)
 
     if (ret != 0)
         return SELFTEST_ACC_ST_READ_ERROR;
-    
+
     icm_dev.acc_avg_st[0] = icm_dev.avg[0];
     icm_dev.acc_avg_st[1] = icm_dev.avg[1];
     icm_dev.acc_avg_st[2] = icm_dev.avg[2];
@@ -2079,22 +2072,22 @@ int inv_icm4x6xx_acc_selftest(bool *result)
     ret += inv_write(REG_BANK_SEL, 0);
     if (ret != 0)
         return SELFTEST_ACC_STCODE_READ_ERROR;
-    
-    INV_LOG(SENSOR_LOG_LEVEL, "acc chip_st_code %d %d %d", 
-        icm_dev.acc_st_code[0], icm_dev.acc_st_code[1], icm_dev.acc_st_code[2]);
-    
+
+    INV_LOG(SENSOR_LOG_LEVEL, "acc chip_st_code %d %d %d",
+            icm_dev.acc_st_code[0], icm_dev.acc_st_code[1], icm_dev.acc_st_code[2]);
+
     *result = inv_icm4x6xx_selftest_acc_result();
 
     ret += inv_write(REG_SELF_TEST_CONFIG, (uint8_t)~BIT_ACCEL_ST_POWER_EN);
     icm_dev.pwr_sta &= (uint8_t)~BIT_GYRO_MODE_MASK;
     ret += inv_write(REG_PWR_MGMT0, icm_dev.pwr_sta);
     inv_delay_us(200);
-    
+
     int recover = 0;
     recover += inv_icm4x6xx_selftest_recover();
     if (recover != 0)
         INV_LOG(INV_LOG_LEVEL_ERROR, "Acc Selftest: Recover Failed %d", recover);
-    
+
     return ret;
 }
 
@@ -2107,11 +2100,11 @@ int inv_icm4x6xx_gyro_selftest(bool *result)
     int ret = 0;
 
     INV_LOG(SENSOR_LOG_LEVEL, "%s", __func__);
-    
+
     ret += inv_icm4x6xx_selftest_init();
     if (ret != 0)
         return SELFTEST_INIT_ERROR;
-    
+
     icm_dev.pwr_sta &= (uint8_t)~BIT_GYRO_MODE_MASK;
     icm_dev.pwr_sta |= (uint8_t)BIT_GYRO_MODE_LN;
     // set 100 ms for accel start-up time in selftest mode
@@ -2133,11 +2126,11 @@ int inv_icm4x6xx_gyro_selftest(bool *result)
     icm_dev.gyro_avg[1] = icm_dev.avg[1];
     icm_dev.gyro_avg[2] = icm_dev.avg[2];
 
-    INV_LOG(SENSOR_LOG_LEVEL, "gyro avg %d %d %d", 
-        icm_dev.gyro_avg[0], icm_dev.gyro_avg[1], icm_dev.gyro_avg[2]);
+    INV_LOG(SENSOR_LOG_LEVEL, "gyro avg %d %d %d",
+            icm_dev.gyro_avg[0], icm_dev.gyro_avg[1], icm_dev.gyro_avg[2]);
 
     INV_LOG(SENSOR_LOG_LEVEL, "Selftest Read gyro In SelfTest Mode");
-    //enable selftest mode of gyro 
+    //enable selftest mode of gyro
     icm_dev.gyro_config = (uint8_t)BIT_GYRO_ST_EN_MASK;
     ret += inv_write(REG_SELF_TEST_CONFIG, icm_dev.gyro_config);    //delay 200ms
     inv_delay_ms(200);
@@ -2149,7 +2142,7 @@ int inv_icm4x6xx_gyro_selftest(bool *result)
 
     if (ret != 0)
         return SELFTEST_GYR_ST_READ_ERROR;
-    
+
     icm_dev.gyro_avg_st[0] = icm_dev.avg[0];
     icm_dev.gyro_avg_st[1] = icm_dev.avg[1];
     icm_dev.gyro_avg_st[2] = icm_dev.avg[2];
@@ -2161,19 +2154,19 @@ int inv_icm4x6xx_gyro_selftest(bool *result)
     /* read gyro st code in bank 1 */
     ret += inv_read(REG_XG_ST_DATA, 3, icm_dev.gyro_st_code);
     ret += inv_write(REG_BANK_SEL, 0);
-    
+
     if (ret != 0)
         return SELFTEST_GYR_STCODE_READ_ERROR;
-    
-    INV_LOG(SENSOR_LOG_LEVEL, "gyro chip_st_code %d %d %d", 
-        icm_dev.gyro_st_code[0], icm_dev.gyro_st_code[1], icm_dev.gyro_st_code[2]);
-    
+
+    INV_LOG(SENSOR_LOG_LEVEL, "gyro chip_st_code %d %d %d",
+            icm_dev.gyro_st_code[0], icm_dev.gyro_st_code[1], icm_dev.gyro_st_code[2]);
+
     *result = inv_icm4x6xx_selftest_gyro_result();
 
     icm_dev.pwr_sta &= (uint8_t)~BIT_GYRO_MODE_MASK;
     ret += inv_write(REG_PWR_MGMT0, icm_dev.pwr_sta);
     inv_delay_us(200);
-    
+
     int recover = 0;
     recover += inv_icm4x6xx_selftest_recover();
     if (recover != 0)
@@ -2186,9 +2179,9 @@ int inv_icm4x6xx_gyro_selftest(bool *result)
 #if SUPPORT_PEDOMETER
 static int inv_icm4x6xx_dmp_reset()
 {
-    int ret = 0;
-    uint8_t data = 0;
-    int timeout = 5000; /*50ms*/
+    int     ret     = 0;
+    uint8_t data    = 0;
+    int     timeout = 5000; /*50ms*/
 
     ret += inv_read(REG_SIGNAL_PATH_RESET, 1, &data);
     data |= (uint8_t)BIT_DMP_MEM_RESET_EN;
@@ -2208,19 +2201,19 @@ static int inv_icm4x6xx_dmp_reset()
 
 static int inv_icm4x6xx_dmp_enable()
 {
-    int ret = 0;
-    uint8_t data = 0;
-    int timeout = 5000; /* 50ms */
+    int     ret     = 0;
+    uint8_t data    = 0;
+    int     timeout = 5000; /* 50ms */
 
     ret += inv_read(REG_SIGNAL_PATH_RESET, 1, &data);
     data |= (uint8_t)BIT_DMP_INIT_EN;
     ret += inv_write(REG_SIGNAL_PATH_RESET, data);
-    
+
     inv_delay_ms(5);
 
     /* DMP INIT is updated every accel ODR Wait for DMP idle */
     do {
-        ret +=  inv_read(REG_APEX_DATA3, 1, &data);
+        ret += inv_read(REG_APEX_DATA3, 1, &data);
         inv_delay_us(10);
     } while ((0 == (data & BIT_DMP_IDLE)) && timeout--);
 
@@ -2232,7 +2225,7 @@ static int inv_icm4x6xx_dmp_enable()
 
 static int inv_icm4x6xx_dmp_set_odr()
 {
-    int ret = 0;
+    int     ret  = 0;
     uint8_t data = 0;
 
     /* dmp odr */
@@ -2247,16 +2240,16 @@ static int inv_icm4x6xx_dmp_set_odr()
 
     data &= (uint8_t)~BIT_DMP_ODR_MASK;
     data |= (uint8_t)BIT_DMP_ODR_50HZ; //set dmp odr 50hz
-    ret += inv_write(REG_APEX_CONFIG0, data);   
+    ret += inv_write(REG_APEX_CONFIG0, data);
 
     return ret;
 }
 
 int inv_icm4x6xx_apex_config(SensorType_t index)
 {
-    int ret = 0;
+    int     ret  = 0;
     uint8_t data = 0;
-    
+
     INV_LOG(SENSOR_LOG_LEVEL, "%s ", __func__);
 
     /* DMP cannot be configured if it is running, hence make sure all APEX algorithms are off */
@@ -2272,31 +2265,29 @@ int inv_icm4x6xx_apex_config(SensorType_t index)
 #endif
 
     switch (index) {
-    #if SUPPORT_PEDOMETER
-    case PEDO:
-        {
-            INV_LOG(SENSOR_LOG_LEVEL, "APEX Case -- PEDO");
-            ret += inv_write(REG_BANK_SEL, 4);
-            data = (uint8_t)(LOW_ENERGY_AMP_TH_SEL_2684354MG) | (uint8_t)(DMP_POWER_SAVE_TIME_SEL_8S);
-            ret += inv_write(REG_APEX_CONFIG1, data);
+#if SUPPORT_PEDOMETER
+    case PEDO: {
+        INV_LOG(SENSOR_LOG_LEVEL, "APEX Case -- PEDO");
+        ret += inv_write(REG_BANK_SEL, 4);
+        data = (uint8_t)(LOW_ENERGY_AMP_TH_SEL_2684354MG) | (uint8_t)(DMP_POWER_SAVE_TIME_SEL_8S);
+        ret += inv_write(REG_APEX_CONFIG1, data);
 
-            data = (uint8_t)(PEDO_AMP_TH_2080374_MG) | (uint8_t)(PED_STEP_CNT_TH_2_STEP);
-            ret += inv_write(REG_APEX_CONFIG2, data);
+        data = (uint8_t)(PEDO_AMP_TH_2080374_MG) | (uint8_t)(PED_STEP_CNT_TH_2_STEP);
+        ret += inv_write(REG_APEX_CONFIG2, data);
 
-            data = (uint8_t)(PED_STEP_DET_TH_2_STEP) | (uint8_t)(PEDO_SB_TIMER_TH_150_SAMPLES) | (uint8_t)(PEDO_HI_ENRGY_TH_107);
-            ret += inv_write(REG_APEX_CONFIG3, data);
+        data = (uint8_t)(PED_STEP_DET_TH_2_STEP) | (uint8_t)(PEDO_SB_TIMER_TH_150_SAMPLES) | (uint8_t)(PEDO_HI_ENRGY_TH_107);
+        ret += inv_write(REG_APEX_CONFIG3, data);
 
-            data = (uint8_t)~BIT_SENSITIVITY_MODE_MASK;
-            ret += inv_write(REG_APEX_CONFIG9, data);
+        data = (uint8_t)~BIT_SENSITIVITY_MODE_MASK;
+        ret += inv_write(REG_APEX_CONFIG9, data);
 
-            ret += inv_write(REG_BANK_SEL, 0);
-        }
-        break;
-    #endif
+        ret += inv_write(REG_BANK_SEL, 0);
+    } break;
+#endif
     default:
         break;
     }
-    
+
     return ret;
 }
 #endif
@@ -2304,7 +2295,7 @@ int inv_icm4x6xx_apex_config(SensorType_t index)
 #if SUPPORT_PEDOMETER
 int inv_icm4x6xx_pedometer_enable()
 {
-    int ret = 0;
+    int     ret  = 0;
     uint8_t data = 0;
 
     INV_LOG(SENSOR_LOG_LEVEL, "%s", __func__);
@@ -2317,7 +2308,7 @@ int inv_icm4x6xx_pedometer_enable()
         inv_delay_us(200);
         INV_LOG(SENSOR_LOG_LEVEL, "pedometer enable, acc on");
     }
-    
+
     /* Make sure Pedo is disabled before init */
     ret += inv_read(REG_APEX_CONFIG0, 1, &data);
     data &= (uint8_t)~BIT_PED_ENABLE_EN;
@@ -2329,9 +2320,9 @@ int inv_icm4x6xx_pedometer_enable()
     ret += inv_icm4x6xx_dmp_reset();
 
     ret += inv_icm4x6xx_apex_config(PEDO);
-    
+
     ret += inv_icm4x6xx_dmp_enable();
-    
+
     if (true == icm_dev.dmp_power_save) {
         ret += inv_read(REG_SMD_CONFIG, 1, &data);
         data &= (uint8_t)~BIT_SMD_MODE_MASK;
@@ -2345,7 +2336,7 @@ int inv_icm4x6xx_pedometer_enable()
     data |= (uint8_t)BIT_INT1_STEP_DET_EN;
     ret += inv_write(REG_INT_SOURCE6, data);
     ret += inv_write(REG_BANK_SEL, 0);
-    
+
     ret += inv_read(REG_APEX_CONFIG0, 1, &data);
     data |= (uint8_t)BIT_PED_ENABLE_EN;
     ret += inv_write(REG_APEX_CONFIG0, data);
@@ -2354,11 +2345,11 @@ int inv_icm4x6xx_pedometer_enable()
         return PEDO_ENABLE_ERROR;
 
     icm_dev.sensors[PEDO].powered = true;
-    
-    #if SENSOR_REG_DUMP
+
+#if SENSOR_REG_DUMP
     inv_icm4x6xx_dumpRegs();
     #endif
-    
+
     return ret;
 }
 
@@ -2374,7 +2365,7 @@ int inv_icm4x6xx_pedometer_disable()
         data &= (uint8_t)~BIT_SMD_MODE_MASK;
         ret += inv_write(REG_SMD_CONFIG, data);
     }
-    
+
     ret += inv_read(REG_APEX_CONFIG0, 1, &data);
     data &= (uint8_t)~BIT_PED_ENABLE_EN;
     ret += inv_write(REG_APEX_CONFIG0, data);
@@ -2389,9 +2380,9 @@ int inv_icm4x6xx_pedometer_disable()
         inv_delay_us(200);
         INV_LOG(SENSOR_LOG_LEVEL, "pedometer disable, acc off pwr: 0x%x", icm_dev.pwr_sta);
     }
-    
+
     icm_dev.sensors[PEDO].powered = false;
-    
+
     return ret;
 }
 
@@ -2401,7 +2392,7 @@ int inv_icm4x6xx_pedometer_get_stepCnt(uint64_t *step_cnt)
         INV_LOG(INV_LOG_LEVEL_ERROR, "STEP_CNT NULL POINTER!!");
         exit(-1);
     }
-    
+
     int ret = 0;
     uint8_t int_status = 0;
     uint8_t data[2] = {0};
@@ -2416,7 +2407,7 @@ int inv_icm4x6xx_pedometer_get_stepCnt(uint64_t *step_cnt)
     INV_LOG(SENSOR_LOG_LEVEL, "INT STATUS3 0x%x", int_status);
     if (ret != 0)
         return INT_STATUS_READ_ERROR;
-    
+
     if (int_status & BIT_INT_STEP_DET) {
         static uint8_t step_cnt_ovflw = 0;
 
@@ -2424,17 +2415,17 @@ int inv_icm4x6xx_pedometer_get_stepCnt(uint64_t *step_cnt)
             step_cnt_ovflw++;
             INV_LOG(SENSOR_LOG_LEVEL, "step_cnt_ovflw %d", step_cnt_ovflw);
         }
-        
+
         memset(data, 0, sizeof(data));
         ret += inv_read(REG_APEX_DATA0, 2, data);
         step_data = (((uint16_t)data[1]) << 8) | data[0];
         ret += inv_read(REG_APEX_DATA2, 1, &step_cadence);
         ret += inv_read(REG_APEX_DATA3, 1, &activity_class);
-    
+
         /* Converting u6.2 to float */
         nb_samples = (step_cadence >> 2) + (float)(step_cadence & 0x03)*0.25;
         cadence_step_per_sec = 50.0f / nb_samples;
-        
+
         *step_cnt = step_data + step_cnt_ovflw * 65535;
 
         activity_class &= BIT_ACTIVITY_CLASS_MASK;
@@ -2470,8 +2461,8 @@ int inv_icm4x6xx_wom_enable()
         inv_delay_us(200);
         INV_LOG(SENSOR_LOG_LEVEL, "wom enable, acc on");
     }
-    
-    /* set X,Y,Z threshold */   
+
+    /* set X,Y,Z threshold */
     ret += inv_write(REG_BANK_SEL, 4);// Bank 4
     ret += inv_write(REG_ACCEL_WOM_X_THR, DEFAULT_WOM_THS_MG);
     ret += inv_write(REG_ACCEL_WOM_Y_THR, DEFAULT_WOM_THS_MG);
@@ -2491,7 +2482,7 @@ int inv_icm4x6xx_wom_enable()
     data |= (uint8_t)BIT_WOM_MODE_COMPARE_PRE;
     INV_LOG(SENSOR_LOG_LEVEL, "SMD_CFG is 0x%x", data);
     ret += inv_write(REG_SMD_CONFIG, data);
-    
+
     if (ret != 0)
         return WOM_ENABLE_ERROR;
 
@@ -2500,7 +2491,7 @@ int inv_icm4x6xx_wom_enable()
     #if SENSOR_REG_DUMP
     inv_icm4x6xx_dumpRegs();
     #endif
-    
+
     return ret;
 }
 
@@ -2510,7 +2501,7 @@ int inv_icm4x6xx_wom_disable()
     uint8_t data = 0;
 
     INV_LOG(SENSOR_LOG_LEVEL, "%s", __func__);
-    
+
     ret += inv_read(REG_INT_SOURCE1, 1, &data);
     data &= (uint8_t)~BIT_INT1_WOM_EN_MASK;
     ret += inv_write(REG_INT_SOURCE1, data);
@@ -2519,19 +2510,19 @@ int inv_icm4x6xx_wom_disable()
     data &= (uint8_t)~BIT_SMD_MODE_MASK;
     ret += inv_write(REG_SMD_CONFIG, data);
 
-    if (false == icm_dev.sensors[ACC].powered 
-        #if SUPPORT_PEDOMETER
+    if (false == icm_dev.sensors[ACC].powered
+#if SUPPORT_PEDOMETER
         && false == icm_dev.sensors[PEDO].powered
-        #endif
-        ) {
+#endif
+    ) {
         icm_dev.pwr_sta &= ~BIT_ACCEL_MODE_MASK;
         ret += inv_write(REG_PWR_MGMT0, icm_dev.pwr_sta);
         inv_delay_us(200);
         INV_LOG(SENSOR_LOG_LEVEL, "wom disable, acc off pwr: 0x%x", icm_dev.pwr_sta);
     }
-    
+
     icm_dev.sensors[WOM].powered = false;
-    
+
     return ret;
 }
 
@@ -2541,7 +2532,7 @@ int inv_icm4x6xx_wom_get_event(bool *event)
         INV_LOG(INV_LOG_LEVEL_ERROR, "EVENT NULL POINTER!!");
         exit(-1);
     }
-    
+
     int ret = 0;
     uint8_t int_status = 0;
 
@@ -2551,7 +2542,7 @@ int inv_icm4x6xx_wom_get_event(bool *event)
         INV_LOG(SENSOR_LOG_LEVEL, "Motion Detected !!");
         *event = true;
     }
-    
+
     return ret;
 }
 #endif
@@ -2592,8 +2583,8 @@ void inv_icm4x6xx_dumpRegs()
         inv_read(reg_map_bank_0[i], 1, &data);
         INV_LOG(SENSOR_LOG_LEVEL, "bank0 reg[0x%x] 0x%x", reg_map_bank_0[i], data);
     }
-    
-    #if (SUPPORT_PEDOMETER | SUPPORT_WOM)
+
+#if (SUPPORT_PEDOMETER | SUPPORT_WOM)
     /* Apex config */
     uint8_t reg_map_bank_4[] = {
         REG_APEX_CONFIG0,

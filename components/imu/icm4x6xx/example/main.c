@@ -36,7 +36,7 @@
 #include "ASF/common/services/delay/delay.h"
 
 #include "system.h"
-#include "main.h"       
+#include "main.h"
 //#include "sensor.h"
 
 static InvSchedulerTask blinkerLedTask;
@@ -77,8 +77,8 @@ bool sensor[NUM_OF_SENSOR];
 */
 void ext_interrupt_handler(void)
 {
-    /* 
-     * Multiply ul_ticks by 100 because it is currently ticking over at 10 kHz and we need to bump it up to 1 MHz. 
+    /*
+     * Multiply ul_ticks by 100 because it is currently ticking over at 10 kHz and we need to bump it up to 1 MHz.
      * this becomes the ms portion of the time stamp.
      * SysTick->VAL / SysTickReloadValue specifies the fraction of the 100 us timer remaining. Multiply this value by
      * 100 to convert from a 100 us to 1 us resolution.
@@ -134,9 +134,9 @@ void platform_init()
 {
     /* Hardware initialization */
     sysclk_init();
-    board_init(); 
-    sysclk_enable_peripheral_clock(ID_TC0); 
-    
+    board_init();
+    sysclk_enable_peripheral_clock(ID_TC0);
+
     /* Configure Device - Host Interface */
     configure_console();
 
@@ -147,14 +147,14 @@ void platform_init()
     ext_int_initialize(&ext_interrupt_handler);
 
     /* Initialize SPI/I2C*/
-    interface_initialize(); 
-    
+    interface_initialize();
+
     /* Set SysTick timer to MICROSECONDS_PER_SYSTICK us. */
-    SysTickReloadValue = sysclk_get_cpu_hz() / MICROSECONDS_PER_SECOND * MICROSECONDS_PER_SYSTICK; 
-    
-    /* Configure sysTick Timer */   
-    SysTick_Config(SysTickReloadValue);  
-    
+    SysTickReloadValue = sysclk_get_cpu_hz() / MICROSECONDS_PER_SECOND * MICROSECONDS_PER_SYSTICK;
+
+    /* Configure sysTick Timer */
+    SysTick_Config(SysTickReloadValue);
+
     /* Clear timer-stamp and any remaining interrupts */
     __disable_irq();
 
@@ -177,7 +177,7 @@ int main (void)
     INV_LOG(SENSOR_LOG_LEVEL, "###################################");
     INV_LOG(SENSOR_LOG_LEVEL, "#   ICM4X6XX MCU Driver V3.0      #");
     INV_LOG(SENSOR_LOG_LEVEL, "###################################");
-    
+
     int ret = 0;
     #if SUPPORT_SELFTEST
     bool st_acc_result = false;
@@ -187,14 +187,14 @@ int main (void)
     ret += inv_icm4x6xx_gyro_selftest(&st_gyr_result);
     INV_LOG(SENSOR_LOG_LEVEL, "GYR Selftest ret %d result %d", ret, st_gyr_result);
     #endif
-    
+
     ret = inv_icm4x6xx_initialize();
     if (ret != 0) {
         INV_LOG(SENSOR_LOG_LEVEL, "Chip Initialize Failed. Do nothing");
         //Release system resource Todo if need?
         return ret;
     }
-    
+
     ret += inv_icm4x6xx_acc_set_rate(200, 2);//200Hz, watermark 2.
     ret += inv_icm4x6xx_acc_enable();
     sensor[ACC] = true;
@@ -214,7 +214,7 @@ int main (void)
         //Release system resource Todo if need?
         return ret;
     }
-    
+
     InvScheduler_init(&scheduler);
     InvScheduler_initTask(&scheduler, &blinkerLedTask, "blinkerLedTask", BlinkerLedTaskMain, 0, INVSCHEDULER_TASK_PRIO_MIN+1, MICROSECONDS_PER_SECOND/MICROSECONDS_PER_SYSTICK); // keep the LED blink at 1Hz
     InvScheduler_startTask(&blinkerLedTask, 0);
@@ -222,8 +222,8 @@ int main (void)
     int i = 0;
     while (1) {
         InvScheduler_dispatchTasks(&scheduler);
-        
-        if (irq_from_device == 1) { 
+
+        if (irq_from_device == 1) {
             inv_data_handler();
             __disable_irq();
             irq_from_device = 0;

@@ -40,12 +40,12 @@ static __GYRO_ACC_HANDLE_TypeDef sIMUHandle = { &sGyroAccHwDrv, &sGyroAccDevDrv,
 
 #pragma region acc gyro interface
 
-static int32_t acc_write_buffer(void *handle, uint8_t reg, const uint8_t *data, uint16_t size)
+static int32_t acc_write_buffer(void *handle, uint8_t reg, const uint8_t *data, uint32_t size)
 {
     uint8_t  ret, write_buff[32], read_buff[32];
     uint16_t real_size;
 
-    __GYRO_ACC_HANDLE_TypeDef *imu_handle = (__GYRO_ACC_HANDLE_TypeDef *)handle;
+    __GYRO_ACC_HANDLE_TypeDef *imu_handle = &sIMUHandle;
 
     memset(write_buff, 0xFF, sizeof(write_buff));
     write_buff[0] = (reg & 0x7F);
@@ -66,11 +66,11 @@ static int32_t acc_write_buffer(void *handle, uint8_t reg, const uint8_t *data, 
     return ret;
 }
 
-static int32_t acc_read_buffer(void *handle, uint8_t reg, uint8_t *buff, uint16_t size)
+static int32_t acc_read_buffer(void *handle, uint8_t reg, uint8_t *buff, uint32_t size)
 {
     uint8_t ret, write_buff[256];
 
-    __GYRO_ACC_HANDLE_TypeDef *imu_handle = (__GYRO_ACC_HANDLE_TypeDef *)handle;
+    __GYRO_ACC_HANDLE_TypeDef *imu_handle = &sIMUHandle;
 
     memset(write_buff, 0xFF, sizeof(write_buff));
     write_buff[0] = (reg | 0x80);

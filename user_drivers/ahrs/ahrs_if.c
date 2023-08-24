@@ -13,7 +13,6 @@ to the ground plane
 #include "standard_lib.h"
 #include "motion_fx_manager.h"
 #include "motion_fx.h"
-#include "motion_gc.h"
 #include "platform.h"
 
 #define AHRS_GYRO_SCALE           (2)   // GYPO_SCALE_500dps
@@ -113,9 +112,7 @@ static void ahrs_read_task(void)
 /* process the imu data and report it */
 static void ahrs_proc_task(void)
 {
-    MFX_input_t  mfx_input_buf;
-    MGC_input_t  mgc_input_buf;
-    MGC_output_t mgc_output_buf;
+    MFX_input_t mfx_input_buf;
 
     static uint64_t cal_tick = 0, report_time_point_recode = 0, report_time_point_recode1 = 0;
     uint32_t        current_tick = 0;
@@ -135,14 +132,6 @@ static void ahrs_proc_task(void)
         mfx_input_buf.gyro[0] = sAhrsInput[sOutPtr].G[0];
         mfx_input_buf.gyro[1] = sAhrsInput[sOutPtr].G[1];
         mfx_input_buf.gyro[2] = sAhrsInput[sOutPtr].G[2];
-
-        mgc_input_buf.Acc[0] = sAhrsInput[sOutPtr].A[0];
-        mgc_input_buf.Acc[1] = sAhrsInput[sOutPtr].A[1];
-        mgc_input_buf.Acc[2] = sAhrsInput[sOutPtr].A[2];
-
-        mgc_input_buf.Gyro[0] = sAhrsInput[sOutPtr].G[0];
-        mgc_input_buf.Gyro[1] = sAhrsInput[sOutPtr].G[1];
-        mgc_input_buf.Gyro[2] = sAhrsInput[sOutPtr].G[2];
 
         during_time = (float)(sAhrsInput[sOutPtr].tick - cal_tick) / (float)(GTIMER_LPTIM_FREQ); //TICKS_TO_S
         cal_tick    = sAhrsInput[sOutPtr].tick;
@@ -203,7 +192,7 @@ static void ahrs_proc_task(void)
                 sSktMasterFrame.A[1] = sAhrsInput[sOutPtr].A[1];
                 sSktMasterFrame.A[2] = sAhrsInput[sOutPtr].A[2];
 
-                send_callback((uint8_t *)&sSktMasterFrame, sizeof(sSktMasterFrame));
+                // send_callback((uint8_t *)&sSktMasterFrame, sizeof(sSktMasterFrame));
 
 #ifdef DEBUG
                 do {

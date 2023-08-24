@@ -52,7 +52,7 @@
    { { -1, -1, -1}, {1, 0, 2} }, */
 #define SENSOR_LOG_LEVEL                     3 //INV_LOG_LEVEL_INFO
 #define SENSOR_REG_DUMP                      0
-#define MAX_RECV_PACKET                      100
+#define MAX_RECV_PACKET                      20
 
 enum inv_log_level {
     INV_LOG_LEVEL_OFF     = 0,
@@ -62,9 +62,9 @@ enum inv_log_level {
     INV_LOG_LEVEL_MAX
 };
 
-#if 0
+#if 1
 /* customer board, need invoke system marco*/
-#define INV_LOG           
+#define INV_LOG
 #else
 /* smart motion board*/
 #include "utils/Message.h"

@@ -25,9 +25,9 @@ typedef struct {
     ACC_SCALE_E  acc_scale;
     uint8_t      high_performance; // 0 disable, 1 enable
 
-    int32_t (*write_buffer)(void *, uint8_t, const uint8_t *, uint16_t);
-    int32_t (*read_buffer)(void *, uint8_t, uint8_t *, uint16_t);
-    uint8_t (*irq_enable)(uint8_t);
+    int32_t (*write_buffer)(void *handle, uint8_t reg, const uint8_t *data, uint32_t size);
+    int32_t (*read_buffer)(void *handle, uint8_t reg, uint8_t *buff, uint32_t size);
+    uint8_t (*irq_enable)(uint8_t state);
 
     void *handle;
 } ACC_GYRO_CONFIG_TypeDef;

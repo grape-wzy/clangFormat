@@ -30,20 +30,20 @@ extern "C" {
 #include "cmsis_os.h"
 #endif
 
-#define         STD_HELLO				(0x01)
-#define         STD_ERROR				(0x02)
-#define         STD_SUCCESS				(0x03)
-#define         STD_FAILED				(0x04)
-#define         STD_BUSY				(0x05)
-#define         STD_DENIED				(0x06)
-#define         STD_PING				(0x07)
-#define         STD_DO_NOTHING			(0x08)
-#define         STD_NEXT				(0x09)
-#define         STD_NODATA				(0x0a)
-#define         STD_TIMEOUT				(0x0b)
-#define         STD_INVALID_ARG			(0x0c)
-#define         STD_NO_SPACE			(0x0d)
-#define         STD_NO_INIT				(0x0e)
+#define STD_HELLO            (0x01)
+#define STD_ERROR            (0x02)
+#define STD_SUCCESS          (0x03)
+#define STD_FAILED           (0x04)
+#define STD_BUSY             (0x05)
+#define STD_DENIED           (0x06)
+#define STD_PING             (0x07)
+#define STD_DO_NOTHING       (0x08)
+#define STD_NEXT             (0x09)
+#define STD_NODATA           (0x0a)
+#define STD_TIMEOUT          (0x0b)
+#define STD_INVALID_ARG      (0x0c)
+#define STD_NO_SPACE         (0x0d)
+#define STD_NO_INIT          (0x0e)
 
 #define SIZE_OFF_SET(s, m) (uint32_t)(&(((s *)0)->m))
 #define SIZE_OF_STRUCT(s, m) sizeof((((s *)0)->m))
@@ -55,14 +55,14 @@ extern "C" {
 //#define is_long_long_aligned(x)   (((uintptr_t)x & 0x07) == 0)
 //#define is_word_aligned(x)		  (((uintptr_t)x & 0x03) == 0)
 
-__STATIC_INLINE uint8_t is_long_long_aligned(void const* p)
+__STATIC_INLINE uint8_t is_long_long_aligned(void const *p)
 {
-	return (((uintptr_t)p & 0x07) == 0);
+    return (((uintptr_t)p & 0x07) == 0);
 }
 
-__STATIC_INLINE uint8_t is_word_aligned(void const* p)
+__STATIC_INLINE uint8_t is_word_aligned(void const *p)
 {
-	return (((uintptr_t)p & 0x03) == 0);
+    return (((uintptr_t)p & 0x03) == 0);
 }
 
 #pragma endregion
@@ -93,20 +93,56 @@ __STATIC_INLINE uint8_t is_word_aligned(void const* p)
 //#define TraceBX(flags, func_name, ...) TraceB ##flags(func_name, ##__VA_ARGS__)
 //#define fprint(flag, ...)   TraceBX(flag, __func__, ##__VA_ARGS__)
 
-#define TraceA0(...) do {printf("[%lu]:", (long unsigned int)time_print); printf(__VA_ARGS__);} while(0)
-#define TraceA1(...) do {printf("[%s][%lu]: ", (char *)__func__, (long unsigned int)time_print); printf(__VA_ARGS__);} while(0)
-#define TraceAX(flags, ...) TraceA ##flags(__VA_ARGS__)
+#define TraceA0(...)                                     \
+    do {                                                 \
+        printf("[%lu]:", (long unsigned int)time_print); \
+        printf(__VA_ARGS__);                             \
+    } while (0)
 
+#define TraceA1(...)                                                            \
+    do {                                                                        \
+        printf("[%s][%lu]: ", (char *)__func__, (long unsigned int)time_print); \
+        printf(__VA_ARGS__);                                                    \
+    } while (0)
+
+#define TraceAX(flags, ...) TraceA##flags(__VA_ARGS__)
 
 //带函数名和时间,log输出, dma传输打印
-#define kprint(...) do{uint64_t time_print = Clock_Time();LOG_ENTER_CRITICAL_SECTION(); TraceAX(1, __VA_ARGS__); LOG_EXIT_CRITICAL_SECTION( ) ;}while(0)
+#define kprint(...)                         \
+    do {                                    \
+        uint64_t time_print = Clock_Time(); \
+        LOG_ENTER_CRITICAL_SECTION();       \
+        TraceAX(1, __VA_ARGS__);            \
+        LOG_EXIT_CRITICAL_SECTION();        \
+    } while (0)
+
 //带时间,log输出, dma传输打印
-#define tprint(...) do{uint64_t time_print = Clock_Time();LOG_ENTER_CRITICAL_SECTION(); TraceAX(0, __VA_ARGS__); LOG_EXIT_CRITICAL_SECTION( ) ;}while(0)
+#define tprint(...)                         \
+    do {                                    \
+        uint64_t time_print = Clock_Time(); \
+        LOG_ENTER_CRITICAL_SECTION();       \
+        TraceAX(0, __VA_ARGS__);            \
+        LOG_EXIT_CRITICAL_SECTION();        \
+    } while (0)
 
 //仅仅log输出，不附带其他信息
-#define nprint(...) do{LOG_ENTER_CRITICAL_SECTION();printf( __VA_ARGS__);LOG_EXIT_CRITICAL_SECTION( ) ;}while(0)
+#define nprint(...)                   \
+    do {                              \
+        LOG_ENTER_CRITICAL_SECTION(); \
+        printf(__VA_ARGS__);          \
+        LOG_EXIT_CRITICAL_SECTION();  \
+    } while (0)
+
 //仅仅打印到缓存中
-#define cprint(...) do{uint64_t time_print = Clock_Time();LOG_ENTER_CRITICAL_SECTION(); log_set_mode(1); TraceAX(0, __VA_ARGS__);log_set_mode(0); LOG_EXIT_CRITICAL_SECTION( ) ;}while(0)
+#define cprint(...)                         \
+    do {                                    \
+        uint64_t time_print = Clock_Time(); \
+        LOG_ENTER_CRITICAL_SECTION();       \
+        log_set_mode(1);                    \
+        TraceAX(0, __VA_ARGS__);            \
+        log_set_mode(0);                    \
+        LOG_EXIT_CRITICAL_SECTION();        \
+    } while (0)
 
 //切换顺序打印
 //#define cprint(...)  do{kp_set_mode(0);fprint(1, __VA_ARGS__);}while(0)

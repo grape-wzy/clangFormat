@@ -1,10 +1,10 @@
 /*
  * @Author       : Zhaoyu.Wu
  * @Date         : 2023-07-18 14:57
- * @LastEditTime : 2023-08-11 15:56
+ * @LastEditTime : 2023-08-22 17:49
  * @LastEditors  : Zhaoyu.Wu
  * @Description  : Private processing function of equipment
- * @FilePath     : d:/eMed/product/osteotomy_simple_1/applications/cmd_handle_proc.c
+ * @FilePath     : d:/eMed/product/osteotomy_simple/firmware/applications/cmd_handle_proc.c
  * If you have any questions, email to mr.wuzhaoyu@outlook.com.
  */
 
