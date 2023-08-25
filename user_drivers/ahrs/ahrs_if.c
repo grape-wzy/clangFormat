@@ -91,8 +91,8 @@ static void ahrs_read_task(void)
     sAhrsInput[inp].tick = Clock_Tick();
 
     for (uint8_t i = 0; i < 3; i++) {
-        sAhrsInput[inp].G[i] = (float)(ahrs_result_buf.gyro[i] / 1000.00);
-        sAhrsInput[inp].A[i] = (float)(ahrs_result_buf.acc[i] / 1000.00);
+        sAhrsInput[inp].A[i] = ahrs_result_buf.acc[i];
+        sAhrsInput[inp].G[i] = ahrs_result_buf.gyro[i];
     }
 
     inp++;
@@ -136,30 +136,7 @@ static void ahrs_proc_task(void)
         during_time = (float)(sAhrsInput[sOutPtr].tick - cal_tick) / (float)(GTIMER_LPTIM_FREQ); //TICKS_TO_S
         cal_tick    = sAhrsInput[sOutPtr].tick;
 
-        // if (learning != 0) {
-        //     learning++;
-        //     if (learning == 2) {
-        //         ahrs_calib(1);
-        //     } else if (learning == AHRS_ACC_GYRO_DATA_RATE * 15) {
-        //         ahrs_calib(0);
-        //         learning = 0;
-        //     }
-        // }
-
         sAhrsAlgApi.run(&mfx_input_buf, &sAhrsOutput, during_time);
-
-        // if (sAhrsInput[sOutPtr].tick > AHRS_BIAS_REPORT_MIN_TIME + report_time_point_recode1) {
-        //     gbias[0] = 0.0;
-        //     gbias[1] = 0.0;
-        //     gbias[2] = 0.0;
-
-        //     report_time_point_recode1 = sAhrsInput[sOutPtr].tick;
-
-        //     MotionFX_getGbias(motion_fx_state_buff, gbias);
-        //     nprint("gyro: %f, %f, %f | bias: %f, %f, %f\r\n",
-        //            mfx_input_buf.gyro[0], mfx_input_buf.gyro[1], mfx_input_buf.gyro[2],
-        //            gbias[0], gbias[1], gbias[2]);
-        // }
 
         // if (send_callback != NULL)
         {
@@ -207,26 +184,26 @@ static void ahrs_proc_task(void)
                     current_tick = TICKS_TO_MS((uint32_t)Clock_Tick());
                     // nprint("%lu,", current_tick);
 
-                    // nprint("%lf,%lf,%lf,%lf,",
-                    //        sAhrsOutput.quaternion[0], // 四元数
-                    //        sAhrsOutput.quaternion[1],
-                    //        sAhrsOutput.quaternion[2],
-                    //        sAhrsOutput.quaternion[3]);
+                    nprint("%lf,%lf,%lf,%lf,",
+                           sAhrsOutput.quaternion[0], // 四元数
+                           sAhrsOutput.quaternion[1],
+                           sAhrsOutput.quaternion[2],
+                           sAhrsOutput.quaternion[3]);
 
                     nprint("%lu,%lf,%lf,%lf\r\n", current_tick,
                            sAhrsOutput.rotation[0],  // yaw-z
                            sAhrsOutput.rotation[1],  //pitch-x
                            sAhrsOutput.rotation[2]); // roll-y
-                    // report_time_point_recode1++;
+                    report_time_point_recode1++;
 
-                    // nprint("%lf/%lf/%lf, ",
-                    //        mfx_input_buf.acc[0],                                 // yaw-z
-                    //        mfx_input_buf.acc[1],                                 //pitch-x
-                    //        mfx_input_buf.acc[2]);                                // roll-y
-                    // nprint("%lf, %lf, %lf, ",
-                    //        mfx_input_buf.gyro[0],                                // yaw-z
-                    //        mfx_input_buf.gyro[1],                                //pitch-x
-                    //        mfx_input_buf.gyro[2]);                               // roll-y
+                    // nprint("%lf,%lf,%lf, ",
+                    //        mfx_input_buf.acc[0],   // yaw-z
+                    //        mfx_input_buf.acc[1],   //pitch-x
+                    //        mfx_input_buf.acc[2]);  // roll-y
+                    // nprint("%lf, %lf, %lf\r\n",
+                    //        mfx_input_buf.gyro[0],  // yaw-z
+                    //        mfx_input_buf.gyro[1],  //pitch-x
+                    //        mfx_input_buf.gyro[2]); // roll-y
 
                     // nprint("%lf, %lf, %lf, %d\r\n",
                     //        mgc_output_buf.GyroBiasX,                             // yaw-z

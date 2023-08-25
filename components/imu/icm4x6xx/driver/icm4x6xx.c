@@ -36,9 +36,9 @@
 #define ICM4X6XX_MAX_FIFO_SIZE        2000  // Max FIFO count size
 
 #define G                             9.80665
-#define PI                            3.141592
-#define KSCALE_ACC_8G_RANGE           0.002394202f  // ACC_range * 9.81f / 65536.0f;
-#define KSCALE_GYRO_2000_RANGE        0.001065264f  // GYR_range * M_PI / (180.0f * 65536.0f);
+#define PI                            3.1415926
+#define KSCALE_ACC_RATIO              (1.0 / 16384.0) // acc_result = (acc * (1 / acc_sensitivity)); 配置量程为±2g，单位为g
+#define KSCALE_GYRO_RATIO             (1.0 / 262.0)  // g_result = (gyro * (1 / g_sensitivity)) * (PI / 180)，角度换为弧度
 #define TEMP_SENSITIVITY_FIFO         0.4831f
 #define TEMP_SENSITIVITY_REG          0.007548f
 #define ROOM_TEMP_OFFSET              25 //Celsius degree
@@ -920,10 +920,10 @@ static int inv_icm4x6xx_init_config()
     INV_LOG(SENSOR_LOG_LEVEL, "INT1 cfg 0x%x", icm_dev.int_cfg);
     ret += inv_write(REG_INT_CONFIG, icm_dev.int_cfg);
     /* gyr odr & fs */
-    icm_dev.gyro_cfg0 = ((uint8_t)ODR_50HZ) | ((uint8_t)GYRO_RANGE_2000DPS);
+    icm_dev.gyro_cfg0 = ((uint8_t)ODR_50HZ) | ((uint8_t)GYRO_RANGE_125DPS);
     ret += inv_write(REG_GYRO_CONFIG0, icm_dev.gyro_cfg0);
     /* acc odr & fs */
-    icm_dev.acc_cfg0 = ((uint8_t)ODR_50HZ) | ((uint8_t)ACCEL_RANGE_8G);
+    icm_dev.acc_cfg0 = ((uint8_t)ODR_50HZ) | ((uint8_t)ACCEL_RANGE_2G);
     ret += inv_write(REG_ACCEL_CONFIG0, icm_dev.acc_cfg0);
     /* acc & gyro BW */
     data = (uint8_t)((BW_ODR_DIV_2 << BIT_ACCEL_FILT_BW_SHIFT) | BW_ODR_DIV_4);
@@ -1544,15 +1544,15 @@ static void inv_icm4x6xx_parse_rawdata(struct accGyroData *data, uint8_t *buf, S
     remap_data[icm_dev.cvt.axis[AXIS_Z]] = icm_dev.cvt.sign[AXIS_Z] * raw_data[AXIS_Z];
 
     if (sensorType == ACC) {
-        data->x = (float)remap_data[AXIS_X] * KSCALE_ACC_8G_RANGE;
-        data->y = (float)remap_data[AXIS_Y] * KSCALE_ACC_8G_RANGE;
-        data->z = (float)remap_data[AXIS_Z] * KSCALE_ACC_8G_RANGE;
+        data->x        = (float)remap_data[AXIS_X] * KSCALE_ACC_RATIO;
+        data->y        = (float)remap_data[AXIS_Y] * KSCALE_ACC_RATIO;
+        data->z        = (float)remap_data[AXIS_Z] * KSCALE_ACC_RATIO;
         data->sensType = sensorType;
         //INV_LOG(SENSOR_LOG_LEVEL, "A: %f %f %f", (double)temp_data[AXIS_X], (double)temp_data[AXIS_Y], (double)temp_data[AXIS_Z]);
     } else if(sensorType == GYR) {
-        data->x = (float)remap_data[AXIS_X] * KSCALE_GYRO_2000_RANGE;
-        data->y = (float)remap_data[AXIS_Y] * KSCALE_GYRO_2000_RANGE;
-        data->z = (float)remap_data[AXIS_Z] * KSCALE_GYRO_2000_RANGE;
+        data->x        = (float)remap_data[AXIS_X] * KSCALE_GYRO_RATIO;
+        data->y        = (float)remap_data[AXIS_Y] * KSCALE_GYRO_RATIO;
+        data->z        = (float)remap_data[AXIS_Z] * KSCALE_GYRO_RATIO;
         data->sensType = sensorType;
         //INV_LOG(SENSOR_LOG_LEVEL, "G: %f %f %f", (double)temp_data[AXIS_X], (double)temp_data[AXIS_Y], (double)temp_data[AXIS_Z]);
     }

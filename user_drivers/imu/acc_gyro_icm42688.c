@@ -37,10 +37,10 @@ uint8_t acc_gyro_init(void *config)
     if (0 != inv_icm4x6xx_initialize())
         return STD_FAILED;
 
-    inv_icm4x6xx_acc_set_rate(200, 2);  //200Hz, watermark 2.
-    inv_icm4x6xx_gyro_set_rate(100, 4); //100Hz, watermark 4.
+    inv_icm4x6xx_acc_set_rate(100, 2);  //200Hz, watermark 2.
+    inv_icm4x6xx_gyro_set_rate(200, 4); //100Hz, watermark 2.
 
-    return STD_FAILED;
+    return STD_SUCCESS;
 }
 
 uint8_t acc_gyro_deinit(void *config)
@@ -106,6 +106,7 @@ uint8_t acc_gyro_get_result(float acc[3], float gyro[3], uint32_t number)
         gyro[0] = gyro[0] / icm42688_data.gyroOutSize;
         gyro[1] = gyro[1] / icm42688_data.gyroOutSize;
         gyro[2] = gyro[2] / icm42688_data.gyroOutSize;
+        num++;
     }
 
     if (retry == 15 || num != number)
