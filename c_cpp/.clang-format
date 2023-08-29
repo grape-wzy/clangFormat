@@ -74,7 +74,7 @@ AlignOperands:   Align
 # 是否对齐后面的注释
 AlignTrailingComments:
   Kind: Always
-  OverEmptyLines: 2
+  OverEmptyLines: 1
 
 AllowAllArgumentsOnNextLine: true
 
