@@ -899,11 +899,11 @@ static int inv_icm4x6xx_init_config()
         data = (uint8_t)(BIT_UI_SIFS_CFG_I2C_DIS | BIT_FIFO_HOLD_LAST_DATA_EN);
     } else {
         INV_LOG(SENSOR_LOG_LEVEL, "I2C BUS");
-  /*      ret += inv_write(REG_BANK_SEL, 1);
+        /* ret += inv_write(REG_BANK_SEL, 1);
         data = inv_read(REG_INTF_CONFIG6, 1, &data);
         data &= (uint8_t)~(BIT_I3C_SDR_EN | BIT_I3C_DDR_EN);
         ret += inv_write(REG_INTF_CONFIG6, data);
-        ret += inv_write(REG_BANK_SEL, 0);*/
+        ret += inv_write(REG_BANK_SEL, 0); */
 
         data = (uint8_t)(BIT_UI_SIFS_CFG_SPI_DIS | BIT_FIFO_HOLD_LAST_DATA_EN);
     }
