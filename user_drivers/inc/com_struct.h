@@ -77,6 +77,7 @@ typedef __I__packed struct
     uint8_t  MotionFreezPercent;
     int16_t  MotionError;
     uint16_t DebugStatus;
+
     uint8_t  DataSize; // 字节数
     float    Q[4];
     float    G[3];

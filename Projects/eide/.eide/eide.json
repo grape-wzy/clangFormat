@@ -709,7 +709,10 @@
             "name": "imu",
             "files": [
               {
-                "path": "../../components/imu/icm4x6xx/driver/icm4x6xx.c"
+                "path": "../../components/imu/Icm426xx/driver/Icm426xxDriver_HL.c"
+              },
+              {
+                "path": "../../components/imu/Icm426xx/driver/Icm426xxTransport.c"
               },
               {
                 "path": "../../user_drivers/imu/acc_gyro_icm42688.c"
@@ -932,7 +935,7 @@
           "../../components/ST/STM32_MotionFX_Library/Inc",
           "../../user_drivers/utest",
           "../../user_drivers/skt",
-          "../../components/imu/icm4x6xx/driver"
+          "../../components/imu/Icm426xx"
         ],
         "libList": [
           "../../components/ST/STM32_MotionFX_Library/Lib"

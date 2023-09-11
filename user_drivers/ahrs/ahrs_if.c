@@ -150,8 +150,8 @@ static void ahrs_proc_task(void)
                 sSktMasterFrame.MotionMode    = 0;
                 sSktMasterFrame.MotionProcess = 0;
                 sSktMasterFrame.MotionStatus  = 0;
-
                 sSktMasterFrame.DebugStatus = 1;
+
                 sSktMasterFrame.DataSize    = 64;
                 sSktMasterFrame.Q[0]        = sAhrsOutput.quaternion[3];
                 sSktMasterFrame.Q[1]        = sAhrsOutput.quaternion[0];

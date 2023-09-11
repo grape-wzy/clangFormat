@@ -21,10 +21,10 @@
  * ________________________________________________________________________________________________________
  */
 
-#include "Invn/Drivers/Icm426xx/Icm426xxDefs.h"
-#include "Invn/Drivers/Icm426xx/Icm426xxExtFunc.h"
-#include "Invn/Drivers/Icm426xx/Icm426xxDriver_HL.h"
-#include "Invn/Drivers/Icm426xx/Icm426xxDriver_HL_apex.h"
+#include "Icm426xxDefs.h"
+#include "Icm426xxExtFunc.h"
+#include "Icm426xxDriver_HL.h"
+#include "Icm426xxDriver_HL_apex.h"
 
 static int inv_icm426xx_resume_dmp(struct inv_icm426xx *s);
 
@@ -667,13 +667,13 @@ int inv_icm426xx_load_dmp_sram_code(struct inv_icm426xx *s, const uint8_t *dmp_p
 	uint8_t  dmp_sram_offset = 0x40, data;
 	int      status          = 0;
 
-	/* DMP SRAM is updated by DMP DMA every time accel ODR triggers, hence 
+    /* DMP SRAM is updated by DMP DMA every time accel ODR triggers, hence
 	 * first 7B of SRAM are not usable.
 	 * Since start addresses are aligned on 32B binary, there is some loss
 	 * here (minor however).
 	 */
-	if (size + start_offset > 1024U)
-		return INV_ERROR_SIZE;
+    if (size + start_offset > 1024U)
+        return INV_ERROR_SIZE;
 
 	status |= inv_icm426xx_read_reg(s, MPUREG_PWR_MGMT_0, 1, &pwr_mgmt);
 	/* Writing DMP SRAM not supported when accel is not IDLE */

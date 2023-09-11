@@ -8,11 +8,14 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "acc_gyro_if.h"
-#include "icm4x6xx.h"
+#include "driver/Icm426xxDriver_HL.h"
 #include "standard_lib.h"
 #include "gtimer.h"
 
 #define MEMS_SUCCESS   (0)
+
+/* Icm426xx driver object */
+static struct inv_icm426xx icm_driver;
 
 static icm4x6xx_delay_ms(uint16_t ms)
 {

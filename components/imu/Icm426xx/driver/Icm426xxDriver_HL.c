@@ -21,11 +21,11 @@
  * ________________________________________________________________________________________________________
  */
 
-#include "Invn/Drivers/Icm426xx/Icm426xxDefs.h"
-#include "Invn/Drivers/Icm426xx/Icm426xxExtFunc.h"
-#include "Invn/Drivers/Icm426xx/Icm426xxDriver_HL.h"
-#include "Invn/Drivers/Icm426xx/Icm426xxTransport.h"
-#include "Invn/Drivers/Icm426xx/Icm426xxVersion.h"
+#include "Icm426xxDefs.h"
+#include "Icm426xxExtFunc.h"
+#include "Icm426xxDriver_HL.h"
+#include "Icm426xxTransport.h"
+#include "Icm426xxVersion.h"
 
 static int  inv_icm426xx_configure_serial_interface(struct inv_icm426xx *s);
 static int  inv_icm426xx_init_hardware_from_ui(struct inv_icm426xx *s);
@@ -52,24 +52,24 @@ int inv_icm426xx_init(struct inv_icm426xx *s, struct inv_icm426xx_serif *serif,
 	if ((status |= inv_icm426xx_configure_serial_interface(s)) != 0)
 		return status;
 
-	/* Register the callback to be executed each time inv_icm426xx_get_data_from_fifo extracts 
-	 * a packet from fifo or inv_icm426xx_get_data_from_registers read data 
+    /* Register the callback to be executed each time inv_icm426xx_get_data_from_fifo extracts
+	 * a packet from fifo or inv_icm426xx_get_data_from_registers read data
 	 */
-	s->sensor_event_cb = sensor_event_cb;
+    s->sensor_event_cb = sensor_event_cb;
 
-	/* initialize hardware */
+    /* initialize hardware */
 	status |= inv_icm426xx_init_hardware_from_ui(s);
 
-	/* First data are noisy after enabling sensor
-	 * This variable keeps track of gyro start time. Set to UINT32_MAX at init 
+    /* First data are noisy after enabling sensor
+	 * This variable keeps track of gyro start time. Set to UINT32_MAX at init
 	 */
-	s->gyro_start_time_us = UINT32_MAX;
-	/* First data are noisy after enabling sensor
-	 * This variable keeps track of accel start time. Set to UINT32_MAX at init 
+    s->gyro_start_time_us = UINT32_MAX;
+    /* First data are noisy after enabling sensor
+	 * This variable keeps track of accel start time. Set to UINT32_MAX at init
 	 */
-	s->accel_start_time_us = UINT32_MAX;
+    s->accel_start_time_us = UINT32_MAX;
 
-	/* Gyro power-off to power-on transition can cause ring down issue
+    /* Gyro power-off to power-on transition can cause ring down issue
 	 * This variable keeps track of timestamp when gyro is power off. Set to UINT32_MAX at init
 	 */
 	s->gyro_power_off_tmst = UINT32_MAX;
@@ -174,27 +174,27 @@ int inv_icm426xx_enable_accel_low_power_mode(struct inv_icm426xx *s)
 	accel_mode = (ICM426XX_PWR_MGMT_0_ACCEL_MODE_t)(pwr_mgmt0_reg & BIT_PWR_MGMT_0_ACCEL_MODE_MASK);
 	gyro_mode  = (ICM426XX_PWR_MGMT_0_GYRO_MODE_t)(pwr_mgmt0_reg & BIT_PWR_MGMT_0_GYRO_MODE_MASK);
 
-	/* Subroutines need to be followed when enabling or disabling sensor to ensure ODR regularity
-	 * Check if the accelerometer is the only one enabled 
+    /* Subroutines need to be followed when enabling or disabling sensor to ensure ODR regularity
+	 * Check if the accelerometer is the only one enabled
 	 */
-	if ((accel_mode != ICM426XX_PWR_MGMT_0_ACCEL_MODE_LP) &&
-	    ((gyro_mode == ICM426XX_PWR_MGMT_0_GYRO_MODE_OFF) ||
-	     (gyro_mode == ICM426XX_PWR_MGMT_0_GYRO_MODE_STANDBY))) {
-		/* Get accelerometer's ODR for next required wait */
+    if ((accel_mode != ICM426XX_PWR_MGMT_0_ACCEL_MODE_LP) &&
+        ((gyro_mode == ICM426XX_PWR_MGMT_0_GYRO_MODE_OFF) ||
+         (gyro_mode == ICM426XX_PWR_MGMT_0_GYRO_MODE_STANDBY))) {
+        /* Get accelerometer's ODR for next required wait */
 		status |= inv_icm426xx_read_reg(s, MPUREG_ACCEL_CONFIG0, 1, &accel_cfg_0_reg);
 		acc_odr_bitfield =
 		    (ICM426XX_ACCEL_CONFIG0_ODR_t)(accel_cfg_0_reg & BIT_ACCEL_CONFIG0_ODR_MASK);
 		accel_odr_us = inv_icm426xx_convert_odr_bitfield_to_us(acc_odr_bitfield);
 		// Select the RC OSC as clock source for the accelerometer
 		status |= inv_icm426xx_force_clock_source(s, ICM426XX_INTF_CONFIG1_ACCEL_LP_CLK_RCOSC);
-	}
+    }
 
-	/* FIFO contains Gyro and Accel data if enabled on the OIS path
-	 * Dynamically configure the FIFO to publish data only for sensors explicitly enabled on the UI path 
+    /* FIFO contains Gyro and Accel data if enabled on the OIS path
+	 * Dynamically configure the FIFO to publish data only for sensors explicitly enabled on the UI path
 	 */
-	if (accel_mode == ICM426XX_PWR_MGMT_0_ACCEL_MODE_OFF &&
-	    gyro_mode == ICM426XX_PWR_MGMT_0_GYRO_MODE_OFF) {
-		uint8_t data_endianess;
+    if (accel_mode == ICM426XX_PWR_MGMT_0_ACCEL_MODE_OFF &&
+        gyro_mode == ICM426XX_PWR_MGMT_0_GYRO_MODE_OFF) {
+        uint8_t data_endianess;
 		if (s->fifo_is_used) {
 			status |= inv_icm426xx_read_reg(s, MPUREG_FIFO_CONFIG1, 1, &data);
 			data |= (uint8_t)ICM426XX_FIFO_CONFIG1_ACCEL_EN;
@@ -207,7 +207,7 @@ int inv_icm426xx_enable_accel_low_power_mode(struct inv_icm426xx *s)
 		/* Read data endianness in order to process correctly data*/
 		status |= inv_icm426xx_read_reg(s, MPUREG_INTF_CONFIG0, 1, &data_endianess);
 		s->endianess_data = data_endianess & BIT_DATA_ENDIAN_MASK;
-	}
+    }
 #endif
 
 	/* Restore filter averaging settings */
@@ -261,13 +261,13 @@ int inv_icm426xx_enable_accel_low_power_mode(struct inv_icm426xx *s)
 	s->wu_off_acc_odr_changes = 0;
 
 	if (accel_mode == ICM426XX_PWR_MGMT_0_ACCEL_MODE_OFF) {
-		/* First data are noisy after enabling sensor 
+        /* First data are noisy after enabling sensor
 		 * Keeps track of the start time to discard first sample
 		 */
-		if (s->fifo_is_used) {
-			s->accel_start_time_us = inv_icm426xx_get_time_us();
-		}
-	}
+        if (s->fifo_is_used) {
+            s->accel_start_time_us = inv_icm426xx_get_time_us();
+        }
+    }
 #endif
 
 	return status;
@@ -289,13 +289,13 @@ int inv_icm426xx_enable_accel_low_noise_mode(struct inv_icm426xx *s)
 	accel_mode = (ICM426XX_PWR_MGMT_0_ACCEL_MODE_t)(pwr_mgmt0_reg & BIT_PWR_MGMT_0_ACCEL_MODE_MASK);
 	gyro_mode  = (ICM426XX_PWR_MGMT_0_GYRO_MODE_t)(pwr_mgmt0_reg & BIT_PWR_MGMT_0_GYRO_MODE_MASK);
 
-	/* Subroutines need to be followed when enabling or disabling sensor to ensure ODR regularity
-	 * Check if the accelerometer is the only one enabled 
+    /* Subroutines need to be followed when enabling or disabling sensor to ensure ODR regularity
+	 * Check if the accelerometer is the only one enabled
 	 */
-	if ((accel_mode == ICM426XX_PWR_MGMT_0_ACCEL_MODE_LP) &&
-	    ((gyro_mode == ICM426XX_PWR_MGMT_0_GYRO_MODE_OFF) ||
-	     (gyro_mode == ICM426XX_PWR_MGMT_0_GYRO_MODE_STANDBY))) {
-		/* Get accelerometer's ODR for next required wait */
+    if ((accel_mode == ICM426XX_PWR_MGMT_0_ACCEL_MODE_LP) &&
+        ((gyro_mode == ICM426XX_PWR_MGMT_0_GYRO_MODE_OFF) ||
+         (gyro_mode == ICM426XX_PWR_MGMT_0_GYRO_MODE_STANDBY))) {
+        /* Get accelerometer's ODR for next required wait */
 		status |= inv_icm426xx_read_reg(s, MPUREG_ACCEL_CONFIG0, 1, &accel_cfg_0_reg);
 		acc_odr_bitfield =
 		    (ICM426XX_ACCEL_CONFIG0_ODR_t)(accel_cfg_0_reg & BIT_ACCEL_CONFIG0_ODR_MASK);
@@ -304,14 +304,14 @@ int inv_icm426xx_enable_accel_low_noise_mode(struct inv_icm426xx *s)
 		status |= inv_icm426xx_force_clock_source(s, ICM426XX_INTF_CONFIG1_ACCEL_LP_CLK_RCOSC);
 		/* Wait one accel ODR before switching to low noise mode */
 		inv_icm426xx_sleep_us(accel_odr_us);
-	}
+    }
 
-	/* FIFO contains Gyro and Accel data if enabled on the OIS path
-	 * Dynamically configure the FIFO to publish data only for sensors explicitly enabled on the UI path 
+    /* FIFO contains Gyro and Accel data if enabled on the OIS path
+	 * Dynamically configure the FIFO to publish data only for sensors explicitly enabled on the UI path
 	 */
-	if (accel_mode == ICM426XX_PWR_MGMT_0_ACCEL_MODE_OFF &&
-	    gyro_mode == ICM426XX_PWR_MGMT_0_GYRO_MODE_OFF) {
-		uint8_t data_endianess;
+    if (accel_mode == ICM426XX_PWR_MGMT_0_ACCEL_MODE_OFF &&
+        gyro_mode == ICM426XX_PWR_MGMT_0_GYRO_MODE_OFF) {
+        uint8_t data_endianess;
 
 		if (s->fifo_is_used) {
 			status |= inv_icm426xx_read_reg(s, MPUREG_FIFO_CONFIG1, 1, &data);
@@ -324,7 +324,7 @@ int inv_icm426xx_enable_accel_low_noise_mode(struct inv_icm426xx *s)
 		/* Read data endianness in order to process correctly data */
 		status |= inv_icm426xx_read_reg(s, MPUREG_INTF_CONFIG0, 1, &data_endianess);
 		s->endianess_data = data_endianess & BIT_DATA_ENDIAN_MASK;
-	}
+    }
 #endif
 
 	/* Restore filter BW settings */
@@ -342,13 +342,13 @@ int inv_icm426xx_enable_accel_low_noise_mode(struct inv_icm426xx *s)
 
 #if (!INV_ICM426XX_LIGHTWEIGHT_DRIVER)
 	if (accel_mode == ICM426XX_PWR_MGMT_0_ACCEL_MODE_OFF) {
-		/* First data are noisy after enabling sensor 
+        /* First data are noisy after enabling sensor
 		 * Keeps track of the start time to discard first sample
 		 */
-		if (s->fifo_is_used) {
-			s->accel_start_time_us = inv_icm426xx_get_time_us();
-		}
-	}
+        if (s->fifo_is_used) {
+            s->accel_start_time_us = inv_icm426xx_get_time_us();
+        }
+    }
 #endif
 
 	return status;
@@ -372,11 +372,11 @@ int inv_icm426xx_disable_accel(struct inv_icm426xx *s)
 	if ((gyro_mode == ICM426XX_PWR_MGMT_0_GYRO_MODE_OFF) && s->fifo_is_used) {
 		/* First FSYNC event after enable is irrelevant */
 		s->fsync_to_be_ignored = 1;
-		/* FIFO contains Gyro and Accel data if enabled on the OIS path
-		 * Dynamically configure the FIFO to publish data only for sensors explicitly enabled on the UI path 
+        /* FIFO contains Gyro and Accel data if enabled on the OIS path
+		 * Dynamically configure the FIFO to publish data only for sensors explicitly enabled on the UI path
 		 */
-		stop_fifo_usage = 1;
-	}
+        stop_fifo_usage = 1;
+    }
 #endif
 
 	pwr_mngt_0_reg &= (uint8_t)~BIT_PWR_MGMT_0_ACCEL_MODE_MASK;
@@ -408,19 +408,19 @@ int inv_icm426xx_enable_gyro_low_noise_mode(struct inv_icm426xx *s)
 	uint8_t  pwr_mngt_0_reg;
 	uint64_t current_time;
 
-	/* Powering the gyroscope on immediately after powering it off can result in device failure. 
-	 * The gyroscope proof mass can continue vibrating after it has been powered off, 
+    /* Powering the gyroscope on immediately after powering it off can result in device failure.
+	 * The gyroscope proof mass can continue vibrating after it has been powered off,
 	 * and powering it back on immediately can result in unpredictable proof mass movement.
 	 * After powering the gyroscope off, a period of > 150ms should be allowed to elapse before it is powered back on. */
-	if (s->gyro_power_off_tmst != UINT32_MAX) {
-		current_time = inv_icm426xx_get_time_us();
+    if (s->gyro_power_off_tmst != UINT32_MAX) {
+        current_time = inv_icm426xx_get_time_us();
 		/* Handle rollover */
 		if (current_time <= s->gyro_power_off_tmst)
 			current_time += UINT32_MAX;
 		/* If 150 ms are not elapsed since power-off error is returned */
 		if ((current_time - s->gyro_power_off_tmst) <= (150 * 1000))
 			return INV_ERROR_HW;
-	}
+    }
 
 #if (!INV_ICM426XX_LIGHTWEIGHT_DRIVER)
 	ICM426XX_PWR_MGMT_0_GYRO_MODE_t  gyro_mode;
@@ -434,13 +434,13 @@ int inv_icm426xx_enable_gyro_low_noise_mode(struct inv_icm426xx *s)
 	accel_mode =
 	    (ICM426XX_PWR_MGMT_0_ACCEL_MODE_t)(pwr_mngt_0_reg & BIT_PWR_MGMT_0_ACCEL_MODE_MASK);
 
-	/* Subroutines need to be followed when enabling or disabling sensor to ensure ODR regularity
-	 * Check if the accelerometer is the only one enabled 
+    /* Subroutines need to be followed when enabling or disabling sensor to ensure ODR regularity
+	 * Check if the accelerometer is the only one enabled
 	 */
-	if ((accel_mode == ICM426XX_PWR_MGMT_0_ACCEL_MODE_LP) &&
-	    ((gyro_mode == ICM426XX_PWR_MGMT_0_GYRO_MODE_OFF) ||
-	     (gyro_mode == ICM426XX_PWR_MGMT_0_GYRO_MODE_STANDBY))) {
-		/* Get accelerometer's ODR for next required wait */
+    if ((accel_mode == ICM426XX_PWR_MGMT_0_ACCEL_MODE_LP) &&
+        ((gyro_mode == ICM426XX_PWR_MGMT_0_GYRO_MODE_OFF) ||
+         (gyro_mode == ICM426XX_PWR_MGMT_0_GYRO_MODE_STANDBY))) {
+        /* Get accelerometer's ODR for next required wait */
 		status |= inv_icm426xx_read_reg(s, MPUREG_ACCEL_CONFIG0, 1, &accel_cfg_0_reg);
 		acc_odr_bitfield =
 		    (ICM426XX_ACCEL_CONFIG0_ODR_t)(accel_cfg_0_reg & BIT_ACCEL_CONFIG0_ODR_MASK);
@@ -449,14 +449,14 @@ int inv_icm426xx_enable_gyro_low_noise_mode(struct inv_icm426xx *s)
 		status |= inv_icm426xx_force_clock_source(s, ICM426XX_INTF_CONFIG1_ACCEL_LP_CLK_RCOSC);
 		/* Wait one accel ODR before enabling the gyroscope */
 		inv_icm426xx_sleep_us(accel_odr_us);
-	}
+    }
 
-	/* FIFO contains Gyro and Accel data if enabled on the OIS path
-	 * Dynamically configure the FIFO to publish data only for sensors explicitly enabled on the UI path 
+    /* FIFO contains Gyro and Accel data if enabled on the OIS path
+	 * Dynamically configure the FIFO to publish data only for sensors explicitly enabled on the UI path
 	 */
-	if (accel_mode == ICM426XX_PWR_MGMT_0_ACCEL_MODE_OFF &&
-	    gyro_mode == ICM426XX_PWR_MGMT_0_GYRO_MODE_OFF) {
-		uint8_t data_endianess;
+    if (accel_mode == ICM426XX_PWR_MGMT_0_ACCEL_MODE_OFF &&
+        gyro_mode == ICM426XX_PWR_MGMT_0_GYRO_MODE_OFF) {
+        uint8_t data_endianess;
 
 		if (s->fifo_is_used) {
 			status |= inv_icm426xx_read_reg(s, MPUREG_FIFO_CONFIG1, 1, &data);
@@ -469,7 +469,7 @@ int inv_icm426xx_enable_gyro_low_noise_mode(struct inv_icm426xx *s)
 		/* Read data endianness in order to process correctly data */
 		status |= inv_icm426xx_read_reg(s, MPUREG_INTF_CONFIG0, 1, &data_endianess);
 		s->endianess_data = data_endianess & BIT_DATA_ENDIAN_MASK;
-	}
+    }
 #endif
 
 	/* Restore filter BW settings */
@@ -487,13 +487,13 @@ int inv_icm426xx_enable_gyro_low_noise_mode(struct inv_icm426xx *s)
 
 #if (!INV_ICM426XX_LIGHTWEIGHT_DRIVER)
 	if (gyro_mode == ICM426XX_PWR_MGMT_0_GYRO_MODE_OFF) {
-		/* First data are noisy after enabling sensor 
+        /* First data are noisy after enabling sensor
 		 * Keeps track of the start time to discard first sample
 		 */
-		if (s->fifo_is_used) {
-			s->gyro_start_time_us = inv_icm426xx_get_time_us();
-		}
-	}
+        if (s->fifo_is_used) {
+            s->gyro_start_time_us = inv_icm426xx_get_time_us();
+        }
+    }
 #endif
 
 	return status;
@@ -519,11 +519,11 @@ int inv_icm426xx_disable_gyro(struct inv_icm426xx *s)
 	if ((accel_mode == ICM426XX_PWR_MGMT_0_ACCEL_MODE_OFF) && s->fifo_is_used) {
 		/* First FSYNC event after enable is irrelevant */
 		s->fsync_to_be_ignored = 1;
-		/* FIFO contains Gyro and Accel data if enabled on the OIS path
-		 * Dynamically configure the FIFO to publish data only for sensors explicitly enabled on the UI path 
+        /* FIFO contains Gyro and Accel data if enabled on the OIS path
+		 * Dynamically configure the FIFO to publish data only for sensors explicitly enabled on the UI path
 		 */
-		stop_fifo_usage = 1;
-	}
+        stop_fifo_usage = 1;
+    }
 #endif
 
 #if (!INV_ICM426XX_LIGHTWEIGHT_DRIVER)
@@ -975,16 +975,16 @@ int inv_icm426xx_get_data_from_registers(struct inv_icm426xx *s)
 		inv_icm426xx_format_data(s->endianess_data, &gyro[2], (uint16_t *)&event.gyro[1]);
 		inv_icm426xx_format_data(s->endianess_data, &gyro[4], (uint16_t *)&event.gyro[2]);
 
-		/* Device interrupts delayed when communicating with other slaves connected to same bus 
+        /* Device interrupts delayed when communicating with other slaves connected to same bus
 		 * Semi-Write to release interrupt in I2C
 		 */
-		if ((s->transport.serif.serif_type == ICM426XX_UI_I2C) ||
-		    (s->transport.serif.serif_type == ICM426XX_UI_I3C)) {
-			uint8_t data = 0;
+        if ((s->transport.serif.serif_type == ICM426XX_UI_I2C) ||
+            (s->transport.serif.serif_type == ICM426XX_UI_I3C)) {
+            uint8_t data = 0;
 			status |= inv_icm426xx_write_reg(s, MPUREG_WHO_AM_I, 1, &data);
-		}
+        }
 
-		/* call sensor event callback */
+        /* call sensor event callback */
 		if (s->sensor_event_cb)
 			s->sensor_event_cb(&event);
 	}
@@ -1024,15 +1024,15 @@ int inv_icm426xx_get_data_from_fifo(struct inv_icm426xx *s)
 				packet_size = FIFO_20BYTES_PACKET_SIZE;
 
 			if (s->transport.serif.serif_type == ICM426XX_UI_I3C) {
-				/* in case of I3C, need to read packet by packet since INT is embedded on protocol so this can 
+                /* in case of I3C, need to read packet by packet since INT is embedded on protocol so this can
 				happen that FIFO read is interrupted to handle IBI, and in that case FIFO is partially read.
 				To handle this, 2 solution :
 				- handle fifo lost packet & partial read
 				- read packet by packet
 				2nd solution preferred here because less heavy from driver point of view but it is less optimal
 				for the timing because we have to initiate N transactions in any case */
-				for (packet_count_i = 0; packet_count_i < packet_count; packet_count_i++) {
-					status |= inv_icm426xx_read_reg(s, MPUREG_FIFO_DATA, packet_size,
+                for (packet_count_i = 0; packet_count_i < packet_count; packet_count_i++) {
+                    status |= inv_icm426xx_read_reg(s, MPUREG_FIFO_DATA, packet_size,
 					                                &s->fifo_data[packet_count_i * packet_size]);
 					if (status) {
 						/* sensor data is in FIFO according to FIFO_COUNT but failed to read FIFO,
@@ -1040,8 +1040,8 @@ int inv_icm426xx_get_data_from_fifo(struct inv_icm426xx *s)
 						inv_icm426xx_reset_fifo(s);
 						return status;
 					}
-				}
-			} else {
+                }
+            } else {
 				status |= inv_icm426xx_read_reg(s, MPUREG_FIFO_DATA, packet_size * packet_count,
 				                                s->fifo_data);
 				if (status) {
@@ -1052,16 +1052,16 @@ int inv_icm426xx_get_data_from_fifo(struct inv_icm426xx *s)
 				}
 			}
 
-			/* Device interrupts delayed when communicating with other slaves connected to same bus 
+            /* Device interrupts delayed when communicating with other slaves connected to same bus
 			 * Semi-Write to release interrupt in I2C
 			 */
-			if ((s->transport.serif.serif_type == ICM426XX_UI_I2C) ||
-			    (s->transport.serif.serif_type == ICM426XX_UI_I3C)) {
-				uint8_t data_w = 0;
+            if ((s->transport.serif.serif_type == ICM426XX_UI_I2C) ||
+                (s->transport.serif.serif_type == ICM426XX_UI_I3C)) {
+                uint8_t data_w = 0;
 				status |= inv_icm426xx_write_reg(s, MPUREG_WHO_AM_I, 1, &data_w);
-			}
+            }
 
-			for (packet_count_i = 0; packet_count_i < packet_count; packet_count_i++) {
+            for (packet_count_i = 0; packet_count_i < packet_count; packet_count_i++) {
 				inv_icm426xx_sensor_event_t event;
 				event.sensor_mask = 0;
 
@@ -1442,12 +1442,12 @@ int inv_icm426xx_reset_fifo(struct inv_icm426xx *s)
 		data = (uint8_t)ICM426XX_SIGNAL_PATH_RESET_FIFO_FLUSH_EN;
 		status |= inv_icm426xx_write_reg(s, MPUREG_SIGNAL_PATH_RESET, 1, &data);
 	} else {
-		/* In case no sensor is enabled or in accel low power mode, change the FIFO_MODE to “bypass” (00) mode to force the FIFO reset,
-		 * potentials remaining data will be flushed 
+        /* In case no sensor is enabled or in accel low power mode, change the FIFO_MODE to “bypass” (00) mode to force the FIFO reset,
+		 * potentials remaining data will be flushed
 		 * Then proceed to a dummy read to released the FIFO reset synchronously with the serial clock
 		 */
-		status |= inv_icm426xx_read_reg(s, MPUREG_FIFO_CONFIG, 1, &saved_fifo_config);
-		data = (uint8_t)ICM426XX_FIFO_CONFIG_MODE_BYPASS;
+        status |= inv_icm426xx_read_reg(s, MPUREG_FIFO_CONFIG, 1, &saved_fifo_config);
+        data = (uint8_t)ICM426XX_FIFO_CONFIG_MODE_BYPASS;
 		status |= inv_icm426xx_write_reg(s, MPUREG_FIFO_CONFIG, 1, &data);
 		status |= inv_icm426xx_write_reg(s, MPUREG_FIFO_CONFIG, 1, &saved_fifo_config);
 		status |= inv_icm426xx_read_reg(s, MPUREG_WHO_AM_I, 1, &data);
@@ -1462,11 +1462,11 @@ int inv_icm426xx_enable_timestamp_to_register(struct inv_icm426xx *s)
 	uint8_t tmst_cfg_reg;
 
 	if (!s->tmst_to_reg_en_cnt) {
-		/* Enable the 20-bits timestamp register reading
-		 * It's needed to wait at least 200us before doing the strobe 
+        /* Enable the 20-bits timestamp register reading
+		 * It's needed to wait at least 200us before doing the strobe
 		 */
-		status |= inv_icm426xx_read_reg(s, MPUREG_TMST_CONFIG, 1, &tmst_cfg_reg);
-		tmst_cfg_reg &= ~(uint8_t)BIT_TMST_CONFIG_TMST_TO_REGS_EN_MASK;
+        status |= inv_icm426xx_read_reg(s, MPUREG_TMST_CONFIG, 1, &tmst_cfg_reg);
+        tmst_cfg_reg &= ~(uint8_t)BIT_TMST_CONFIG_TMST_TO_REGS_EN_MASK;
 		tmst_cfg_reg |= (uint8_t)ICM426XX_TMST_CONFIG_TMST_TO_REGS_EN;
 		status |= inv_icm426xx_write_reg(s, MPUREG_TMST_CONFIG, 1, &tmst_cfg_reg);
 
@@ -1604,14 +1604,14 @@ int inv_icm426xx_configure_fifo(struct inv_icm426xx *s, INV_ICM426XX_FIFO_CONFIG
 
 	switch (fifo_config) {
 	case INV_ICM426XX_FIFO_ENABLED:
-		/* Configure:
-			 * - FIFO record mode i.e FIFO count unit is packet 
+        /* Configure:
+			 * - FIFO record mode i.e FIFO count unit is packet
 			 * - FIFO snapshot mode i.e drop the data when the FIFO overflows
 			 * - Timestamp is logged in FIFO
 			 * - Little Endian fifo_count
 			*/
-		status |= inv_icm426xx_read_reg(s, MPUREG_INTF_CONFIG0, 1, &data);
-		data |= (uint8_t)ICM426XX_INTF_CONFIG0_FIFO_COUNT_REC_RECORD;
+        status |= inv_icm426xx_read_reg(s, MPUREG_INTF_CONFIG0, 1, &data);
+        data |= (uint8_t)ICM426XX_INTF_CONFIG0_FIFO_COUNT_REC_RECORD;
 		data &= (uint8_t)~BIT_FIFO_COUNT_ENDIAN_MASK; // little endian
 		status |= inv_icm426xx_write_reg(s, MPUREG_INTF_CONFIG0, 1, &data);
 		data = (uint8_t)ICM426XX_FIFO_CONFIG_MODE_STOP_ON_FULL;
@@ -1750,11 +1750,11 @@ uint32_t inv_icm426xx_get_fifo_timestamp_resolution_us_q24(struct inv_icm426xx *
 	if (tmst_resol == ICM426XX_TMST_CONFIG_RESOL_1us)
 		return 1 * scale_factor_q24;
 	else if (inv_icm426xx_get_clkin_rtc_status(s))
-		/* RTC is enabled, the resolution of the timestamp is one tick of RTC
-		 * RTC runs at 32768 Hz, so resolution is 1/32768 s, or 1000000/32768 us	
+        /* RTC is enabled, the resolution of the timestamp is one tick of RTC
+		 * RTC runs at 32768 Hz, so resolution is 1/32768 s, or 1000000/32768 us
 		 */
-		return ((1000000UL << 12) / 32768UL) << (24 - 12);
-	else if (tmst_resol == ICM426XX_TMST_CONFIG_RESOL_16us)
+        return ((1000000UL << 12) / 32768UL) << (24 - 12);
+    else if (tmst_resol == ICM426XX_TMST_CONFIG_RESOL_16us)
 		return 16 * scale_factor_q24;
 	else
 		/* Should not happen, return 0 */
@@ -1765,11 +1765,11 @@ uint32_t inv_icm426xx_get_reg_timestamp_resolution_us_q24(struct inv_icm426xx *s
 {
 	uint32_t scale_factor_q24 = 1 << 24;
 
-	/* RTC is enabled, the resolution of the timestamp is one tick of RTC
-	 * Our RTC runs at 32768 Hz, so resolution is 1/32768 s, or 1000000/32768 us	
+    /* RTC is enabled, the resolution of the timestamp is one tick of RTC
+	 * Our RTC runs at 32768 Hz, so resolution is 1/32768 s, or 1000000/32768 us
 	 */
-	if (inv_icm426xx_get_clkin_rtc_status(s))
-		return ((1000000UL << 12) / 32768UL) << (24 - 12);
+    if (inv_icm426xx_get_clkin_rtc_status(s))
+        return ((1000000UL << 12) / 32768UL) << (24 - 12);
 
 	/* PLL scale factor doesn't apply when WU oscillator is in use */
 	if (!inv_icm426xx_is_wu_osc_active(s))

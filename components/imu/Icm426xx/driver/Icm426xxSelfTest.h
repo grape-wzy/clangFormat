@@ -31,8 +31,6 @@
 #ifndef _INV_ICM426XX_SELFTEST_H_
 #define _INV_ICM426XX_SELFTEST_H_
 
-#include "Invn/InvExport.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif

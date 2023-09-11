@@ -35,10 +35,10 @@
 extern "C" {
 #endif
 
-#include "Invn/Drivers/Icm426xx/Icm426xxDefs.h"
-#include "Invn/Drivers/Icm426xx/Icm426xxTransport.h"
+#include "Icm426xxDefs.h"
+#include "Icm426xxTransport.h"
 
-#include "Invn/InvError.h"
+#include "InvError.h"
 
 #include <stdint.h>
 #include <string.h>
@@ -55,12 +55,12 @@ extern "C" {
 #define INV_ICM426XX_LIGHTWEIGHT_DRIVER 0
 #endif
 
-/** @brief Scale factor and max ODR 
+/** @brief Scale factor and max ODR
  *  Dependant of chip
  */
-#if (defined(ICM42600) || defined(ICM42622) || defined(ICM42633) || defined(ICM42686P) ||          \
+#if (defined(ICM42600) || defined(ICM42622) || defined(ICM42633) || defined(ICM42686P) || \
      defined(ICM42688P) || defined(ICM42688V) || defined(ICM42686V))
-/* 
+/*
 	 * For parts with maximum ODR of 32 KHz,
 	 * PLL is running at 19.2 MHz instead of the nominal 20.48 MHz
 	 * Time resolution has to be scaled by 20.48/19.2=1.06666667
@@ -82,21 +82,21 @@ extern "C" {
 #define ACCEL_CONFIG0_FS_SEL_MAX ICM426XX_ACCEL_CONFIG0_FS_SEL_32g
 #define GYRO_CONFIG0_FS_SEL_MAX  ICM426XX_GYRO_CONFIG0_FS_SEL_4000dps
 
-#define ACCEL_OFFUSER_MAX_MG 2000
-#define GYRO_OFFUSER_MAX_DPS 128
+#define ACCEL_OFFUSER_MAX_MG     2000
+#define GYRO_OFFUSER_MAX_DPS     128
 #else
 #define ACCEL_CONFIG0_FS_SEL_MAX ICM426XX_ACCEL_CONFIG0_FS_SEL_16g
 #define GYRO_CONFIG0_FS_SEL_MAX  ICM426XX_GYRO_CONFIG0_FS_SEL_2000dps
 
-#define ACCEL_OFFUSER_MAX_MG 1000
-#define GYRO_OFFUSER_MAX_DPS 64
+#define ACCEL_OFFUSER_MAX_MG     1000
+#define GYRO_OFFUSER_MAX_DPS     64
 #endif
 
 /** @brief RTC Support flag
  *  Define whether the RTC mode is supported
  *  Dependant of chip
  */
-#if (defined(ICM42600) || defined(ICM42622) || defined(ICM42633) || defined(ICM42686P) ||          \
+#if (defined(ICM42600) || defined(ICM42622) || defined(ICM42633) || defined(ICM42686P) || \
      defined(ICM42688P) || defined(ICM42688V) || defined(ICM42686V))
 #define RTC_SUPPORTED 1
 #else
@@ -111,7 +111,7 @@ extern "C" {
 /** @brief Default value for the WOM threshold
  *  Resolution of the threshold is ~= 4mg
  */
-#define ICM426XX_DEFAULT_WOM_THS_MG 52 >> 2 /* = 52mg/4 */
+#define ICM426XX_DEFAULT_WOM_THS_MG  52 >> 2 /* = 52mg/4 */
 
 /** @brief Icm426xx Accelerometer start-up time before having correct data
  */
@@ -124,170 +124,171 @@ extern "C" {
 /** @brief Sensor identifier for UI control and OIS function
  */
 enum inv_icm426xx_sensor {
-	INV_ICM426XX_SENSOR_ACCEL, /**< Accelerometer (UI control path) */
-	INV_ICM426XX_SENSOR_GYRO, /**< Gyroscope (UI control path) */
-	INV_ICM426XX_SENSOR_FSYNC_EVENT, /**< Used by OIS and UI control layers */
-	INV_ICM426XX_SENSOR_OIS, /**< Only used by OIS layer */
-	INV_ICM426XX_SENSOR_TEMPERATURE, /**< Chip temperature, enabled by default. 
-	                                      Will be reported only if Accel and/or Gyro are also 
-	                                      enabled. 
+    INV_ICM426XX_SENSOR_ACCEL,               /**< Accelerometer (UI control path) */
+    INV_ICM426XX_SENSOR_GYRO,                /**< Gyroscope (UI control path) */
+    INV_ICM426XX_SENSOR_FSYNC_EVENT,         /**< Used by OIS and UI control layers */
+    INV_ICM426XX_SENSOR_OIS,                 /**< Only used by OIS layer */
+    INV_ICM426XX_SENSOR_TEMPERATURE,         /**< Chip temperature, enabled by default.
+	                                      Will be reported only if Accel and/or Gyro are also
+	                                      enabled.
 	                                      The Temperature's ODR (Output Data Rate) will match
-	                                      the ODR of Accel or Gyro, or the fastest if both are 
+	                                      the ODR of Accel or Gyro, or the fastest if both are
 	                                      enabled */
-	INV_ICM426XX_SENSOR_TAP, /**< Tap and Double tap */
-	INV_ICM426XX_SENSOR_DMP_PEDOMETER_EVENT, /**< Pedometer: step is detected */
-	INV_ICM426XX_SENSOR_DMP_PEDOMETER_COUNT, /**< Pedometer: step counter */
-	INV_ICM426XX_SENSOR_DMP_TILT, /**< Tilt */
+    INV_ICM426XX_SENSOR_TAP,                 /**< Tap and Double tap */
+    INV_ICM426XX_SENSOR_DMP_PEDOMETER_EVENT, /**< Pedometer: step is detected */
+    INV_ICM426XX_SENSOR_DMP_PEDOMETER_COUNT, /**< Pedometer: step counter */
+    INV_ICM426XX_SENSOR_DMP_TILT,            /**< Tilt */
 #if defined(ICM_FAMILY_BPLUS)
-	INV_ICM426XX_SENSOR_DMP_R2W, /**< Raise to wake */
+    INV_ICM426XX_SENSOR_DMP_R2W,             /**< Raise to wake */
 #elif defined(ICM_FAMILY_CPLUS)
-	INV_ICM426XX_SENSOR_DMP_FF, /**< Free Fall */
-	INV_ICM426XX_SENSOR_DMP_LOWG, /**< Low G */
+    INV_ICM426XX_SENSOR_DMP_FF,   /**< Free Fall */
+    INV_ICM426XX_SENSOR_DMP_LOWG, /**< Low G */
 #endif
-	INV_ICM426XX_SENSOR_MAX
+    INV_ICM426XX_SENSOR_MAX
 };
 
 /** @brief Configure Fifo usage
  */
 typedef enum {
-	INV_ICM426XX_FIFO_DISABLED = 0, /**< Fifo is disabled and data source is sensors registers */
-	INV_ICM426XX_FIFO_ENABLED  = 1, /**< Fifo is used as data source */
+    INV_ICM426XX_FIFO_DISABLED = 0, /**< Fifo is disabled and data source is sensors registers */
+    INV_ICM426XX_FIFO_ENABLED  = 1, /**< Fifo is used as data source */
 } INV_ICM426XX_FIFO_CONFIG_t;
 
 /** @brief Sensor event structure definition
  */
 typedef struct {
-	int      sensor_mask;
-	uint16_t timestamp_fsync;
-	int16_t  accel[3];
-	int16_t  gyro[3];
-	int16_t  temperature;
-	int8_t   accel_high_res[3];
-	int8_t   gyro_high_res[3];
+    int      sensor_mask;
+    uint16_t timestamp_fsync;
+    int16_t  accel[3];
+    int16_t  gyro[3];
+    int16_t  temperature;
+    int8_t   accel_high_res[3];
+    int8_t   gyro_high_res[3];
 } inv_icm426xx_sensor_event_t;
 
-/** @brief Icm426xx driver states definition 
+/** @brief Icm426xx driver states definition
  */
 struct inv_icm426xx {
-	/** @brief Transport structure */
-	struct inv_icm426xx_transport transport; 
+    /** @brief Transport structure */
+    struct inv_icm426xx_transport transport;
 
-	/** @brief Callback executed when retrieving data from FIFO or registers.
+    /** @brief Callback executed when retrieving data from FIFO or registers.
 	 * Called by `inv_icm426xx_get_data_from_fifo` for each packet in FIFO.
 	 * Called by `inv_icm426xx_get_data_from_registers` when reading registers.
-	 * This field may be NULL if aformentioned functions are not used by application. 
+	 * This field may be NULL if aformentioned functions are not used by application.
 	 */
-	void (*sensor_event_cb)(inv_icm426xx_sensor_event_t *event); 
+    void (*sensor_event_cb)(inv_icm426xx_sensor_event_t *event);
 
-	/** @brief Gyro bias values (lsb) collected during self test */
-	int gyro_st_bias[3];
+    /** @brief Gyro bias values (lsb) collected during self test */
+    int gyro_st_bias[3];
 
-	/** @brief Accel bias values (lsb) collected during self test */
-	int accel_st_bias[3];
+    /** @brief Accel bias values (lsb) collected during self test */
+    int accel_st_bias[3];
 
-	/** @brief Flag to keep track if self-test has already been executed */
-	int st_result;
+    /** @brief Flag to keep track if self-test has already been executed */
+    int st_result;
 
-	/** @brief FIFO mirroring memory area */
-	uint8_t fifo_data[ICM426XX_FIFO_MIRRORING_SIZE]; 
+    /** @brief FIFO mirroring memory area */
+    uint8_t fifo_data[ICM426XX_FIFO_MIRRORING_SIZE];
 
-	/** @brief Internal counter to keep track of the timestamp to register access availability */
-	uint8_t tmst_to_reg_en_cnt; 
+    /** @brief Internal counter to keep track of the timestamp to register access availability */
+    uint8_t tmst_to_reg_en_cnt;
 
-	/** @brief DMP started status */
-	uint8_t dmp_is_on;
-	
-	/** @brief DMP executes from SRAM */
-	uint8_t dmp_from_sram;
+    /** @brief DMP started status */
+    uint8_t dmp_is_on;
 
-	/** @brief Internal state needed to discard first gyro samples */
-	uint64_t gyro_start_time_us;
-	
-	/** @brief Internal state needed to discard first accel samples */
-	uint64_t accel_start_time_us;
+    /** @brief DMP executes from SRAM */
+    uint8_t dmp_from_sram;
 
-	/** @brief Internal status of data endianness mode to report correctly data */
-	uint8_t endianess_data;
+    /** @brief Internal state needed to discard first gyro samples */
+    uint64_t gyro_start_time_us;
 
-	/** @brief Indicates if highres mode is used for FIFO */
-	uint8_t fifo_highres_enabled;
+    /** @brief Internal state needed to discard first accel samples */
+    uint64_t accel_start_time_us;
 
-	/** @brief Indicates if data are retrieved from FIFO or registers */
-	INV_ICM426XX_FIFO_CONFIG_t fifo_is_used;
+    /** @brief Internal status of data endianness mode to report correctly data */
+    uint8_t endianess_data;
+
+    /** @brief Indicates if highres mode is used for FIFO */
+    uint8_t fifo_highres_enabled;
+
+    /** @brief Indicates if data are retrieved from FIFO or registers */
+    INV_ICM426XX_FIFO_CONFIG_t fifo_is_used;
 
 #if (!INV_ICM426XX_LIGHTWEIGHT_DRIVER)
-	/** @brief Indicates if the next FSYNC should be ignored.
-	 * When the sensors are switched off and then on again, an FSYNC tag with incorrect 
-	 * FSYNC value can be generated on the next first ODR. 
+    /** @brief Indicates if the next FSYNC should be ignored.
+	 * When the sensors are switched off and then on again, an FSYNC tag with incorrect
+	 * FSYNC value can be generated on the next first ODR.
 	 * Solution: FSYNC tag and FSYNC data should be ignored on this first ODR.
 	 */
-	uint8_t fsync_to_be_ignored;
+    uint8_t fsync_to_be_ignored;
 #endif
 
-	/** @brief Accel Low Power could report with wrong ODR if internal counter 
+    /** @brief Accel Low Power could report with wrong ODR if internal counter
 	 *         for ODR changed overflowed.
-	 * WUOSC clock domain is informed through an 3bit counter that ODR has changed 
-	 * in RC/PLL mode. Every 8 event, this counter overflows and goes back to 0, 
+	 * WUOSC clock domain is informed through an 3bit counter that ODR has changed
+	 * in RC/PLL mode. Every 8 event, this counter overflows and goes back to 0,
 	 * same as 'no ODR changes', therefore previous ALP ODR is re-used.
-	 * Solution: Keep track of ODR changes when WUOSC is disabled and perform 
+	 * Solution: Keep track of ODR changes when WUOSC is disabled and perform
 	 *           dummy ODR changes when re-enabling WU after 8*n ODR changes.
 	 */
-	uint32_t wu_off_acc_odr_changes;
+    uint32_t wu_off_acc_odr_changes;
 
-	/** @brief Keeps track if wom or smd is enabled */
-	uint8_t wom_smd_mask;
+    /** @brief Keeps track if wom or smd is enabled */
+    uint8_t wom_smd_mask;
 
-	/** @brief Keeps track if wom is enabled */
-	uint8_t wom_enable;
+    /** @brief Keeps track if wom is enabled */
+    uint8_t wom_enable;
 
-	/** @brief Software mirror of BW and AVG settings in hardware. 
-	 * To be re-applied on each enabling of sensor 
+    /** @brief Software mirror of BW and AVG settings in hardware.
+	 * To be re-applied on each enabling of sensor
 	 */
-	struct {
-		uint8_t acc_lp_avg; /**< Low-power averaging setting for accelerometer */
-		uint8_t reserved; /**< reserved field */
-		uint8_t acc_ln_bw; /**< Low-noise filter bandwidth setting for accelerometer */
-		uint8_t gyr_ln_bw; /**< Low-noise filter bandwidth setting for gyroscope */
-	} avg_bw_setting;
+    struct {
+        uint8_t acc_lp_avg; /**< Low-power averaging setting for accelerometer */
+        uint8_t reserved;   /**< reserved field */
+        uint8_t acc_ln_bw;  /**< Low-noise filter bandwidth setting for accelerometer */
+        uint8_t gyr_ln_bw;  /**< Low-noise filter bandwidth setting for gyroscope */
+    } avg_bw_setting;
 
-	/** @brief Keeps track of timestamp when gyro is power off */
-	uint64_t gyro_power_off_tmst;
+    /** @brief Keeps track of timestamp when gyro is power off */
+    uint64_t gyro_power_off_tmst;
 };
 
 /* Interrupt enum state for INT1, INT2, and IBI */
-typedef enum { INV_ICM426XX_DISABLE = 0, INV_ICM426XX_ENABLE } inv_icm426xx_interrupt_value;
+typedef enum { INV_ICM426XX_DISABLE = 0,
+               INV_ICM426XX_ENABLE } inv_icm426xx_interrupt_value;
 
 /** @brief Icm426xx set of interrupt enable flag
  */
 typedef struct {
-	inv_icm426xx_interrupt_value INV_ICM426XX_UI_FSYNC;
-	inv_icm426xx_interrupt_value INV_ICM426XX_UI_DRDY;
-	inv_icm426xx_interrupt_value INV_ICM426XX_FIFO_THS;
-	inv_icm426xx_interrupt_value INV_ICM426XX_FIFO_FULL;
-	inv_icm426xx_interrupt_value INV_ICM426XX_SMD;
-	inv_icm426xx_interrupt_value INV_ICM426XX_WOM_X;
-	inv_icm426xx_interrupt_value INV_ICM426XX_WOM_Y;
-	inv_icm426xx_interrupt_value INV_ICM426XX_WOM_Z;
-	inv_icm426xx_interrupt_value INV_ICM426XX_STEP_DET;
-	inv_icm426xx_interrupt_value INV_ICM426XX_STEP_CNT_OVFL;
-	inv_icm426xx_interrupt_value INV_ICM426XX_TILT_DET;
+    inv_icm426xx_interrupt_value INV_ICM426XX_UI_FSYNC;
+    inv_icm426xx_interrupt_value INV_ICM426XX_UI_DRDY;
+    inv_icm426xx_interrupt_value INV_ICM426XX_FIFO_THS;
+    inv_icm426xx_interrupt_value INV_ICM426XX_FIFO_FULL;
+    inv_icm426xx_interrupt_value INV_ICM426XX_SMD;
+    inv_icm426xx_interrupt_value INV_ICM426XX_WOM_X;
+    inv_icm426xx_interrupt_value INV_ICM426XX_WOM_Y;
+    inv_icm426xx_interrupt_value INV_ICM426XX_WOM_Z;
+    inv_icm426xx_interrupt_value INV_ICM426XX_STEP_DET;
+    inv_icm426xx_interrupt_value INV_ICM426XX_STEP_CNT_OVFL;
+    inv_icm426xx_interrupt_value INV_ICM426XX_TILT_DET;
 #if defined(ICM_FAMILY_BPLUS)
-	inv_icm426xx_interrupt_value INV_ICM426XX_SLEEP_DET;
-	inv_icm426xx_interrupt_value INV_ICM426XX_WAKE_DET;
+    inv_icm426xx_interrupt_value INV_ICM426XX_SLEEP_DET;
+    inv_icm426xx_interrupt_value INV_ICM426XX_WAKE_DET;
 #elif defined(ICM_FAMILY_CPLUS)
-	inv_icm426xx_interrupt_value INV_ICM426XX_FF_DET;
-	inv_icm426xx_interrupt_value INV_ICM426XX_LOWG_DET;
+    inv_icm426xx_interrupt_value INV_ICM426XX_FF_DET;
+    inv_icm426xx_interrupt_value INV_ICM426XX_LOWG_DET;
 #endif
-	inv_icm426xx_interrupt_value INV_ICM426XX_TAP_DET;
+    inv_icm426xx_interrupt_value INV_ICM426XX_TAP_DET;
 } inv_icm426xx_interrupt_parameter_t;
 
 #if defined(ICM_FAMILY_CPLUS)
 /* Possible interface configurations mode */
 typedef enum {
-	INV_ICM426XX_SINGLE_INTERFACE    = 0x01,
-	INV_ICM426XX_DUAL_INTERFACE      = 0x02,
-	INV_ICM426XX_DUAL_INTERFACE_SPI4 = 0x06,
-	INV_ICM426XX_TRIPLE_INTERFACE    = 0x08,
+    INV_ICM426XX_SINGLE_INTERFACE    = 0x01,
+    INV_ICM426XX_DUAL_INTERFACE      = 0x02,
+    INV_ICM426XX_DUAL_INTERFACE_SPI4 = 0x06,
+    INV_ICM426XX_TRIPLE_INTERFACE    = 0x08,
 } inv_icm426xx_interface_mode_t;
 #endif
 
@@ -301,9 +302,9 @@ int inv_icm426xx_set_reg_bank(struct inv_icm426xx *s, uint8_t bank);
 /** @brief Initializes device.
  *  @param[in] s                Pointer to device.
  *  @param[in] serif            Pointer on serial interface structure to be used to access icm426xx.
- *  @param[in] sensor_event_cb  Callback executed when reading data from FIFO or registers. 
- *                              Can be NULL if `inv_icm426xx_get_data_from_fifo` and 
- *                              `inv_icm426xx_get_data_from_registers` are not used by the 
+ *  @param[in] sensor_event_cb  Callback executed when reading data from FIFO or registers.
+ *                              Can be NULL if `inv_icm426xx_get_data_from_fifo` and
+ *                              `inv_icm426xx_get_data_from_registers` are not used by the
  *                              application.
  *  @return                     0 on success, negative value on error.
  */
@@ -330,7 +331,7 @@ int inv_icm426xx_get_who_am_i(struct inv_icm426xx *s, uint8_t *who_am_i);
  *  @note Transitions when enabling/disabling sensors are already handled by
  *        the driver. This function forces a specific clock source.
  */
-int inv_icm426xx_force_clock_source(struct inv_icm426xx *                s,
+int inv_icm426xx_force_clock_source(struct inv_icm426xx                 *s,
                                     ICM426XX_INTF_CONFIG1_ACCEL_LP_CLK_t clk_src);
 
 /** @brief Enable accel in low power mode.
@@ -365,8 +366,8 @@ int inv_icm426xx_disable_gyro(struct inv_icm426xx *s);
 
 /** @brief Enable fsync tagging functionality.
  *     - enables fsync
- *     - enables timestamp to registers. Once fysnc is enabled fsync counter is pushed to 
- *       fifo instead of timestamp. So timestamp is made available in registers. Note that 
+ *     - enables timestamp to registers. Once fysnc is enabled fsync counter is pushed to
+ *       fifo instead of timestamp. So timestamp is made available in registers. Note that
  *       this increase power consumption.
  *     - enables fsync related interrupt
  *  @param[in] s  Pointer to device.
@@ -376,8 +377,8 @@ int inv_icm426xx_enable_fsync(struct inv_icm426xx *s);
 
 /** @brief Disable fsync tagging functionality.
  *     - disables fsync
- *     - disables timestamp to registers. Once fysnc is disabled  timestamp is pushed to fifo 
- *        instead of fsync counter. So in order to decrease power consumption, timestamp is no 
+ *     - disables timestamp to registers. Once fysnc is disabled  timestamp is pushed to fifo
+ *        instead of fsync counter. So in order to decrease power consumption, timestamp is no
  *        more available in registers.
  *     - disables fsync related interrupt
  *  @param[in] s  Pointer to device.
@@ -387,12 +388,12 @@ int inv_icm426xx_disable_fsync(struct inv_icm426xx *s);
 
 /** @brief  Configure timestamp resolution from FIFO.
  *  @param[in] s      Pointer to device.
- *  @param[in] resol  The expected resolution of the timestamp. 
+ *  @param[in] resol  The expected resolution of the timestamp.
  *                    See enum ICM426XX_TMST_CONFIG_RESOL_t.
  *  @return           0 on success, negative value on error.
  *  @warning The resolution will have no effect if RTC is enabled
  */
-int inv_icm426xx_configure_timestamp_resolution(struct inv_icm426xx *        s,
+int inv_icm426xx_configure_timestamp_resolution(struct inv_icm426xx         *s,
                                                 ICM426XX_TMST_CONFIG_RESOL_t resol);
 
 /** @brief  Configure which interrupt source can trigger IBI interruptions.
@@ -401,7 +402,7 @@ int inv_icm426xx_configure_timestamp_resolution(struct inv_icm426xx *        s,
  *                                     interruptions.
  *  @return                            0 on success, negative value on error.
  */
-int inv_icm426xx_set_config_ibi(struct inv_icm426xx *               s,
+int inv_icm426xx_set_config_ibi(struct inv_icm426xx                *s,
                                 inv_icm426xx_interrupt_parameter_t *interrupt_to_configure);
 
 /** @brief  Retrieve interrupts configuration.
@@ -410,7 +411,7 @@ int inv_icm426xx_set_config_ibi(struct inv_icm426xx *               s,
  *                                     interruptions.
  *  @return                            0 on success, negative value on error.
  */
-int inv_icm426xx_get_config_ibi(struct inv_icm426xx *               s,
+int inv_icm426xx_get_config_ibi(struct inv_icm426xx                *s,
                                 inv_icm426xx_interrupt_parameter_t *interrupt_to_configure);
 
 /** @brief  Configure which interrupt source can trigger INT1.
@@ -418,7 +419,7 @@ int inv_icm426xx_get_config_ibi(struct inv_icm426xx *               s,
  *  @param[in] interrupt_to_configure  Structure with the corresponding state to manage INT1.
  *  @return                            0 on success, negative value on error.
  */
-int inv_icm426xx_set_config_int1(struct inv_icm426xx *               s,
+int inv_icm426xx_set_config_int1(struct inv_icm426xx                *s,
                                  inv_icm426xx_interrupt_parameter_t *interrupt_to_configure);
 
 /** @brief  Retrieve interrupts configuration.
@@ -426,7 +427,7 @@ int inv_icm426xx_set_config_int1(struct inv_icm426xx *               s,
  *  @param[in] interrupt_to_configure  Structure with the corresponding state to manage INT1.
  *  @return                            0 on success, negative value on error.
  */
-int inv_icm426xx_get_config_int1(struct inv_icm426xx *               s,
+int inv_icm426xx_get_config_int1(struct inv_icm426xx                *s,
                                  inv_icm426xx_interrupt_parameter_t *interrupt_to_configure);
 
 /** @brief  Configure which interrupt source can trigger INT2.
@@ -434,7 +435,7 @@ int inv_icm426xx_get_config_int1(struct inv_icm426xx *               s,
  *  @param[in] interrupt_to_configure  Structure with the corresponding state to INT2.
  *  @return                            0 on success, negative value on error.
  */
-int inv_icm426xx_set_config_int2(struct inv_icm426xx *               s,
+int inv_icm426xx_set_config_int2(struct inv_icm426xx                *s,
                                  inv_icm426xx_interrupt_parameter_t *interrupt_to_configure);
 
 /** @brief  Retrieve interrupts configuration.
@@ -442,10 +443,10 @@ int inv_icm426xx_set_config_int2(struct inv_icm426xx *               s,
  *  @param[in] interrupt_to_configure  Structure with the corresponding state to manage INT2.
  *  @return                            0 on success, negative value on error.
  */
-int inv_icm426xx_get_config_int2(struct inv_icm426xx *               s,
+int inv_icm426xx_get_config_int2(struct inv_icm426xx                *s,
                                  inv_icm426xx_interrupt_parameter_t *interrupt_to_configure);
 
-/** @brief Read all registers containing data (temperature, accelerometer and gyroscope). Then calls 
+/** @brief Read all registers containing data (temperature, accelerometer and gyroscope). Then calls
  *  `sensor_event_cb` function for each packet.
  *  @param[in] s  Pointer to device.
  *  @return       0 on success, negative value on error.
@@ -453,14 +454,14 @@ int inv_icm426xx_get_config_int2(struct inv_icm426xx *               s,
 int inv_icm426xx_get_data_from_registers(struct inv_icm426xx *s);
 
 /** @brief Read all available packets from the FIFO. For each packet function builds a
- *  sensor event containing packet data and validity information. Then calls 
+ *  sensor event containing packet data and validity information. Then calls
  *  `sensor_event_cb` function for each packet.
  *  @param[in] s  Pointer to device.
  *  @return       0 on success, negative value on error.
  */
 int inv_icm426xx_get_data_from_fifo(struct inv_icm426xx *s);
 
-/** @brief Converts `ICM426XX_ACCEL_CONFIG0_ODR_t` or `ICM426XX_GYRO_CONFIG0_ODR_t` enums to 
+/** @brief Converts `ICM426XX_ACCEL_CONFIG0_ODR_t` or `ICM426XX_GYRO_CONFIG0_ODR_t` enums to
  *         period expressed in us.
  *  @param[in] odr_bitfield  An ICM426XX_ACCEL_CONFIG0_ODR_t or ICM426XX_GYRO_CONFIG0_ODR_t enum
  *  @return                  The corresponding period expressed in us
@@ -472,7 +473,7 @@ uint32_t inv_icm426xx_convert_odr_bitfield_to_us(uint32_t odr_bitfield);
  *  @param[in] frequency  The requested frequency.
  *  @return               0 on success, negative value on error.
  */
-int inv_icm426xx_set_accel_frequency(struct inv_icm426xx *              s,
+int inv_icm426xx_set_accel_frequency(struct inv_icm426xx               *s,
                                      const ICM426XX_ACCEL_CONFIG0_ODR_t frequency);
 
 /** @brief Configure gyro Output Data Rate.
@@ -480,7 +481,7 @@ int inv_icm426xx_set_accel_frequency(struct inv_icm426xx *              s,
  *  @param[in] frequency  The requested frequency.
  *  @return               0 on success, negative value on error.
  */
-int inv_icm426xx_set_gyro_frequency(struct inv_icm426xx *             s,
+int inv_icm426xx_set_gyro_frequency(struct inv_icm426xx              *s,
                                     const ICM426XX_GYRO_CONFIG0_ODR_t frequency);
 
 /** @brief Set accel full scale range.
@@ -495,7 +496,7 @@ int inv_icm426xx_set_accel_fsr(struct inv_icm426xx *s, ICM426XX_ACCEL_CONFIG0_FS
  *  @param[out] accel_fsr_g  Current full scale range.
  *  @return                  0 on success, negative value on error.
  */
-int inv_icm426xx_get_accel_fsr(struct inv_icm426xx *            s,
+int inv_icm426xx_get_accel_fsr(struct inv_icm426xx             *s,
                                ICM426XX_ACCEL_CONFIG0_FS_SEL_t *accel_fsr_g);
 
 /** @brief Set gyro full scale range.
@@ -517,7 +518,7 @@ int inv_icm426xx_get_gyro_fsr(struct inv_icm426xx *s, ICM426XX_GYRO_CONFIG0_FS_S
  *  @param[in] acc_avg  Requested averaging value
  *  @return             0 on success, negative value on error.
  */
-int inv_icm426xx_set_accel_lp_avg(struct inv_icm426xx *                        s,
+int inv_icm426xx_set_accel_lp_avg(struct inv_icm426xx                         *s,
                                   ICM426XX_GYRO_ACCEL_CONFIG0_ACCEL_FILT_AVG_t acc_avg);
 
 /** @brief Set accel Low-Noise bandwidth value.
@@ -525,7 +526,7 @@ int inv_icm426xx_set_accel_lp_avg(struct inv_icm426xx *                        s
  *  @param[in] acc_bw  Requested averaging value
  *  @return            0 on success, negative value on error.
  */
-int inv_icm426xx_set_accel_ln_bw(struct inv_icm426xx *                       s,
+int inv_icm426xx_set_accel_ln_bw(struct inv_icm426xx                        *s,
                                  ICM426XX_GYRO_ACCEL_CONFIG0_ACCEL_FILT_BW_t acc_bw);
 
 /** @brief Set gyro Low-Noise bandwidth value.
@@ -533,7 +534,7 @@ int inv_icm426xx_set_accel_ln_bw(struct inv_icm426xx *                       s,
  *  @param[in] gyr_bw  Requested averaging value
  *  @return            0 on success, negative value on error.
  */
-int inv_icm426xx_set_gyro_ln_bw(struct inv_icm426xx *                      s,
+int inv_icm426xx_set_gyro_ln_bw(struct inv_icm426xx                       *s,
                                 ICM426XX_GYRO_ACCEL_CONFIG0_GYRO_FILT_BW_t gyr_bw);
 
 /** @brief reset ICM426XX fifo
@@ -568,7 +569,7 @@ int inv_icm426xx_get_current_timestamp(struct inv_icm426xx *s, uint32_t *icm_tim
  *  @param[in] s       Pointer to device.
  *  @param[in] enable  1 if external 32kHz is provided to ICM, 0 otherwise
  *  @return            0 on success, negative value on error.
- *  @warning In case CLKIN is disabled, it is recommended to call 
+ *  @warning In case CLKIN is disabled, it is recommended to call
  *           `inv_icm426xx_configure_timestamp_resolution` just afterwards so that timestamp
  *           resolution is in line with system request.
  */
@@ -597,8 +598,8 @@ int inv_icm426xx_disable_high_resolution_fifo(struct inv_icm426xx *s);
 
 /** @brief Configure Fifo to select the way data are gathered.
  *  @param[in] s            Pointer to device.
- *  @param[in] fifo_config  Fifo configuration method: 
- *                          If enabled data are coming from fifo and interrupt is configured 
+ *  @param[in] fifo_config  Fifo configuration method:
+ *                          If enabled data are coming from fifo and interrupt is configured
  *                          on Fifo Watermark.
  *                          If disabled data are coming from sensor registers and interrupt
  *                          is configured on Data ready.
@@ -628,7 +629,7 @@ uint32_t inv_icm426xx_get_reg_timestamp_resolution_us_q24(struct inv_icm426xx *s
 #if defined(ICM_FAMILY_CPLUS)
 /** @brief Configure Fifo decimation rate.
  *  @param[in] s         Pointer to device.
- *  @param[in] dec_rate  Decimation value from 0 to 127. If 0, no sample is decimated, 
+ *  @param[in] dec_rate  Decimation value from 0 to 127. If 0, no sample is decimated,
  *                       1 means 1 sample over 2 are skipped.
  *  @return              0 on success, negative value on error.
  */
@@ -640,7 +641,7 @@ int inv_icm426xx_set_fifo_dec_rate(struct inv_icm426xx *s, uint8_t dec_rate);
  *                             according to `inv_icm426xx_interface_mode_t`.
  *  @return                    0 on success, negative value on error.
  */
-int inv_icm426xx_interface_change_procedure(struct inv_icm426xx *         s,
+int inv_icm426xx_interface_change_procedure(struct inv_icm426xx          *s,
                                             inv_icm426xx_interface_mode_t interface_mode);
 #endif
 
