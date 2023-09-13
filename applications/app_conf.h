@@ -24,7 +24,7 @@
 
 #include "hw.h"
 #include "hw_conf.h"
-//#include "platform.h"
+#include "platform.h"
 #include "ble_bufsize.h"
 
 /******************************************************************************

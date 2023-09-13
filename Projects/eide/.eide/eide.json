@@ -709,19 +709,35 @@
             "name": "imu",
             "files": [
               {
-                "path": "../../components/imu/Icm426xx/driver/Icm426xxDriver_HL.c"
-              },
-              {
-                "path": "../../components/imu/Icm426xx/driver/Icm426xxTransport.c"
-              },
-              {
-                "path": "../../user_drivers/imu/acc_gyro_icm42688.c"
-              },
-              {
-                "path": "../../user_drivers/imu/imu_if.c"
+                "path": "../../user_drivers/imu/imu_dev.c"
               }
             ],
-            "folders": []
+            "folders": [
+              {
+                "name": "icm426xx",
+                "files": [
+                  {
+                    "path": "../../user_drivers/imu/sensors/icm426xx/driver/Icm426xxDriver_HL_apex.c"
+                  },
+                  {
+                    "path": "../../user_drivers/imu/sensors/icm426xx/driver/Icm426xxDriver_HL.c"
+                  },
+                  {
+                    "path": "../../user_drivers/imu/sensors/icm426xx/driver/Icm426xxSelfTest.c"
+                  },
+                  {
+                    "path": "../../user_drivers/imu/sensors/icm426xx/driver/Icm426xxTransport.c"
+                  },
+                  {
+                    "path": "../../user_drivers/imu/sensors/icm426xx/drv_icm426xx.c"
+                  },
+                  {
+                    "path": "../../user_drivers/imu/sensors/icm426xx/Helpers/Icm426xx/helperClockCalib.c"
+                  }
+                ],
+                "folders": []
+              }
+            ]
           },
           {
             "name": "log",
@@ -934,8 +950,7 @@
           "../../include",
           "../../components/ST/STM32_MotionFX_Library/Inc",
           "../../user_drivers/utest",
-          "../../user_drivers/skt",
-          "../../components/imu/Icm426xx"
+          "../../user_drivers/skt"
         ],
         "libList": [
           "../../components/ST/STM32_MotionFX_Library/Lib"

@@ -9,7 +9,7 @@ to the ground plane
 *******************************************************************************/
 
 #include "ahrs.h"
-#include "imu_if.h"
+#include "imu_dev.h"
 #include "standard_lib.h"
 #include "motion_fx_manager.h"
 #include "motion_fx.h"
@@ -69,44 +69,44 @@ static AHRS_SEND_CALLBACK_TYPE send_callback;
 
 static void ahrs_read_task(void)
 {
-    IMU_RESULT_TypeDef ahrs_result_buf;
-    uint32_t           inp;
+    // IMU_RESULT_TypeDef ahrs_result_buf;
+    // uint32_t           inp;
 
-    if (sAhrsStartFlag == 0) return;
+    // if (sAhrsStartFlag == 0) return;
 
-    if (STD_SUCCESS != imu_get_result(&ahrs_result_buf, 1))
-        return;
+    // if (STD_SUCCESS != imu_get_result(&ahrs_result_buf, 1))
+    //     return;
 
-    if ((ahrs_result_buf.acc[0] == 0) && (ahrs_result_buf.acc[1] == 0) && (ahrs_result_buf.acc[2] == 0)) {
-        kprint("A is 0\r\n");
-        return;
-    }
-    if ((ahrs_result_buf.gyro[0] == 0) && (ahrs_result_buf.gyro[1] == 0) && (ahrs_result_buf.gyro[2] == 0)) {
-        kprint("G is 0\r\n");
-        return;
-    }
+    // if ((ahrs_result_buf.acc[0] == 0) && (ahrs_result_buf.acc[1] == 0) && (ahrs_result_buf.acc[2] == 0)) {
+    //     kprint("A is 0\r\n");
+    //     return;
+    // }
+    // if ((ahrs_result_buf.gyro[0] == 0) && (ahrs_result_buf.gyro[1] == 0) && (ahrs_result_buf.gyro[2] == 0)) {
+    //     kprint("G is 0\r\n");
+    //     return;
+    // }
 
-    inp = sInPtr;
+    // inp = sInPtr;
 
-    sAhrsInput[inp].tick = Clock_Tick();
+    // sAhrsInput[inp].tick = Clock_Tick();
 
-    for (uint8_t i = 0; i < 3; i++) {
-        sAhrsInput[inp].A[i] = ahrs_result_buf.acc[i];
-        sAhrsInput[inp].G[i] = ahrs_result_buf.gyro[i];
-    }
+    // for (uint8_t i = 0; i < 3; i++) {
+    //     sAhrsInput[inp].A[i] = ahrs_result_buf.acc[i];
+    //     sAhrsInput[inp].G[i] = ahrs_result_buf.gyro[i];
+    // }
 
-    inp++;
-    if (inp == IMU_INPUT_BUFF_LENGTH) {
-        inp = 0;
-    }
-    if (inp == sOutPtr) {
-        kprint("read over\r\n");
-    } else {
-        sInPtr = inp;
-    }
+    // inp++;
+    // if (inp == IMU_INPUT_BUFF_LENGTH) {
+    //     inp = 0;
+    // }
+    // if (inp == sOutPtr) {
+    //     kprint("read over\r\n");
+    // } else {
+    //     sInPtr = inp;
+    // }
 
-    /* start to process the imu data */
-    UTIL_SEQ_SetTask(1 << CFG_TASK_AHRS_PROC_ID, CFG_PRIO_NBR_1);
+    // /* start to process the imu data */
+    // UTIL_SEQ_SetTask(1 << CFG_TASK_AHRS_PROC_ID, CFG_PRIO_NBR_1);
 }
 
 /* process the imu data and report it */
@@ -242,9 +242,9 @@ static void ahrs_run_ts_callback(void)
 
 uint8_t ahrs_init(void)
 {
-    __GYRO_ACC_CONFIG_TypeDef acc_gyro_config = { AHRS_ACC_GYRO_DATA_RATE, AHRS_GYRO_SCALE, AHRS_ACC_SCALE, AHRS_ACC_GYRO_POWER_MODE };
+    // __GYRO_ACC_CONFIG_TypeDef acc_gyro_config = { AHRS_ACC_GYRO_DATA_RATE, AHRS_GYRO_SCALE, AHRS_ACC_SCALE, AHRS_ACC_GYRO_POWER_MODE };
 
-    imu_init(&acc_gyro_config);
+    // imu_init(&acc_gyro_config);
     sAhrsAlgApi.init();
 
     ts_create(0, &(sTSAhrsRunID), TS_Repeated, ahrs_run_ts_callback);
@@ -257,7 +257,7 @@ uint8_t ahrs_start(void)
 {
     sInPtr = sOutPtr = 0;
     sAhrsAlgApi.start();
-    imu_enable();
+    // imu_enable();
     kprint("start\r\n");
     sAhrsStartFlag = 1;
     ts_start_ms(sTSAhrsRunID, 1000 / 100);
@@ -267,7 +267,7 @@ uint8_t ahrs_start(void)
 uint8_t ahrs_stop(void)
 {
     sAhrsStartFlag = 0;
-    imu_disable();
+    // imu_disable();
     sAhrsAlgApi.stop();
     kprint("stop\r\n");
     return STD_SUCCESS;

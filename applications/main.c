@@ -9,8 +9,6 @@
 #include "main.h"
 #include "platform.h"
 
-#include "acc_gyro_if.h"
-
 #include "motion_fx_manager.h"
 #include "motion_fx.h"
 

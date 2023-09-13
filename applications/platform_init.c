@@ -13,7 +13,6 @@
 #include "pm_proc.h"
 #include "pd_proc.h"
 #include "utest.h"
-#include "acc_gyro_if.h"
 
 void Error_Handler(void);
 
