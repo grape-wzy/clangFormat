@@ -31,7 +31,7 @@ AlignArrayOfStructures: Left
 # 连续赋值语句的对齐，即多个赋值语句连续出现时的对齐策略配置, 包含多个子配置项
 AlignConsecutiveAssignments:
   # 是否启用, 建议不启用
-  Enabled:         true
+  Enabled: false
   # 是否跨过空行, 即多个对齐语句中间有空行时, 是否跨过, 如果要开启连续赋值语句的配置, 建议为false
   AcrossEmptyLines: false
   # 同AcrossComments: 即是否跨过注释, 建议false
@@ -50,7 +50,7 @@ AlignConsecutiveBitFields:
 
 # 是否对齐连续声明, 同AlignConsecutiveDeclarations
 AlignConsecutiveDeclarations:
-  Enabled:         true
+  Enabled: false
   AcrossEmptyLines: false
   AcrossComments:  false
 
